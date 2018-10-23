@@ -1,0 +1,41 @@
+image: Visual Studio 2017
+
+branches:
+  only:
+  - master
+
+version: 1.0.{build}
+
+init:
+  - cmd: git config --global core.autocrlf true
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: $(appveyor_build_version)
+  package_version: $(appveyor_build_version)
+  assembly_version: $(appveyor_build_version)
+  file_version: $(appveyor_build_version)
+  informational_version: $(appveyor_build_version)
+
+install:
+
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./SampleProject/SampleProject.csproj --verbosity m
+
+build_script:
+  - cmd: dotnet publish ./SampleProject/SampleProject.csproj /p:Version=%APPVEYOR_BUILD_VERSION%
+
+after_build:
+
+clone_depth: 1
+
+test_script:
+  # - cmd: dotnet restore ./SampleProjectTests/SampleProjectTests.csproj --verbosity m
+  # - cmd: cd SampleProjectTests
+  # - cmd: dotnet test
+
+on_finish:
+
+deploy: off
