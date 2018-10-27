@@ -1,5 +1,84 @@
 // https://github.com/kittykatattack/learningPixi
 // npm start
+
+// parent class for hero and enemies
+
+class Entity {
+  constructor(){
+    this.x = 0;
+    this.y = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.hp = 100;
+    this.rotation = 0;
+    this.damage = 1;
+  }
+}
+class Hero extends Entity {
+  constructor(){
+    super();
+    this.gear = [];
+    this.modules = [];
+  }
+}
+
+class Enemy extends Entity {
+  constructor(){
+    super();
+    this.type = "default";
+  }
+}
+
+// holds all needed game-state, which will be updated by backend
+class GameState {
+  constructor(){
+    this.hero = new Hero();
+    this.enemies = [new Enemy()];
+  }
+  getEnemies(){
+    return this.enemies;
+  }
+
+  getHero(){
+    return this.hero;
+  }
+
+  // calls backend to update itself
+  update(data) {
+    //console.log(data.keyPresses);
+    this.dummy();
+  }
+
+  // dummy placeholder instead of server update
+  dummy(){
+    let hero = GAMESTATE.getHero();
+    hero.x += hero.vx;
+    hero.y += hero.vy;
+  }
+}
+
+
+let GAMESTATE = new GameState();
+
+// holds information that backend needs for updating game-state
+class UpdatesForBackend{
+  constructor(){
+    this.timeSinceLastSend = 0;
+    this.keyPresses = [];
+    this.actionsPerformed = [];
+  }
+
+  addKeyPress(key){
+    this.keyPresses.push(key);
+  }
+
+  addKeyRelease(key){
+    this.keyPresses.push(-key);
+  }
+}
+
+let UPDATES_FOR_BACKEND = new UpdatesForBackend();
+
 // using Aliases
 let Application = PIXI.Application,
     loader = PIXI.loader,
@@ -70,16 +149,18 @@ let cat;
 
 // currently is only assigned to play inside setup(),
 // but can be assigned to something else if needed, eg. menu.
-let GameState;
+let WhatToRender;
+
 
 function setup() {
   console.log("All files loaded");
   cat = new Sprite(loader.resources["images/cat.png"].texture);
   // cat.visible = false;
-  cat.x = 100
-  cat.y = 200
-  cat.vx = 0
-  cat.vy = 0
+  let hero = GAMESTATE.getHero();
+  hero.x = 100
+  hero.y = 200
+  hero.vx = 0
+  hero.vy = 0
   // cat.position.set(100, 200)
   cat.scale.set(0.5, 0.5)
   // percentage of texture dimensions 0 to 1
@@ -99,52 +180,56 @@ function setup() {
   // TODO: move these key setups in a seperate function
   //Up
   up.press = () => {
-    cat.vy = -5;
-    cat.vx = 0;
+    hero.vy = -5;
   };
   up.release = () => {
-    if (!down.isDown && cat.vx === 0) {
-      cat.vy = 0;
+    if (down.isDown){
+      hero.vy = 5;
+    } else {
+      hero.vy = 0;
     }
   };
 
   //left
   left.press = () => {
-    cat.vx = -5;
-    cat.vy = 0;
+    hero.vx = -5;
   };
   left.release = () => {
-    if (!right.isDown && cat.vy === 0) {
-      cat.vx = 0;
+    if (right.isDown){
+      hero.vx = 5;
+    } else {
+      hero.vx = 0;
     }
   };
 
   //Right
   right.press = () => {
-    cat.vx = 5;
-    cat.vy = 0;
+    hero.vx = 5;
   };
   right.release = () => {
-    if (!left.isDown && cat.vy === 0) {
-      cat.vx = 0;
+    if (left.isDown){
+      hero.vx = -5;
+    } else {
+      hero.vx = 0;
     }
   };
 
   //Down
   down.press = () => {
-    cat.vy = 5;
-    cat.vx = 0;
+    hero.vy = 5;
   };
   down.release = () => {
-    if (!up.isDown && cat.vx === 0) {
-      cat.vy = 0;
+    if (up.isDown){
+      hero.vy = -5;
+    } else {
+      hero.vy = 0;
     }
   };
 
   let message = new PIXI.Text("Java is the best programming language.");
   app.stage.addChild(message);
 
-  GameState = play
+  WhatToRender = play
   // game loop
   app.ticker.add(delta => gameLoop(delta))
 }
@@ -153,13 +238,15 @@ function setup() {
 // creates frame-independent transformation
 function gameLoop(delta){
   // console.log(delta)
-  GameState(delta)
+  WhatToRender(delta)
 }
 
 function play(delta){
   // console.log(delta)
-  cat.x += cat.vx * delta
-  cat.y += cat.vy * delta
+  let hero = GAMESTATE.getHero();
+  cat.position.set(hero.x, hero.y);
+  GAMESTATE.update(UPDATES_FOR_BACKEND);
+  UPDATES_FOR_BACKEND = new UpdatesForBackend();
 }
 //Add the canvas that Pixi automatically created for you to the HTML document
 
@@ -178,19 +265,19 @@ function keyboard(keyCode) {
   key.release = undefined;
   //The `downHandler`
   key.downHandler = event => {
-    // console.log(event.keyCode)
     if (event.keyCode === key.code) {
+      UPDATES_FOR_BACKEND.addKeyPress(key.code);
       if (key.isUp && key.press) key.press();
       key.isDown = true;
       key.isUp = false;
       return;
     }
-    //event.preventDefault();
   };
 
   //The `upHandler`
   key.upHandler = event => {
     if (event.keyCode === key.code) {
+      UPDATES_FOR_BACKEND.addKeyRelease(key.code);
       if (key.isDown && key.release) key.release();
       key.isDown = false;
       key.isUp = true;
