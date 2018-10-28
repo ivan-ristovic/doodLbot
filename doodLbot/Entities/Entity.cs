@@ -9,8 +9,8 @@ namespace doodLbot.Entities
     {
         public double Xpos { get; private set; }
         public double Ypos { get; private set; }
-        public double Xvel { get; private set; }
-        public double Yvel { get; private set; }
+        public double Xvel { get; set; }
+        public double Yvel { get; set; }
         public double Hp { get; private set; }
         public double Damage { get; private set; }
 
@@ -19,6 +19,13 @@ namespace doodLbot.Entities
         {
             this.Hp = 100;
             this.Damage = 1;
+        }
+
+
+        public void Move()
+        {
+            this.Xpos += this.Xvel;
+            this.Ypos += this.Yvel;
         }
     }
 }

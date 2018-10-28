@@ -7,7 +7,7 @@ namespace doodLbot.Entities
 {
     public class Hero : Entity
     {
-        // Remains list of objects until the classes are made
+        // These will remain lists of objects until the classes are made
         public IReadOnlyList<object> Gear => this.gear.AsReadOnly();
         public IReadOnlyList<object> Modules => this.modules.AsReadOnly();
 
