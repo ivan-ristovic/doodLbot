@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "doodL bot", "SampleProject\doodL bot.csproj", "{7E136580-A7D2-4189-B443-01BCF21FC343}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "doodLbot", "SampleProject\doodLbot.csproj", "{7E136580-A7D2-4189-B443-01BCF21FC343}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
