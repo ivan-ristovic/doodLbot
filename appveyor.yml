@@ -22,10 +22,10 @@ install:
 
 before_build:
   - cmd: dotnet --version
-  - cmd: dotnet restore ./SampleProject/SampleProject.csproj --verbosity m
+  - cmd: dotnet restore ./doodLbot/doodLbot.csproj --verbosity m
 
 build_script:
-  - cmd: dotnet publish ./SampleProject/SampleProject.csproj /p:Version=%APPVEYOR_BUILD_VERSION%
+  - cmd: dotnet publish ./doodLbot/doodLbot.csproj /p:Version=%APPVEYOR_BUILD_VERSION%
 
 after_build:
 
