@@ -32,9 +32,9 @@ after_build:
 clone_depth: 1
 
 test_script:
-  # - cmd: dotnet restore ./SampleProjectTests/SampleProjectTests.csproj --verbosity m
-  # - cmd: cd SampleProjectTests
-  # - cmd: dotnet test
+  - cmd: dotnet restore ./doodLbot.Tests/doodLbot.Tests.csproj --verbosity m
+  - cmd: cd doodLbot.Tests
+  - cmd: dotnet test
 
 on_finish:
 
