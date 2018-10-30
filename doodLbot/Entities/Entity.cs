@@ -7,12 +7,12 @@ namespace doodLbot.Entities
 {
     public class Entity
     {
-        public double Xpos { get; private set; }
-        public double Ypos { get; private set; }
+        public double Xpos { get; protected set; }
+        public double Ypos { get; protected set; }
         public double Xvel { get; set; }
         public double Yvel { get; set; }
-        public double Hp { get; private set; }
-        public double Damage { get; private set; }
+        public double Hp { get; protected set; }
+        public double Damage { get; protected set; }
 
 
         public Entity()
