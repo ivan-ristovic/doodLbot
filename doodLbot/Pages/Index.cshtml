@@ -1,28 +1,13 @@
 ﻿@page
-<div class="container">
-    <div>Moze da se otvori vise tabova u browseru sa istim ovim linkom i da chatuju.
-    Obrisacemo ovo, samo za je sad za testiranje.</div>
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            User..........<input type="text" id="userInput" />
-            <br />
-            Message...<input type="text" id="messageInput" />
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-</div>
-<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-<script src="~/js/chat.js"></script>
+
+  <!-- This style is to remove padding from all elements,
+    it's needed for the canvas to properly fit the window -->
+
+<!-- I don't know how to do this using Razor... -->
+  <!--<style>* {padding: 0; margin: 0}</style>-->
+
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/pixi.js/dist/pixi.min.js"></script>
+    <!--<script src="node_modules/pixi-particles/dist/pixi-particles.min.js"></script>-->
+    <script src="~/js/canvas.js"></script>

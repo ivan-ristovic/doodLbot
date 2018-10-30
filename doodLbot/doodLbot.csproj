@@ -6,6 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Index.cshtml" />
+    <Content Remove="wwwroot\images\cat.png" />
+    <Content Remove="wwwroot\images\paper.jpg" />
+    <Content Remove="wwwroot\images\particle.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Index.cshtml" />
+    <None Include="wwwroot\images\cat.png" />
+    <None Include="wwwroot\images\paper.jpg" />
+    <None Include="wwwroot\images\particle.png" />
+    <None Include="wwwroot\js\canvas.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.0-preview2-20181018-02" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />

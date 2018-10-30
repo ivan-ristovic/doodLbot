@@ -11,6 +11,7 @@ namespace doodLbot.Entities
             var rand = new Random();
             double xpos, ypos;
 
+            // TODO canvas size is irrelevant for back
             if (rand.Next() % 2 == 0) {
                 xpos = (rand.Next() % 2 == 0) ? 0 : GameHub.CanvasSize.X;
                 ypos = rand.NextDouble() * GameHub.CanvasSize.Y;

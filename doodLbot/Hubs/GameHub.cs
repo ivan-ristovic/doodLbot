@@ -14,7 +14,7 @@ namespace doodLbot.Hubs
     {
         static public readonly (int X, int Y) CanvasSize = (800, 600);
         static public readonly int TickRate = 50;
-        static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000 / TickRate);
+        static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000.0 / TickRate);
 
         static private readonly AsyncExecutor _async = new AsyncExecutor();
 

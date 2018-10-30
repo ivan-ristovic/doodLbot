@@ -17,7 +17,7 @@ namespace doodLbot.Logic
         public GameStateUpdate(IEnumerable<ConsoleKey> keys, IEnumerable<object> actions)
         {
             this.keyPresses = keys.ToList();
-            this.actionsPerformed = actions .ToList();
+            this.actionsPerformed = actions.ToList();
         }
     }
 }
