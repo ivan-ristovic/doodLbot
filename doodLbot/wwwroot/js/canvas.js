@@ -8,10 +8,13 @@ connection.on("ReceiveMessage", function (user, message) {
     document.getElementById("consoleDiv").appendChild(li);
     console.log("Recieved message!", user, message);
 });
-
-connection.start().catch(function (err) {
-    return console.error(err.toString());
+connection.on("ServerToClientTemplate", function (result) {
+    var li = document.createElement("li");
+    li.textContent = "ServerToCLientTemplate result = " + result;
+    document.getElementById("consoleDiv").appendChild(li);
+    console.log("Template:", result);
 });
+
 // parent class for hero and enemies
 
 class Entity {
@@ -243,6 +246,9 @@ function setup() {
         connection.invoke("SendMessage", "user69", "thisIsTheMessage").catch(function (err) {
             return console.error(err.toString());
         });
+        connection.invoke("ClientToServer", "client-message").catch(function (err) {
+            return console.error(err.toString());
+        });
     };
 
   let message = new PIXI.Text("Java is the best programming language.");
@@ -315,5 +321,7 @@ function keyboard(keyCode) {
 }
 
 PIXI.utils.sayHello(type)
-
+connection.start().catch(function (err) {
+    return console.error(err.toString());
+});
 // use new Container() when grouping of sprites is needed
