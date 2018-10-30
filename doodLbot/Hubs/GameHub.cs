@@ -1,4 +1,5 @@
-﻿using doodLbot.Entities;
+﻿using doodLbot.Common;
+using doodLbot.Entities;
 using doodLbot.Logic;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -11,8 +12,11 @@ namespace doodLbot.Hubs
 {
     public class GameHub : Hub
     {
+        static public readonly (int X, int Y) CanvasSize = (800, 600);
         static public readonly int TickRate = 50;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000 / TickRate);
+
+        static private readonly AsyncExecutor _async = new AsyncExecutor();
 
         static private void UpdateCallback(object _)
         {
@@ -22,22 +26,21 @@ namespace doodLbot.Hubs
             foreach (Enemy enemy in game.enemies)
                 enemy.Move();
 
-            // Ugly solution, leave it for now until I create an AsyncExecutor class
-            game.Clients.All.SendAsync("StateUpdated", game.GameState).GetAwaiter().GetResult();
+            _async.Execute(game.Clients.All.SendAsync("StateUpdated", game.GameState));
         }
 
 
         public GameState GameState => new GameState(this.hero, this.enemies);
 
-        private readonly Hero hero;
-        private readonly List<Enemy> enemies;
+        private readonly Hero hero;     // Change this to ConcurrentHashSet for the multiplayer
+        private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;
 
 
         public GameHub()
         {
             this.hero = new Hero();
-            this.enemies = new List<Enemy>();
+            this.enemies = new ConcurrentHashSet<Enemy>();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
         }
         
