@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SignalRChat.Hubs;
+using doodLbot.Hubs;
 
 namespace SignalRChat
 {
@@ -49,6 +50,7 @@ namespace SignalRChat
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatHub");
+                routes.MapHub<GameHub>("/gameHub");
             });
             app.UseMvc();
         }

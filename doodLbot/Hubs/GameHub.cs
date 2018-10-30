@@ -20,14 +20,18 @@ namespace doodLbot.Hubs
 
         static private void UpdateCallback(object _)
         {
+            
             var game = _ as GameHub;
 
             game.hero.Move();
             foreach (Enemy enemy in game.enemies)
                 enemy.Move();
-
             _async.Execute(game.Clients.All.SendAsync("StateUpdated", game.GameState));
         }
+
+        // testing communication
+        public Task SendMessage(string user, string message)
+            => this.Clients.All.SendAsync("ReceiveMessage", user, message);
 
 
         public GameState GameState => new GameState(this.hero, this.enemies);
@@ -41,7 +45,8 @@ namespace doodLbot.Hubs
         {
             this.hero = new Hero();
             this.enemies = new ConcurrentHashSet<Enemy>();
-            this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
+            // TODO UNCOMMENT when its all connected, now its crashing because of no object
+            //this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
         }
         
 

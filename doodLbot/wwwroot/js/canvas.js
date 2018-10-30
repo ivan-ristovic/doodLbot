@@ -1,6 +1,17 @@
 // https://github.com/kittykatattack/learningPixi
-// npm start
 
+var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+
+connection.on("ReceiveMessage", function (user, message) {
+    var li = document.createElement("li");
+    li.textContent = user + " says " + message;;
+    document.getElementById("consoleDiv").appendChild(li);
+    console.log("Recieved message!", user, message);
+});
+
+connection.start().catch(function (err) {
+    return console.error(err.toString());
+});
 // parent class for hero and enemies
 
 class Entity {
@@ -224,12 +235,20 @@ function setup() {
     } else {
       hero.vy = 0;
     }
-  };
+    };
+
+    
+    let testKey = keyboard(84);
+    testKey.press = () => {
+        connection.invoke("SendMessage", "user69", "thisIsTheMessage").catch(function (err) {
+            return console.error(err.toString());
+        });
+    };
 
   let message = new PIXI.Text("Java is the best programming language.");
   app.stage.addChild(message);
 
-  WhatToRender = play
+    WhatToRender = play;
   // game loop
   app.ticker.add(delta => gameLoop(delta))
 }
