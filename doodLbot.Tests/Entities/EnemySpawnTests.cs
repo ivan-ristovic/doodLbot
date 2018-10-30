@@ -1,5 +1,6 @@
 using doodLbot.Entities;
-using doodLbot.Hubs;
+using doodLbot.Logic;
+
 using NUnit.Framework;
 
 namespace doodLbotTests.Entities
@@ -15,15 +16,15 @@ namespace doodLbotTests.Entities
                 Assert.IsNotNull(enemy);
 
                 Assert.GreaterOrEqual(enemy.Xpos, 0d);
-                Assert.LessOrEqual(enemy.Xpos, GameHub.CanvasSize.X);
+                Assert.LessOrEqual(enemy.Xpos, Game.MapSize.X);
                 Assert.GreaterOrEqual(enemy.Ypos, 0d);
-                Assert.LessOrEqual(enemy.Ypos, GameHub.CanvasSize.Y);
+                Assert.LessOrEqual(enemy.Ypos, Game.MapSize.Y);
 
                 Assert.That(
                     enemy.Xpos == 0d || 
-                    enemy.Xpos == GameHub.CanvasSize.X || 
+                    enemy.Xpos == Game.MapSize.X || 
                     enemy.Ypos == 0d || 
-                    enemy.Ypos == GameHub.CanvasSize.Y
+                    enemy.Ypos == Game.MapSize.Y
                 );
             }
         }

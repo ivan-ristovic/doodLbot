@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace doodLbot.Logic
 {
-    public class GameStateUpdate
+    public sealed class GameStateUpdate
     {
         public TimeSpan TimeSinceLastUpdate { get; }
         public IReadOnlyList<ConsoleKey> KeyPresses => this.keyPresses.AsReadOnly();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace doodLbot.Logic
 {
-    public class GameState
+    public sealed class GameState
     {
         public Hero Hero { get; }
         public IReadOnlyList<Enemy> Enemies => this.enemies.AsReadOnly();

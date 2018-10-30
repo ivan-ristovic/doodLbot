@@ -1,4 +1,4 @@
-﻿using doodLbot.Hubs;
+﻿using doodLbot.Logic;
 
 using System;
 
@@ -10,14 +10,13 @@ namespace doodLbot.Entities
         {
             var rand = new Random();
             double xpos, ypos;
-
-            // TODO canvas size is irrelevant for back
+            
             if (rand.Next() % 2 == 0) {
-                xpos = (rand.Next() % 2 == 0) ? 0 : GameHub.CanvasSize.X;
-                ypos = rand.NextDouble() * GameHub.CanvasSize.Y;
+                xpos = (rand.Next() % 2 == 0) ? 0 : Game.MapSize.X;
+                ypos = rand.NextDouble() * Game.MapSize.Y;
             } else {
-                xpos = rand.NextDouble() * GameHub.CanvasSize.X;
-                ypos = (rand.Next() % 2 == 0) ? 0 : GameHub.CanvasSize.Y;
+                xpos = rand.NextDouble() * Game.MapSize.X;
+                ypos = (rand.Next() % 2 == 0) ? 0 : Game.MapSize.Y;
             }
 
             // TODO set velocity
