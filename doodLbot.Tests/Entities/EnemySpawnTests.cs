@@ -21,7 +21,7 @@ namespace doodLbotTests.Entities
                 Assert.LessOrEqual(enemy.Ypos, Game.MapSize.Y);
 
                 Assert.That(
-                    enemy.Xpos == 0d || // shouldn't these be &&?
+                    enemy.Xpos == 0d ||
                     enemy.Xpos == Game.MapSize.X || 
                     enemy.Ypos == 0d || 
                     enemy.Ypos == Game.MapSize.Y
