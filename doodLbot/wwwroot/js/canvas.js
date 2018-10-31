@@ -19,7 +19,7 @@ function onStateUpdate(gameState) {
     timesRecieved++;
     //console.log(timesRecieved);
     GAMESTATE = new GameState(gameState);
-    countTimesPerSecond(true);
+    countTimesPerSecond(false);
     //console.log(gameState);
 }
 

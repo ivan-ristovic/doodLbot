@@ -9,12 +9,12 @@ namespace doodLbot.Entities
     public class Hero : Entity
     {
         // These will remain lists of objects until the classes are made
+        [JsonProperty("gear")]
         public IReadOnlyList<object> Gear => this.gear.AsReadOnly();
+        [JsonProperty("modules")]
         public IReadOnlyList<object> Modules => this.modules.AsReadOnly();
 
-        [JsonProperty("gear")]
         private readonly List<object> gear;
-        [JsonProperty("modules")]
         private readonly List<object> modules;
 
 

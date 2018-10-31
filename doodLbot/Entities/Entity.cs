@@ -39,7 +39,7 @@ namespace doodLbot.Entities
         {
             double xvel = goal.Xpos - this.Xpos;
             double yvel = goal.Ypos - this.Ypos;
-            double norm = xvel * xvel + yvel * yvel;
+            double norm = Math.Sqrt( xvel * xvel + yvel * yvel );
             // todo: handle case when norm is 0
             this.Xvel = xvel / norm;
             this.Yvel = yvel / norm;
