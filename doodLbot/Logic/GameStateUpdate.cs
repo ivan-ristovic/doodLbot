@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,10 +14,11 @@ namespace doodLbot.Logic
         private readonly List<(ConsoleKey key, bool isDown)> keyPresses;
         private readonly List<object> actionsPerformed;
 
-        [Newtonsoft.Json.JsonConstructor]
+
+        [JsonConstructor]
         public GameStateUpdate(int timeSinceLastSend, int[] keyPresses, object [] actions)
         {
-            this.keyPresses = keyPresses.Select((key) => ((ConsoleKey)Math.Abs(key), key >= 0 )).ToList();
+            this.keyPresses = keyPresses.Select((key) => ((ConsoleKey)Math.Abs(key), key >= 0)).ToList();
             this.actionsPerformed = actions.ToList();
         }
     }

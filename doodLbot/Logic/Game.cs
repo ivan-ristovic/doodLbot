@@ -1,13 +1,11 @@
 ﻿using doodLbot.Common;
 using doodLbot.Entities;
 using doodLbot.Hubs;
-using doodLbot.Logic;
+
 using Microsoft.AspNetCore.SignalR;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace doodLbot.Logic
 {
@@ -43,8 +41,10 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.hero = new Hero();
-            this.enemies = new ConcurrentHashSet<Enemy>();
-            this.enemies.Add(new Kamikaze()); // for testing purposes
+            this.enemies = new ConcurrentHashSet<Enemy>() {
+                //Enemy.Spawn<Kamikaze>(),
+                new Kamikaze()
+            };
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
         }
@@ -58,16 +58,16 @@ namespace doodLbot.Logic
             switch (key)
             {
                 case ConsoleKey.A:
-                    hero.Xvel = -velMultiplier;
+                    this.hero.Xvel = -velMultiplier;
                     break;
                 case ConsoleKey.S:
-                    hero.Yvel = velMultiplier;
+                    this.hero.Yvel = velMultiplier;
                     break;
                 case ConsoleKey.D:
-                    hero.Xvel = velMultiplier;
+                    this.hero.Xvel = velMultiplier;
                     break;
                 case ConsoleKey.W:
-                    hero.Yvel = -velMultiplier;
+                    this.hero.Yvel = -velMultiplier;
                     break;
             }
         }
