@@ -3,8 +3,8 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
 connection.on("ReceiveMessage", function (user, message) {
-    var li = document.createElement("li");
-    li.textContent = user + " says " + message;;
+    var li = document.createElement("span");
+    li.textContent = user + " says " + message;
     document.getElementById("consoleDiv").appendChild(li);
     console.log("Recieved message!", user, message);
 });
@@ -42,8 +42,10 @@ function countTimesPerSecond(shouldPrint) {
     oldCountTime = now;
     frame++;
     timeSum += diff;
-    if (shouldPrint && timeSum > 1000) {
-        console.log("fps = ", frame * 1000 / timeSum);
+    if (timeSum > 1000) {
+        if (shouldPrint) {
+            console.log("fps = ", frame * 1000 / timeSum);
+        }
         timeSum -= 1000;
         frame = 0;
         timeSUm = 0;
@@ -52,8 +54,6 @@ function countTimesPerSecond(shouldPrint) {
 
 
 // parent class for hero and enemies
-
-// TODO class field names are not mirrored.
 class Entity {
     constructor(obj) {
         if (obj != undefined) {
@@ -115,14 +115,11 @@ class GameState {
 
     // calls backend to update itself
     update(data) {
-        //console.log(data.keyPresses);
         if (UPDATES_FOR_BACKEND.keyPresses.length == 0) {
             // then don't bother server
             return;
         }
-        //console.log("sending length = ", UPDATES_FOR_BACKEND.keyPresses.length);
         sendUpdateToServer(data);
-        //this.dummy();
     }
 
     // dummy placeholder instead of server update
@@ -133,7 +130,30 @@ class GameState {
     }
 }
 
+let EnemySprites = []
+function updateEnemySprites() {
+    let numEnemies = GAMESTATE.enemies.length;
+    while (EnemySprites.length < numEnemies) {
+        enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
+        EnemySprites.push(enemyTexture);
+        app.stage.addChild(enemyTexture);
+    }
 
+    let enemies = GAMESTATE.enemies;
+    for (let i = 0; i < enemies.length; i++) {
+        EnemySprites[i].position.set(enemies[i].x, enemies[i].y);
+        EnemySprites[i].visible = true;
+    }
+
+    // if there are now less enemies than theer are sprites, then don't draw them
+    for (let i = enemies.length; i < EnemySprites.length; i++) {
+        if (EnemySprites[i].visible = false) {
+            break;
+        }
+        EnemySprites[i].visible = false;
+    }
+    
+}
 let GAMESTATE = new GameState();
 
 // holds information that backend needs for updating game-state
@@ -231,11 +251,9 @@ let enemyTexture;
 
 function setup() {
     console.log("All files loaded");
-    enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
+    
+
     cat = new Sprite(loader.resources["images/cat.png"].texture);
-    enemyTexture.x = 100;
-    enemyTexture.y = 100;
-    // cat.visible = false;
     let hero = GAMESTATE.getHero();
     hero.x = 100
     hero.y = 200
@@ -251,62 +269,11 @@ function setup() {
     paper.scale.set(4, 3)
     app.stage.addChild(paper);
     app.stage.addChild(cat);
-    app.stage.addChild(enemyTexture);
 
     let left = keyboard(65),
         up = keyboard(87),
         right = keyboard(68),
         down = keyboard(83);
-
-    // TODO: move these key setups in a seperate function
-    //Up
-    up.press = () => {
-        hero.vy = -5;
-    };
-    up.release = () => {
-        if (down.isDown) {
-            hero.vy = 5;
-        } else {
-            hero.vy = 0;
-        }
-    };
-
-    //left
-    left.press = () => {
-        hero.vx = -5;
-    };
-    left.release = () => {
-        if (right.isDown) {
-            hero.vx = 5;
-        } else {
-            hero.vx = 0;
-        }
-    };
-
-    //Right
-    right.press = () => {
-        hero.vx = 5;
-    };
-    right.release = () => {
-        if (left.isDown) {
-            hero.vx = -5;
-        } else {
-            hero.vx = 0;
-        }
-    };
-
-    //Down
-    down.press = () => {
-        hero.vy = 5;
-    };
-    down.release = () => {
-        if (up.isDown) {
-            hero.vy = -5;
-        } else {
-            hero.vy = 0;
-        }
-    };
-
 
     let testKey = keyboard(84);
     testKey.press = testKeyFunc;
@@ -323,18 +290,14 @@ function setup() {
 // creates frame-independent transformation
 function gameLoop(delta) {
     // console.log(delta)
-    WhatToRender(delta)
+    WhatToRender(delta);
 }
 
 function play(delta) {
     // console.log(delta)
     let hero = GAMESTATE.hero;
     cat.position.set(hero.x, hero.y);
-    // TODO think about handling multiples of same texture
-    GAMESTATE.enemies.forEach(enemy => {
-        enemyTexture.x = enemy.x;
-        enemyTexture.y = enemy.y;
-    });
+    updateEnemySprites();
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
 }

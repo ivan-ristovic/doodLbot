@@ -42,19 +42,31 @@ namespace doodLbot.Logic
         {
             this.hero = new Hero();
             this.enemies = new ConcurrentHashSet<Enemy>() {
-                //Enemy.Spawn<Kamikaze>(),
-                new Kamikaze()
             };
+            this.SpawnEnemy();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
+        }
+
+        public void SpawnEnemy()
+        {
+            const double spawnRange = 300;
+            enemies.Add(Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, spawnRange));
         }
 
 
         public void UpdateState(GameStateUpdate update)
         {
-            (ConsoleKey key, bool isDown) = update.KeyPresses[0];
+            foreach(var (key, isDown) in update.KeyPresses)
+            {
+                OnKey(key, isDown);
+            }
+        }
+
+        public void OnKey(ConsoleKey key, bool isDown)
+        {
+            
             double velMultiplier = isDown ? 5 : 0;
-            // TODO polish
             switch (key)
             {
                 case ConsoleKey.A:
