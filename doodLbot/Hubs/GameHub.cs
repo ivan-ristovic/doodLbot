@@ -1,5 +1,10 @@
-﻿using doodLbot.Logic;
+﻿using doodLbot.Common;
+using doodLbot.Logic;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace doodLbot.Hubs
@@ -8,20 +13,25 @@ namespace doodLbot.Hubs
     {
         private readonly Game game;
 
+
         public GameHub(Game game)
         {
             this.game = game;
         }
 
+
         public Task UpdateGameState(GameStateUpdate update)
         {
             this.game.UpdateState(update);
-            return Task.CompletedTask;
+            return Task.CompletedTask; 
         }
 
         // TODO remove, this is a communication test
         public Task SendMessage(string user, string message)
-            => this.Clients.All.SendAsync("ReceiveMessage", user, message);
+        {
+            Log.Information("PROOOOO");
+            return this.Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
 
         public Task SendUpdatesToClient(GameState update)
             => this.Clients.All.SendAsync("GameStateUpdateRecieved", update);
