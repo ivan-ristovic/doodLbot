@@ -41,6 +41,7 @@ namespace doodLbot.Logic
         {
             this.hero = new Hero();
             this.enemies = new ConcurrentHashSet<Enemy>();
+            this.enemies.Add(new Kamikaze()); // for testing purposes
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
         }

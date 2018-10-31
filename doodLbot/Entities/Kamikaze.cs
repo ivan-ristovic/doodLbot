@@ -9,7 +9,11 @@ namespace doodLbot.Entities
     {
         public Kamikaze() : base()
         {
-
+            // for testing
+            this.Xpos = 300;
+            this.Ypos = 300;
+            this.Xvel = 1;
+            this.Yvel = 0.5;
         }
     }
 }
