@@ -19,6 +19,7 @@ function onStateUpdate(gameState) {
     timesRecieved++;
     //console.log(timesRecieved);
     GAMESTATE = new GameState(gameState);
+    countTimesPerSecond(true);
     //console.log(gameState);
 }
 
@@ -30,6 +31,25 @@ function sendUpdateToServer(update) {
 
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
+
+
+var oldCountTime = performance.now();
+var frame = 0;
+var timeSum = 0;
+function countTimesPerSecond(shouldPrint) {
+    const now = performance.now();
+    let diff = now - oldCountTime;
+    oldCountTime = now;
+    frame++;
+    timeSum += diff;
+    if (shouldPrint && timeSum > 1000) {
+        console.log("fps = ", frame * 1000 / timeSum);
+        timeSum -= 1000;
+        frame = 0;
+        timeSUm = 0;
+    }
+}
+
 
 // parent class for hero and enemies
 
@@ -100,7 +120,7 @@ class GameState {
             // then don't bother server
             return;
         }
-        console.log("sending length = ", UPDATES_FOR_BACKEND.keyPresses.length);
+        //console.log("sending length = ", UPDATES_FOR_BACKEND.keyPresses.length);
         sendUpdateToServer(data);
         //this.dummy();
     }
