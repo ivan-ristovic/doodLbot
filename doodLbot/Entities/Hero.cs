@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace doodLbot.Entities
 {
@@ -11,7 +12,9 @@ namespace doodLbot.Entities
         public IReadOnlyList<object> Gear => this.gear.AsReadOnly();
         public IReadOnlyList<object> Modules => this.modules.AsReadOnly();
 
+        [JsonProperty("gear")]
         private readonly List<object> gear;
+        [JsonProperty("modules")]
         private readonly List<object> modules;
 
 

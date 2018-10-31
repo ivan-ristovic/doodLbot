@@ -329,11 +329,11 @@ function gameLoop(delta) {
 function play(delta) {
     // console.log(delta)
     let hero = GAMESTATE.hero;
-    cat.position.set(hero.xpos, hero.ypos);
+    cat.position.set(hero.x, hero.y);
     // TODO think about handling multiples of same texture
     GAMESTATE.enemies.forEach(enemy => {
-        enemyTexture.x = enemy.xpos;
-        enemyTexture.y = enemy.ypos;
+        enemyTexture.x = enemy.x;
+        enemyTexture.y = enemy.y;
     });
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();

@@ -25,7 +25,10 @@ namespace doodLbot.Logic
 
             game.hero.Move();
             foreach (Enemy enemy in game.enemies)
+            {
+                //enemy.VelocityTowards(game.hero, 5);
                 enemy.Move();
+            }
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
 
