@@ -7,16 +7,16 @@ namespace doodLbot.Logic
     public sealed class GameStateUpdate
     {
         public TimeSpan TimeSinceLastUpdate { get; }
-        public IReadOnlyList<ConsoleKey> KeyPresses => this.keyPresses.AsReadOnly();
+        public IReadOnlyList<(ConsoleKey key, bool isDown)> KeyPresses => this.keyPresses.AsReadOnly();
         public IReadOnlyList<object> ActionsPerformed => this.actionsPerformed.AsReadOnly();
 
-        private readonly List<ConsoleKey> keyPresses;
+        private readonly List<(ConsoleKey key, bool isDown)> keyPresses;
         private readonly List<object> actionsPerformed;
 
-
-        public GameStateUpdate(IEnumerable<ConsoleKey> keys, IEnumerable<object> actions)
+        [Newtonsoft.Json.JsonConstructor]
+        public GameStateUpdate(int timeSinceLastSend, int[] keyPresses, object [] actions)
         {
-            this.keyPresses = keys.ToList();
+            this.keyPresses = keyPresses.Select((key) => ((ConsoleKey)Math.Abs(key), key >= 0 )).ToList();
             this.actionsPerformed = actions.ToList();
         }
     }

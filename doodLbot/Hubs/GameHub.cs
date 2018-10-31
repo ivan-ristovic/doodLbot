@@ -13,7 +13,7 @@ namespace doodLbot.Hubs
             this.game = game;
         }
 
-        public Task GameStateUpdated(GameStateUpdate update)
+        public Task UpdateGameState(GameStateUpdate update)
         {
             this.game.UpdateState(update);
             return Task.CompletedTask;

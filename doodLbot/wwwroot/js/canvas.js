@@ -9,7 +9,7 @@ connection.on("ReceiveMessage", function (user, message) {
     console.log("Recieved message!", user, message);
 });
 
-testKeyFunc = () => {
+let testKeyFunc = () => {
     connection.invoke("SendMessage", "user69", "thisIsTheMessage").catch(function (err) {
         return console.error(err.toString());
     });
@@ -22,6 +22,13 @@ function onStateUpdate(gameState) {
     //console.log(gameState);
 }
 
+function sendUpdateToServer(update) {
+    connection.invoke("updateGameState", update).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+// server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
 
 // parent class for hero and enemies
@@ -89,7 +96,13 @@ class GameState {
     // calls backend to update itself
     update(data) {
         //console.log(data.keyPresses);
-        this.dummy();
+        if (UPDATES_FOR_BACKEND.keyPresses.length == 0) {
+            // then don't bother server
+            return;
+        }
+        console.log("sending length = ", UPDATES_FOR_BACKEND.keyPresses.length);
+        sendUpdateToServer(data);
+        //this.dummy();
     }
 
     // dummy placeholder instead of server update
@@ -108,7 +121,7 @@ class UpdatesForBackend {
     constructor() {
         this.timeSinceLastSend = 0;
         this.keyPresses = [];
-        this.actionsPerformed = [];
+        this.actions = [];
     }
 
     addKeyPress(key) {
@@ -299,10 +312,8 @@ function play(delta) {
     cat.position.set(hero.xpos, hero.ypos);
     // TODO think about handling multiples of same texture
     GAMESTATE.enemies.forEach(enemy => {
-        console.log(enemy.xpos, enemy.ypos);
         enemyTexture.x = enemy.xpos;
         enemyTexture.y = enemy.ypos;
-        console.log(enemyTexture.x, enemyTexture.y)
     });
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();

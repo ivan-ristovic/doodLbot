@@ -49,7 +49,24 @@ namespace doodLbot.Logic
 
         public void UpdateState(GameStateUpdate update)
         {
-            // TODO
+            (ConsoleKey key, bool isDown) = update.KeyPresses[0];
+            double velMultiplier = isDown ? 5 : 0;
+            // TODO polish
+            switch (key)
+            {
+                case ConsoleKey.A:
+                    hero.Xvel = -velMultiplier;
+                    break;
+                case ConsoleKey.S:
+                    hero.Yvel = velMultiplier;
+                    break;
+                case ConsoleKey.D:
+                    hero.Xvel = velMultiplier;
+                    break;
+                case ConsoleKey.W:
+                    hero.Yvel = -velMultiplier;
+                    break;
+            }
         }
     }
 }
