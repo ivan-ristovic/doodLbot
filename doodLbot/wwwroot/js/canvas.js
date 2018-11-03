@@ -15,6 +15,7 @@ let testKeyFunc = () => {
     });
 };
 var timesRecieved = 0;
+
 function onStateUpdate(gameState) {
     timesRecieved++;
     //console.log(timesRecieved);
@@ -36,6 +37,7 @@ connection.on("StateUpdate", onStateUpdate);
 var oldCountTime = performance.now();
 var frame = 0;
 var timeSum = 0;
+
 function countTimesPerSecond(shouldPrint) {
     const now = performance.now();
     let diff = now - oldCountTime;
@@ -55,41 +57,54 @@ function countTimesPerSecond(shouldPrint) {
 
 // parent class for hero and enemies
 class Entity {
-    constructor(obj) {
-        if (obj != undefined) {
-            return Object.assign(this, obj);
-        }
-        console.log("WARNIG! Entity invalid obj");
-        this.x = 0;
-        this.y = 0;
-        this.vx = 0;
-        this.vy = 0;
-        this.hp = 100;
-        this.rotation = 0;
-        this.damage = 1;
+    static createHealthBar(w = 100, h = 10, sprite) {
+        //Create the health bar
+        let healthBar;
+        healthBar = new PIXI.Container();
+        healthBar.position.set(0, 0)
+
+        // Bigger enemy -> bigger hp bar
+        w *= Math.sqrt(sprite.width * sprite.height) / 100;
+
+        //Create the black background rectangle
+        let innerBar = new PIXI.Graphics();
+        innerBar.beginFill(0x000000);
+        innerBar.drawRect(0, 0, w, h);
+        innerBar.endFill();
+        healthBar.addChild(innerBar);
+
+        //Create the front red rectangle
+        let outerBar = new PIXI.Graphics();
+        outerBar.beginFill(0xFF3300);
+        outerBar.drawRect(0, 0, w, h);
+        outerBar.endFill();
+        healthBar.addChild(outerBar);
+
+        healthBar.outer = outerBar;
+        healthBar.w = w;
+        healthBar.h = h;
+        healthBar.sprite = sprite;
+
+        return healthBar;
     }
-}
-class Hero extends Entity {
-    constructor(obj) {
-        if (obj != undefined) {
-            return Object.assign(this, obj);
-        }
-        console.log("WARNIG! Hero invalid obj");
-        super();
-        this.gear = [];
-        this.modules = [];
+
+    static updateHealthBar(entity, healthBar) {
+        healthBar.position.set(
+            entity.x - healthBar.width / 2,
+            entity.y - healthBar.sprite.height / 2 - 15,
+        );
+
+        healthBar.outer.width = entity.hp / 100 * healthBar.w;
     }
 }
 
+class Hero extends Entity {
+
+
+}
+
 class Enemy extends Entity {
-    constructor(obj) {
-        if (obj != undefined) {
-            return Object.assign(this, obj);
-        }
-        console.log("WARNIG! Enemy invalid obj");
-        super();
-        this.type = "default";
-    }
+
 }
 
 // holds all needed game-state, which will be updated by backend
@@ -97,13 +112,19 @@ class GameState {
     constructor(obj) {
         if (obj != undefined) {
             let cast = Object.assign(this, obj);
-            // etc ... 
-            //cast.hero = new Hero(cast.hero);
+
+            // \/ \/ \/ Resource consuming \/ \/ \/
+            // cast.hero = new Hero(cast.hero);
+            // for (let i = 0; i < cast.enemies.length; i++) {
+            //     object.setPrototypeOf(cast.enemies[i], Enemy);
+            // }
+            // /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\
+
             return cast;
         }
         console.log("WARNIG! GameState invalid obj");
-        this.hero = new Hero();
-        this.enemies = [new Enemy()];
+        // this.hero = new Hero();
+        // this.enemies = [new Enemy()];
     }
     getEnemies() {
         return this.enemies;
@@ -131,18 +152,28 @@ class GameState {
 }
 
 let EnemySprites = []
-function updateEnemySprites() {
+let EnemyHps = []
+
+function updateEnemies() {
+    if (GAMESTATE.enemies == undefined)
+        return;
+
     let numEnemies = GAMESTATE.enemies.length;
     while (EnemySprites.length < numEnemies) {
         enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
+        enemyTexture.anchor.set(0.5, 0.5);
         EnemySprites.push(enemyTexture);
         app.stage.addChild(enemyTexture);
+
+        EnemyHps.push(Entity.createHealthBar(100, 10, enemyTexture));
+        app.stage.addChild(EnemyHps[EnemyHps.length - 1]);
     }
 
     let enemies = GAMESTATE.enemies;
     for (let i = 0; i < enemies.length; i++) {
         EnemySprites[i].position.set(enemies[i].x, enemies[i].y);
         EnemySprites[i].visible = true;
+        Entity.updateHealthBar(enemies[i], EnemyHps[i]);
     }
 
     // if there are now less enemies than theer are sprites, then don't draw them
@@ -152,7 +183,7 @@ function updateEnemySprites() {
         }
         EnemySprites[i].visible = false;
     }
-    
+
 }
 let GAMESTATE = new GameState();
 
@@ -184,8 +215,7 @@ TextureCache = PIXI.utils.TextureCache
 
 // can use only one texture
 let superFastSprites = new PIXI.particles.ParticleContainer(
-    100,
-    {
+    100, {
         rotation: true,
         alphaAndtint: true,
         scale: true,
@@ -227,8 +257,7 @@ loader
         "images/paper.jpg",
         "images/particle.png",
         "images/enemy.png"
-    ]
-    )
+    ])
     .on("progress", loadProgressHandler)
     .load(setup);
 
@@ -242,6 +271,7 @@ function loadProgressHandler(loader, resource) {
 
 // sprites
 let cat;
+let heroHealthBar;
 
 // currently is only assigned to play inside setup(),
 // but can be assigned to something else if needed, eg. menu.
@@ -251,24 +281,31 @@ let enemyTexture;
 
 function setup() {
     console.log("All files loaded");
-    
+
 
     cat = new Sprite(loader.resources["images/cat.png"].texture);
-    let hero = GAMESTATE.getHero();
-    hero.x = 100
-    hero.y = 200
-    hero.vx = 0
-    hero.vy = 0
+
+    // waiting server for init
+    // let hero = GAMESTATE.getHero();
+    // hero.x = 100
+    // hero.y = 200
+    // hero.vx = 0
+    // hero.vy = 0
+
     // cat.position.set(100, 200)
     cat.scale.set(0.5, 0.5)
     // percentage of texture dimensions 0 to 1
     cat.anchor.set(0.5, 0.5)
     cat.rotation = -1 // radians
 
+    heroHealthBar = Entity.createHealthBar(100, 10, cat);
+
+
     let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
     paper.scale.set(4, 3)
     app.stage.addChild(paper);
     app.stage.addChild(cat);
+    app.stage.addChild(heroHealthBar);
 
     let left = keyboard(65),
         up = keyboard(87),
@@ -278,8 +315,33 @@ function setup() {
     let testKey = keyboard(84);
     testKey.press = testKeyFunc;
 
-    let message = new PIXI.Text("Java is the best programming language.");
-    app.stage.addChild(message);
+
+
+
+    // let healthBar;
+    // healthBar = new PIXI.Container();
+    // healthBar.position.set(150, 150)
+
+    //Create the black background rectangle
+    // let innerBar = new PIXI.Graphics();
+    // innerBar.beginFill(0x000000);
+    // innerBar.drawRect(0, 0, 128, 8);
+    // innerBar.endFill();
+    // healthBar.addChild(innerBar);
+
+    // //Create the front red rectangle
+    // let outerBar = new PIXI.Graphics();
+    // outerBar.beginFill(0xFF3300);
+    // outerBar.drawRect(0, 0, 64, 8);
+    // outerBar.endFill();
+    // healthBar.addChild(outerBar);
+
+    // healthBar.outer = outerBar;
+    // app.stage.addChild(healthBar);
+
+
+    // let message = new PIXI.Text("Java is the best programming language.");
+    // app.stage.addChild(message);
 
     WhatToRender = play;
     // game loop
@@ -295,11 +357,18 @@ function gameLoop(delta) {
 
 function play(delta) {
     // console.log(delta)
-    let hero = GAMESTATE.hero;
-    cat.position.set(hero.x, hero.y);
-    updateEnemySprites();
+    if (GAMESTATE.hero != undefined) {
+        let hero = GAMESTATE.hero;
+        cat.position.set(hero.x, hero.y);
+        Entity.updateHealthBar(hero, heroHealthBar);
+        // console.log(GAMESTATE);
+    }
+    updateEnemies();
     GAMESTATE.update(UPDATES_FOR_BACKEND);
+
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
+
+    // hero.printme();
 }
 //Add the canvas that Pixi automatically created for you to the HTML document
 
