@@ -1,4 +1,5 @@
 ﻿using doodLbot.Logic;
+using Serilog;
 using System;
 
 namespace doodLbot.Entities
@@ -19,6 +20,8 @@ namespace doodLbot.Entities
             double r = radius * 2;
             xpos = spawnX + (rand.NextDouble() - centerRandomVar) * r;
             ypos = spawnY + (rand.NextDouble() - centerRandomVar) * r;
+
+            Log.Debug($"Spawning: {typeof(T)} at ({xpos}, {ypos}) ; player position ({spawnX}, {spawnY})");
 
             return new T() {
                 Xpos = xpos,

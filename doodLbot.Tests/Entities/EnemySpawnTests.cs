@@ -1,7 +1,8 @@
 using doodLbot.Entities;
-using doodLbot.Logic;
 
 using NUnit.Framework;
+
+using System;
 
 namespace doodLbotTests.Entities
 {
@@ -11,21 +12,18 @@ namespace doodLbotTests.Entities
         [Test]
         public void KamikazeSpawnerTest()
         {
+            var rnd = new Random();
+            const double maxValue = 100d;
+
             for (int i = 0; i < 1000; i++) {
-                var enemy = Enemy.Spawn<Kamikaze>();
+                double radius = rnd.NextDouble() * maxValue + 1d;
+                (double Xpos, double Ypos) hero = (rnd.NextDouble() * maxValue, rnd.NextDouble() * maxValue);
+
+                var enemy = Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, radius);
                 Assert.IsNotNull(enemy);
-
-                Assert.GreaterOrEqual(enemy.Xpos, 0d);
-                Assert.LessOrEqual(enemy.Xpos, Game.MapSize.X);
-                Assert.GreaterOrEqual(enemy.Ypos, 0d);
-                Assert.LessOrEqual(enemy.Ypos, Game.MapSize.Y);
-
-                Assert.That(
-                    enemy.Xpos == 0d ||
-                    enemy.Xpos == Game.MapSize.X || 
-                    enemy.Ypos == 0d || 
-                    enemy.Ypos == Game.MapSize.Y
-                );
+                
+                Assert.LessOrEqual(Math.Abs(enemy.Xpos - hero.Xpos), radius);
+                Assert.LessOrEqual(Math.Abs(enemy.Ypos - hero.Ypos), radius);
             }
         }
     }

@@ -41,8 +41,7 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.hero = new Hero();
-            this.enemies = new ConcurrentHashSet<Enemy>() {
-            };
+            this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
