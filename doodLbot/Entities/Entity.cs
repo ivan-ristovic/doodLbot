@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+
+using System;
 
 namespace doodLbot.Entities
 {
@@ -12,6 +10,8 @@ namespace doodLbot.Entities
         public double Xpos { get; protected set; }
         [JsonProperty("y")]
         public double Ypos { get; protected set; }
+        [JsonProperty("a")]
+        public double Angle { get; protected set; }
         [JsonProperty("vy")]
         public double Xvel { get; set; }
         [JsonProperty("vx")]
@@ -28,10 +28,11 @@ namespace doodLbot.Entities
             this.Damage = 1;
         }
 
-        public Entity(double x, double y) : this()
+        public Entity(double x, double y, double angle = 0) : this()
         {
             this.Xpos = x;
             this.Ypos = y;
+            this.Angle = angle;
         }
 
         public void Move()

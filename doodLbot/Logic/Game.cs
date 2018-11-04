@@ -30,19 +30,19 @@ namespace doodLbot.Logic
                 enemy.Move();
             }
 
-            foreach (var projectile in game.projectiles)
+            foreach (var projectile in game.hero.Projectiles)
             {
                 projectile.Move();
+                // Remove projectiles 
             }
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
 
-        public GameState GameState => new GameState(this.hero, this.enemies, this.projectiles);
+        public GameState GameState => new GameState(this.hero, this.enemies);
 
         private readonly Hero hero;     // Change this to ConcurrentHashSet for the multiplayer
         private readonly ConcurrentHashSet<Enemy> enemies;
-        private readonly List<Projectile> projectiles;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
         
@@ -52,7 +52,6 @@ namespace doodLbot.Logic
             this.hero = new Hero(300, 300);
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy();
-            this.projectiles = new List<Projectile>();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
         }
@@ -91,11 +90,7 @@ namespace doodLbot.Logic
                     this.hero.Yvel = -velMultiplier;
                     break;
                 case ConsoleKey.Spacebar:
-                    // fire a bullet
-                    var bullet = new Projectile(hero.Xpos, hero.Ypos);
-                    bullet.Xvel = 0;
-                    bullet.Yvel = -1;
-                    this.projectiles.Add(bullet);
+                    this.hero.Fire();
                     break;
             }
         }
