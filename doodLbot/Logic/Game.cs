@@ -76,18 +76,18 @@ namespace doodLbot.Logic
             switch (key)
             {
                 case ConsoleKey.A:
-                    this.hero.Angle += 0.1;
+                    this.hero.Rotation -= 0.1;
                     break;
                 case ConsoleKey.S:
-                    this.hero.Xvel = -Math.Sin(this.hero.Angle) * velMultiplier;
-                    this.hero.Yvel = -Math.Cos(this.hero.Angle) * velMultiplier;
+                    this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velMultiplier;
+                    this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velMultiplier; 
                     break;
                 case ConsoleKey.D:
-                    this.hero.Angle -= 0.1;
+                    this.hero.Rotation += 0.1;
                     break;
                 case ConsoleKey.W:
-                    this.hero.Xvel = Math.Sin(this.hero.Angle) * velMultiplier;
-                    this.hero.Yvel = Math.Cos(this.hero.Angle) * velMultiplier;
+                    this.hero.Xvel = Math.Cos(this.hero.Rotation) * velMultiplier;
+                    this.hero.Yvel = Math.Sin(this.hero.Rotation) * velMultiplier; 
                     break;
                 case ConsoleKey.Spacebar:
                     this.hero.Fire();

@@ -33,6 +33,6 @@ namespace doodLbot.Entities
         }
 
         public void Fire()
-            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Angle)); 
+            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation)); 
     }
 }

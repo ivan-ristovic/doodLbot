@@ -10,8 +10,8 @@ namespace doodLbot.Entities
         public double Xpos { get; protected set; }
         [JsonProperty("y")]
         public double Ypos { get; protected set; }
-        [JsonProperty("a")]
-        public double Angle { get; set; }
+        [JsonProperty("rotation")]
+        public double Rotation { get; set; }
         [JsonProperty("vy")]
         public double Xvel { get; set; }
         [JsonProperty("vx")]
@@ -28,11 +28,11 @@ namespace doodLbot.Entities
             this.Damage = 1;
         }
 
-        public Entity(double x, double y, double angle = 0) : this()
+        public Entity(double x, double y, double rotation = 0) : this()
         {
             this.Xpos = x;
             this.Ypos = y;
-            this.Angle = angle;
+            this.Rotation = rotation;
         }
 
         public void Move()

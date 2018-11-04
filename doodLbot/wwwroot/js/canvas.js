@@ -273,7 +273,7 @@ document.body.appendChild(app.view);
 // spritesheet is an efficient way to store multiple sprites
 loader
     .add([
-        "images/cat.png",
+        "images/hero.png",
         "images/paper.jpg",
         "images/particle.png",
         "images/enemy.png",
@@ -302,11 +302,11 @@ let enemyTexture;
 
 function setup() {
     console.log("All files loaded");
-    cat = new Sprite(loader.resources["images/cat.png"].texture);
+    cat = new Sprite(loader.resources["images/hero.png"].texture);
     cat.scale.set(0.5, 0.5);
     // percentage of texture dimensions 0 to 1
     cat.anchor.set(0.5, 0.5);
-    cat.rotation = -1; // radians
+    cat.rotation = Math.sqrt(3)/2; // radians
 
     heroHealthBar = Entity.createHealthBar(100, 10, cat);
 
@@ -342,8 +342,8 @@ function play(delta) {
     if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
         cat.position.set(hero.x, hero.y);
+        cat.rotation = hero.rotation ;
         Entity.updateHealthBar(hero, heroHealthBar);
-        // console.log(GAMESTATE);
     }
     updateEnemies();
     updateProjectiles();
@@ -368,7 +368,7 @@ function keyboard(keyCode) {
     //The `downHandler`
     key.downHandler = event => {
         if (event.keyCode === key.code) {
-            console.log("pressed", key.code);
+            //console.log("pressed", key.code);
             UPDATES_FOR_BACKEND.addKeyPress(key.code);
             if (key.isUp && key.press) key.press();
             key.isDown = true;
