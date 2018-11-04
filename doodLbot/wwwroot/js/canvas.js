@@ -61,7 +61,7 @@ class Entity {
         //Create the health bar
         let healthBar;
         healthBar = new PIXI.Container();
-        healthBar.position.set(0, 0)
+        healthBar.position.set(0, 0);
 
         // Bigger enemy -> bigger hp bar
         w *= Math.sqrt(sprite.width * sprite.height) / 100;
@@ -113,7 +113,7 @@ class GameState {
     // this.enemies = []
     // this.bullets = []
     constructor(obj) {
-        if (obj != undefined) {
+        if (obj !== undefined) {
             let cast = Object.assign(this, obj);
             return cast;
         }
@@ -129,7 +129,7 @@ class GameState {
 
     // calls backend to update itself
     update(data) {
-        if (UPDATES_FOR_BACKEND.keyPresses.length == 0) {
+        if (UPDATES_FOR_BACKEND.keyPresses.length === 0) {
             // then don't bother server
             return;
         }
@@ -144,14 +144,14 @@ class GameState {
     }
 }
 
-let EnemySprites = []
-let ProjectileSprites = []
-let EnemyHps = []
+let EnemySprites = [];
+let ProjectileSprites = [];
+let EnemyHps = [];
 
 function updateProjectiles() {
     // TODO - maybe it can be nicely merged with updateEnemies(),
     // the only prob are health bars.
-    if (GAMESTATE.projectiles == undefined)
+    if (GAMESTATE.projectiles === undefined)
         return;
     let numProjs = GAMESTATE.projectiles.length;
     while (ProjectileSprites.length < numProjs) {
@@ -167,7 +167,7 @@ function updateProjectiles() {
     }
 
     for (let i = projectiles.length; i < ProjectileSprites.length; i++) {
-        if (ProjectileSprites[i].visible = false) {
+        if (ProjectileSprites[i].visible === false) {
             break;
         }
         ProjectileSprites[i].visible = false;
@@ -175,7 +175,7 @@ function updateProjectiles() {
 }
 
 function updateEnemies() {
-    if (GAMESTATE.enemies == undefined)
+    if (GAMESTATE.enemies === undefined)
         return;
 
     let numEnemies = GAMESTATE.enemies.length;
@@ -198,7 +198,7 @@ function updateEnemies() {
 
     // if there are now less enemies than theer are sprites, then don't draw them
     for (let i = enemies.length; i < EnemySprites.length; i++) {
-        if (EnemySprites[i].visible = false) {
+        if (EnemySprites[i].visible === false) {
             break;
         }
         EnemySprites[i].visible = false;
@@ -231,7 +231,7 @@ let Application = PIXI.Application,
     loader = PIXI.loader,
     resources = PIXI.loader.resources,
     Sprite = PIXI.Sprite;
-TextureCache = PIXI.utils.TextureCache
+TextureCache = PIXI.utils.TextureCache;
 
 // can use only one texture
 let superFastSprites = new PIXI.particles.ParticleContainer(
@@ -303,16 +303,16 @@ let enemyTexture;
 function setup() {
     console.log("All files loaded");
     cat = new Sprite(loader.resources["images/cat.png"].texture);
-    cat.scale.set(0.5, 0.5)
+    cat.scale.set(0.5, 0.5);
     // percentage of texture dimensions 0 to 1
-    cat.anchor.set(0.5, 0.5)
-    cat.rotation = -1 // radians
+    cat.anchor.set(0.5, 0.5);
+    cat.rotation = -1; // radians
 
     heroHealthBar = Entity.createHealthBar(100, 10, cat);
 
 
     let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
-    paper.scale.set(4, 3)
+    paper.scale.set(4, 3);
     app.stage.addChild(paper);
     app.stage.addChild(cat);
     app.stage.addChild(heroHealthBar);
@@ -327,7 +327,7 @@ function setup() {
     testKey.press = testKeyFunc;
     WhatToRender = play;
     // game loop
-    app.ticker.add(delta => gameLoop(delta))
+    app.ticker.add(delta => gameLoop(delta));
 }
 
 // delta is 1 if running at 100% performance
@@ -339,7 +339,7 @@ function gameLoop(delta) {
 
 function play(delta) {
     // console.log(delta)
-    if (GAMESTATE.hero != undefined) {
+    if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
         cat.position.set(hero.x, hero.y);
         Entity.updateHealthBar(hero, heroHealthBar);
@@ -352,9 +352,9 @@ function play(delta) {
 }
 //Add the canvas that Pixi automatically created for you to the HTML document
 
-let type = "WebGL"
+let type = "WebGL";
 if (!PIXI.utils.isWebGLSupported()) {
-    type = "canvas"
+    type = "canvas";
 }
 
 // listens for the given keyCode
@@ -400,7 +400,7 @@ function keyboard(keyCode) {
     return key;
 }
 
-PIXI.utils.sayHello(type)
+PIXI.utils.sayHello(type);
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });

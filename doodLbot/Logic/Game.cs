@@ -5,7 +5,6 @@ using doodLbot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace doodLbot.Logic
@@ -73,21 +72,22 @@ namespace doodLbot.Logic
 
         public void OnKey(ConsoleKey key, bool isDown)
         {
-            
             double velMultiplier = isDown ? 5 : 0;
             switch (key)
             {
                 case ConsoleKey.A:
-                    this.hero.Xvel = -velMultiplier;
+                    this.hero.Angle += 0.1;
                     break;
                 case ConsoleKey.S:
-                    this.hero.Yvel = velMultiplier;
+                    this.hero.Xvel = -Math.Sin(this.hero.Angle) * velMultiplier;
+                    this.hero.Yvel = -Math.Cos(this.hero.Angle) * velMultiplier;
                     break;
                 case ConsoleKey.D:
-                    this.hero.Xvel = velMultiplier;
+                    this.hero.Angle -= 0.1;
                     break;
                 case ConsoleKey.W:
-                    this.hero.Yvel = -velMultiplier;
+                    this.hero.Xvel = Math.Sin(this.hero.Angle) * velMultiplier;
+                    this.hero.Yvel = Math.Cos(this.hero.Angle) * velMultiplier;
                     break;
                 case ConsoleKey.Spacebar:
                     this.hero.Fire();

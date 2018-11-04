@@ -11,7 +11,7 @@ namespace doodLbot.Entities
         [JsonProperty("y")]
         public double Ypos { get; protected set; }
         [JsonProperty("a")]
-        public double Angle { get; protected set; }
+        public double Angle { get; set; }
         [JsonProperty("vy")]
         public double Xvel { get; set; }
         [JsonProperty("vx")]
