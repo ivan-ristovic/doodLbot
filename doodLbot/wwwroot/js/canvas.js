@@ -109,22 +109,15 @@ class Enemy extends Entity {
 
 // holds all needed game-state, which will be updated by backend
 class GameState {
+    // this.hero
+    // this.enemies = []
+    // this.bullets = []
     constructor(obj) {
         if (obj != undefined) {
             let cast = Object.assign(this, obj);
-
-            // \/ \/ \/ Resource consuming \/ \/ \/
-            // cast.hero = new Hero(cast.hero);
-            // for (let i = 0; i < cast.enemies.length; i++) {
-            //     object.setPrototypeOf(cast.enemies[i], Enemy);
-            // }
-            // /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\
-
             return cast;
         }
         console.log("WARNIG! GameState invalid obj");
-        // this.hero = new Hero();
-        // this.enemies = [new Enemy()];
     }
     getEnemies() {
         return this.enemies;
@@ -152,7 +145,34 @@ class GameState {
 }
 
 let EnemySprites = []
+let ProjectileSprites = []
 let EnemyHps = []
+
+function updateProjectiles() {
+    // TODO - maybe it can be nicely merged with updateEnemies(),
+    // the only prob are health bars.
+    if (GAMESTATE.projectiles == undefined)
+        return;
+    let numProjs = GAMESTATE.projectiles.length;
+    while (ProjectileSprites.length < numProjs) {
+        var textr = new Sprite(loader.resources["images/projectile.png"].texture);
+        textr.anchor.set(0.5, 0.5);
+        ProjectileSprites.push(textr);
+        app.stage.addChild(textr);
+    }
+    let projectiles = GAMESTATE.projectiles;
+    for (let i = 0; i < projectiles.length; i++) {
+        ProjectileSprites[i].position.set(projectiles[i].x, projectiles[i].y);
+        ProjectileSprites[i].visible = true;
+    }
+
+    for (let i = projectiles.length; i < ProjectileSprites.length; i++) {
+        if (ProjectileSprites[i].visible = false) {
+            break;
+        }
+        ProjectileSprites[i].visible = false;
+    }
+}
 
 function updateEnemies() {
     if (GAMESTATE.enemies == undefined)
@@ -160,7 +180,7 @@ function updateEnemies() {
 
     let numEnemies = GAMESTATE.enemies.length;
     while (EnemySprites.length < numEnemies) {
-        enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
+        var enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
         enemyTexture.anchor.set(0.5, 0.5);
         EnemySprites.push(enemyTexture);
         app.stage.addChild(enemyTexture);
@@ -256,7 +276,8 @@ loader
         "images/cat.png",
         "images/paper.jpg",
         "images/particle.png",
-        "images/enemy.png"
+        "images/enemy.png",
+        "images/projectile.png"
     ])
     .on("progress", loadProgressHandler)
     .load(setup);
@@ -281,18 +302,7 @@ let enemyTexture;
 
 function setup() {
     console.log("All files loaded");
-
-
     cat = new Sprite(loader.resources["images/cat.png"].texture);
-
-    // waiting server for init
-    // let hero = GAMESTATE.getHero();
-    // hero.x = 100
-    // hero.y = 200
-    // hero.vx = 0
-    // hero.vy = 0
-
-    // cat.position.set(100, 200)
     cat.scale.set(0.5, 0.5)
     // percentage of texture dimensions 0 to 1
     cat.anchor.set(0.5, 0.5)
@@ -310,39 +320,11 @@ function setup() {
     let left = keyboard(65),
         up = keyboard(87),
         right = keyboard(68),
-        down = keyboard(83);
+        down = keyboard(83),
+        space = keyboard(32);
 
     let testKey = keyboard(84);
     testKey.press = testKeyFunc;
-
-
-
-
-    // let healthBar;
-    // healthBar = new PIXI.Container();
-    // healthBar.position.set(150, 150)
-
-    //Create the black background rectangle
-    // let innerBar = new PIXI.Graphics();
-    // innerBar.beginFill(0x000000);
-    // innerBar.drawRect(0, 0, 128, 8);
-    // innerBar.endFill();
-    // healthBar.addChild(innerBar);
-
-    // //Create the front red rectangle
-    // let outerBar = new PIXI.Graphics();
-    // outerBar.beginFill(0xFF3300);
-    // outerBar.drawRect(0, 0, 64, 8);
-    // outerBar.endFill();
-    // healthBar.addChild(outerBar);
-
-    // healthBar.outer = outerBar;
-    // app.stage.addChild(healthBar);
-
-
-    // let message = new PIXI.Text("Java is the best programming language.");
-    // app.stage.addChild(message);
-
     WhatToRender = play;
     // game loop
     app.ticker.add(delta => gameLoop(delta))
@@ -364,11 +346,9 @@ function play(delta) {
         // console.log(GAMESTATE);
     }
     updateEnemies();
+    updateProjectiles();
     GAMESTATE.update(UPDATES_FOR_BACKEND);
-
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
-
-    // hero.printme();
 }
 //Add the canvas that Pixi automatically created for you to the HTML document
 
@@ -388,10 +368,12 @@ function keyboard(keyCode) {
     //The `downHandler`
     key.downHandler = event => {
         if (event.keyCode === key.code) {
+            console.log("pressed", key.code);
             UPDATES_FOR_BACKEND.addKeyPress(key.code);
             if (key.isUp && key.press) key.press();
             key.isDown = true;
             key.isUp = false;
+            event.preventDefault();
             return;
         }
     };
@@ -403,6 +385,7 @@ function keyboard(keyCode) {
             if (key.isDown && key.release) key.release();
             key.isDown = false;
             key.isUp = true;
+            event.preventDefault();
             return;
         }
     };

@@ -28,6 +28,11 @@ namespace doodLbot.Entities
             this.Damage = 1;
         }
 
+        public Entity(double x, double y) : this()
+        {
+            this.Xpos = x;
+            this.Ypos = y;
+        }
 
         public void Move()
         {

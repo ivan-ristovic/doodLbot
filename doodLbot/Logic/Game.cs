@@ -5,6 +5,7 @@ using doodLbot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace doodLbot.Logic
@@ -17,6 +18,7 @@ namespace doodLbot.Logic
 
         static private readonly AsyncExecutor _async = new AsyncExecutor();
 
+        // executes one tick of the game
         static private void UpdateCallback(object _)
         {
             var game = _ as Game;
@@ -27,22 +29,30 @@ namespace doodLbot.Logic
                 enemy.VelocityTowards(game.hero, 5);
                 enemy.Move();
             }
+
+            foreach (var projectile in game.projectiles)
+            {
+                projectile.Move();
+            }
+
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
 
-        public GameState GameState => new GameState(this.hero, this.enemies);
+        public GameState GameState => new GameState(this.hero, this.enemies, this.projectiles);
 
         private readonly Hero hero;     // Change this to ConcurrentHashSet for the multiplayer
         private readonly ConcurrentHashSet<Enemy> enemies;
+        private readonly List<Projectile> projectiles;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
         
 
         public Game(IHubContext<GameHub> hctx)
         {
-            this.hero = new Hero();
+            this.hero = new Hero(300, 300);
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy();
+            this.projectiles = new List<Projectile>();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
         }
@@ -79,6 +89,13 @@ namespace doodLbot.Logic
                     break;
                 case ConsoleKey.W:
                     this.hero.Yvel = -velMultiplier;
+                    break;
+                case ConsoleKey.Spacebar:
+                    // fire a bullet
+                    var bullet = new Projectile(hero.Xpos, hero.Ypos);
+                    bullet.Xvel = 0;
+                    bullet.Yvel = -1;
+                    this.projectiles.Add(bullet);
                     break;
             }
         }

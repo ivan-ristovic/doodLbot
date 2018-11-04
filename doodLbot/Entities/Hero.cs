@@ -14,14 +14,17 @@ namespace doodLbot.Entities
         [JsonProperty("modules")]
         public IReadOnlyList<object> Modules => this.modules.AsReadOnly();
 
-        private readonly List<object> gear;
-        private readonly List<object> modules;
+        private readonly List<object> gear = new List<object>();
+        private readonly List<object> modules = new List<object>();
 
 
         public Hero() : base()
         {
-            this.gear = new List<object>();
-            this.modules = new List<object>();
+        }
+
+        public Hero(double x, double y) : base(x, y)
+        {
+
         }
     }
 }
