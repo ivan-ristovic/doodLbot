@@ -27,13 +27,15 @@ namespace doodLbot.Logic
             {
                 enemy.VelocityTowards(game.hero, 5);
                 enemy.Move();
-            }
+            }            
 
             foreach (var projectile in game.hero.Projectiles)
             {
                 projectile.Move();
                 // Remove projectiles 
             }
+
+            CollisionCheck.getCollisions(game.enemies, game.hero.Projectiles);
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
