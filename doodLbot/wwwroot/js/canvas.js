@@ -250,16 +250,25 @@ let app = new Application({
     height: 256,
     antialias: true,
     transparent: false,
-    resolution: 1
+    resolution: devicePixelRatio
 });
 app.renderer.backgroundColor = 0x061639;
 
-// make canvas fill the whole window
-app.renderer.view.style.position = "absolute";
+// make canvas fill the whole div
 app.renderer.view.style.display = "block";
 app.renderer.autoResize = true;
-app.renderer.resize(window.innerWidth, window.innerHeight);
-document.body.appendChild(app.view);
+document.querySelector('#frame').appendChild(app.view);
+window.addEventListener('resize', resize);
+
+// Resize function window
+function resize() {
+
+    // Get the p
+    const parent = app.view.parentNode;
+
+    // Resize the renderer
+    app.renderer.resize(parent.clientWidth, parent.clientHeight);
+}
 
 // The stage object is the root container for all the visible things in your scene. 
 // Whatever you put inside the stage will be rendered on the canvas.
@@ -404,4 +413,5 @@ PIXI.utils.sayHello(type);
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });
+resize();
 // use new Container() when grouping of sprites is needed

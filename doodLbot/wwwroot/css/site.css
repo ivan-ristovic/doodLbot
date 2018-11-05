@@ -1,0 +1,15 @@
+html, body {
+    min-height: 100vh;
+    overflow: auto;
+}
+
+.body-content {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+#frame {
+    background-color: #DDDDDD;
+    height: calc(100vh - 150px);
+}
