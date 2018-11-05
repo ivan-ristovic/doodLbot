@@ -50,5 +50,11 @@ namespace doodLbot.Entities
             this.Xvel = xvel / norm;
             this.Yvel = yvel / norm;
         }
+
+        public void DecreaseHelthPoints(double value)
+        {
+            double newHp = this.Hp - value;
+            this.Hp = newHp > 0 ? newHp : 0;
+        }
     }
 }

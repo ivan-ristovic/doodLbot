@@ -3,7 +3,7 @@ using doodLbot.Entities;
 using doodLbot.Hubs;
 
 using Microsoft.AspNetCore.SignalR;
-
+using Serilog;
 using System;
 using System.Threading;
 
@@ -29,13 +29,15 @@ namespace doodLbot.Logic
             {
                 enemy.VelocityTowards(game.hero, 5);
                 enemy.Move();
-            }
+            }            
 
             foreach (var projectile in game.hero.Projectiles)
             {
                 projectile.Move();
                 // Remove projectiles 
             }
+
+            game.CheckForCollisionsAndUpdateGame();
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
@@ -94,6 +96,26 @@ namespace doodLbot.Logic
                 case ConsoleKey.Spacebar:
                     this.hero.Fire();
                     break;
+            }
+        }
+
+        public void CheckForCollisionsAndUpdateGame()
+        {
+            Collision[] collisions = CollisionCheck.getCollisions(this.enemies, this.hero.Projectiles);
+
+            foreach (Collision c in collisions)
+            {
+                Enemy e = (Enemy)c.collider1;
+                Projectile p = (Projectile)c.collider1;
+                e.DecreaseHelthPoints(p.strength);
+
+                // Removing projectile and enemy (if it's dead)
+                if (e.Hp == 0)
+                {
+                    this.enemies.TryRemove(e);
+                }
+
+                this.hero.TryRemoveProjectile(p);
             }
         }
     }
