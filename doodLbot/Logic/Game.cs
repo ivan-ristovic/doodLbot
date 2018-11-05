@@ -21,8 +21,10 @@ namespace doodLbot.Logic
         static private void UpdateCallback(object _)
         {
             var game = _ as Game;
-
+            
             game.hero.Move();
+            game.hero.Algorithm.ExecuteStep(game.hero);
+
             foreach (Enemy enemy in game.enemies)
             {
                 enemy.VelocityTowards(game.hero, 5);
