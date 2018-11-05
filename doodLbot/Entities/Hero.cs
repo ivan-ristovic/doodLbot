@@ -21,7 +21,7 @@ namespace doodLbot.Entities
 
         private readonly List<object> gear = new List<object>();
         private readonly List<object> modules = new List<object>();
-        private readonly ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
+        private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
 
         public Hero() : base()
@@ -35,6 +35,11 @@ namespace doodLbot.Entities
         }
 
         public void Fire()
-            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation)); 
+            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation));
+        
+        public bool TryRemoveProjectile(Projectile p)
+        {
+            return projectiles.TryRemove(p);
+        }
     }
 }

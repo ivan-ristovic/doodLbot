@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using doodLbot.Entities;
@@ -32,12 +33,12 @@ namespace doodLbot.Logic
             return distanceSquared(x1,y1,x2,y2) < (r1+r2)*(r1+r2);
         }
 
-        public static Collision[] getCollisions(IEnumerable<Entity> projectiles, IEnumerable<Entity> enemies)
+        public static Collision[] getCollisions(IEnumerable<Entity> enemies, IEnumerable<Entity> projectiles)
         {
-
             List<Collision> collides = new List<Collision>();
             const double radius1 = 20;
             const double radius2 = 10;
+            bool collisionFound = false;
 
             foreach (var projectile in projectiles)
             {
@@ -47,9 +48,13 @@ namespace doodLbot.Logic
                     {
                         collides.Append<Collision>(new Collision(enemy, projectile));
                         Log.Debug($"Collision: ({enemy.Xpos}, {enemy.Xpos}) ; ({projectile.Xpos}, {projectile.Ypos})");
+                        collisionFound = true;
                     }
                 }
             }
+
+            //if (collisionFound)
+            //    Debug.Assert(collides.Count > 0);
 
             return collides.ToArray(); ;
         }
