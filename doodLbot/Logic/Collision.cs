@@ -33,25 +33,28 @@ namespace doodLbot.Logic
             return distanceSquared(x1,y1,x2,y2) < (r1+r2)*(r1+r2);
         }
 
-        public static Collision[] getCollisions(IEnumerable<Entity> enemies, IEnumerable<Entity> projectiles)
+        public static Collision[] getCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
         {
             List<Collision> collides = new List<Collision>();
             const double radius1 = 20;
             const double radius2 = 10;
             bool collisionFound = false;
 
-            foreach (var projectile in projectiles)
+            foreach (var collider1 in colliders1)
             {
-                foreach (var enemy in enemies)
+                foreach (var collider2 in colliders2)
                 {
-                    if (isColliding(enemy.Xpos, enemy.Ypos, projectile.Xpos, projectile.Ypos, radius1, radius2))
+                    if (isColliding(collider2.Xpos, collider2.Ypos, collider1.Xpos, collider1.Ypos, radius1, radius2))
                     {
-                        collides.Append<Collision>(new Collision(enemy, projectile));
-                        Log.Debug($"Collision: ({enemy.Xpos}, {enemy.Xpos}) ; ({projectile.Xpos}, {projectile.Ypos})");
+                        collides.Add(new Collision(collider2, collider1));
+                        // Log.Debug($"Collision: ({enemy.Xpos}, {enemy.Xpos}) ; ({projectile.Xpos}, {projectile.Ypos})");
                         collisionFound = true;
                     }
                 }
             }
+
+            if(collides.Count>0)
+                Log.Debug($"Collisions: ({collides.Count})");
 
             //if (collisionFound)
             //    Debug.Assert(collides.Count > 0);

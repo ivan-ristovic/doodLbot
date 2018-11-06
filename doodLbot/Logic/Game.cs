@@ -107,7 +107,7 @@ namespace doodLbot.Logic
             {
                 Enemy e = (Enemy)c.collider1;
                 Projectile p = (Projectile)c.collider1;
-                e.DecreaseHelthPoints(p.strength);
+                e.DecreaseHelthPoints(p.Damage);
 
                 // Removing projectile and enemy (if it's dead)
                 if (e.Hp == 0)
