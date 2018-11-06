@@ -23,7 +23,7 @@ namespace doodLbot.Logic
             var game = _ as Game;
             
             game.hero.Move();
-            game.hero.Algorithm.ExecuteStep(game.hero);
+            //game.hero.Algorithm.ExecuteStep(game.hero);
 
             foreach (Enemy enemy in game.enemies)
             {

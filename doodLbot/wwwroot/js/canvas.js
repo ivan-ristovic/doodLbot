@@ -186,6 +186,7 @@ function updateEnemies() {
   for (let i = 0; i < enemies.length; i++) {
     EnemySprites[i].position.set(enemies[i].x, enemies[i].y);
     EnemySprites[i].visible = true;
+    EnemyHps[i].visible = true;
     Entity.updateHealthBar(enemies[i], EnemyHps[i]);
   }
 

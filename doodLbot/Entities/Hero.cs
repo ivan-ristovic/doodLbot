@@ -17,7 +17,7 @@ namespace doodLbot.Entities
         [JsonProperty("projectiles")]
         public IReadOnlyList<Projectile> Projectiles => this.projectiles.ToList().AsReadOnly();
 
-        public BehaviourAlgorithm Algorithm { get; } = new BehaviourAlgorithm();
+        //public BehaviourAlgorithm Algorithm { get; } = new BehaviourAlgorithm();
 
         private readonly List<object> gear = new List<object>();
         private readonly List<object> modules = new List<object>();
