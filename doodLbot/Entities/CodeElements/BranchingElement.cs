@@ -1,4 +1,6 @@
-﻿namespace doodLbot.Entities.CodeElements
+﻿using doodLbot.Entities.CodeElements.ConditionElements;
+
+namespace doodLbot.Entities.CodeElements
 {
     public class BranchingElement : BaseCodeElement
     {
@@ -15,12 +17,12 @@
         }
 
 
-        public override void Execute(Hero hero)
+        public override bool Execute(Hero hero)
         {
-            if (this.condition.Evaluate())
-                this.thenBlock.Execute(hero);
-            else
-                this.elseBlock.Execute(hero);
+            bool finished = this.condition.Evaluate() ? this.thenBlock.Execute(hero) : this.elseBlock.Execute(hero);
+            if (finished)
+                this.Reset();
+            return finished;
         }
 
         public override void Reset()

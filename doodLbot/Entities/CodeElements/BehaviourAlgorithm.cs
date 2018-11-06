@@ -21,16 +21,20 @@ namespace doodLbot.Entities.CodeElements
         }
         
 
-        public void InsertAt(BaseCodeElement element)
+        public void Insert(BaseCodeElement element, int? index = null)
         {
-            lock (this.codeElementsLock)
-                this.codeElements.Insert(this.index, element);
+            lock (this.codeElementsLock) {
+                if (index is null)
+                    this.codeElements.Add(element);
+                else
+                    this.codeElements.Insert(index.Value, element);
+            }
         }
 
         public void RemoveAt(int index)
         {
             lock (this.codeElementsLock)
-                this.codeElements.RemoveAt(this.index);
+                this.codeElements.RemoveAt(index);
         }
 
         public void ExecuteStep(Hero hero)
@@ -42,9 +46,8 @@ namespace doodLbot.Entities.CodeElements
                 if (this.index >= this.codeElements.Count)
                     this.Reset();
 
-                this.codeElements[this.index].Execute(hero);
-
-                this.index++;
+                if (this.codeElements[this.index].Execute(hero))
+                    this.index++;
             }
         }
 
@@ -52,7 +55,7 @@ namespace doodLbot.Entities.CodeElements
         private void Reset()
         {
             lock (this.codeElementsLock) {
-                foreach (CodeBlockElement element in this.codeElements)
+                foreach (BaseCodeElement element in this.codeElements)
                     element.Reset();
                 this.index = 0;
             }

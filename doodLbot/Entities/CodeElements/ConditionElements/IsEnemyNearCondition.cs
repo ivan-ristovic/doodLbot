@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace doodLbot.Entities.CodeElements.ConditionElements
 {
-    public class IsEnemyNearElement : BaseConditionElement
+    public class IsEnemyNearCondition : BaseConditionElement
     {
-        public IsEnemyNearElement()
+        public IsEnemyNearCondition()
         {
 
         }

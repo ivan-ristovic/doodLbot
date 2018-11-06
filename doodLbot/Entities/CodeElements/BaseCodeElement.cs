@@ -2,7 +2,7 @@
 {
     abstract public class BaseCodeElement
     {
-        abstract public void Execute(Hero hero);
+        abstract public bool Execute(Hero hero);
 
         virtual public void Reset()
         {

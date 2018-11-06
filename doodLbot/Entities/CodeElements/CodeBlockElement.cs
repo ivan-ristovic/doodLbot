@@ -16,19 +16,25 @@ namespace doodLbot.Entities.CodeElements
         }
 
 
-        public override void Execute(Hero hero)
+        public override bool Execute(Hero hero)
         {
-            if (this.index >= this.codeElements.Count)
-                this.Reset();
+            bool finished = this.codeElements[this.index].Execute(hero);
 
-            this.codeElements[this.index].Execute(hero);
+            if (!finished)
+                return false;
 
             this.index++;
+            if (this.index == this.codeElements.Count) {
+                this.Reset();
+                return true;
+            } else {
+                return false;
+            }
         }
 
         public override void Reset()
         {
-            foreach (CodeBlockElement element in this.codeElements)
+            foreach (BaseCodeElement element in this.codeElements)
                 element.Reset();
             this.index = 0;
         }
