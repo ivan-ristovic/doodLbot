@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace doodLbot.Entities.CodeBlocks
+namespace doodLbot.Entities.CodeElements
 {
     public class BehaviourAlgorithm
     {
@@ -41,10 +41,7 @@ namespace doodLbot.Entities.CodeBlocks
                 if (this.index >= this.codeElements.Count)
                     this.index = 0;
 
-                switch (this.codeElements[this.index]) {
-                    case ShootElement _: hero.Fire(); break;
-                    default: break;
-                }
+                this.codeElements[this.index].Execute(hero);
 
                 this.index++;
             }
