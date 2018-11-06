@@ -106,11 +106,11 @@ namespace doodLbot.Logic
             foreach (Collision c in collisions)
             {
                 Enemy e = (Enemy)c.collider1;
-                Projectile p = (Projectile)c.collider1;
+                Projectile p = (Projectile)c.collider2;
                 e.DecreaseHelthPoints(p.Damage);
 
                 // Removing projectile and enemy (if it's dead)
-                if (e.Hp == 0)
+                if (e.Hp <= 0)
                 {
                     this.enemies.TryRemove(e);
                 }

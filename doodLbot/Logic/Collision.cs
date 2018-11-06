@@ -29,7 +29,6 @@ namespace doodLbot.Logic
 
         private static bool isColliding(double x1, double y1, double x2, double y2, double r1, double r2)
         {
-            //Log.Debug($"Collision: ({distanceSquared(x1, y1, x2, y2)}) ; ({(r1 + r2) * (r1 + r2)})");
             return distanceSquared(x1,y1,x2,y2) < (r1+r2)*(r1+r2);
         }
 
@@ -38,7 +37,6 @@ namespace doodLbot.Logic
             List<Collision> collides = new List<Collision>();
             const double radius1 = 20;
             const double radius2 = 10;
-            bool collisionFound = false;
 
             foreach (var collider1 in colliders1)
             {
@@ -46,19 +44,14 @@ namespace doodLbot.Logic
                 {
                     if (isColliding(collider2.Xpos, collider2.Ypos, collider1.Xpos, collider1.Ypos, radius1, radius2))
                     {
-                        collides.Add(new Collision(collider2, collider1));
-                        // Log.Debug($"Collision: ({enemy.Xpos}, {enemy.Xpos}) ; ({projectile.Xpos}, {projectile.Ypos})");
-                        collisionFound = true;
+                        collides.Add(new Collision(collider1, collider2));
                     }
                 }
             }
 
             if(collides.Count>0)
                 Log.Debug($"Collisions: ({collides.Count})");
-
-            //if (collisionFound)
-            //    Debug.Assert(collides.Count > 0);
-
+            
             return collides.ToArray(); ;
         }
     }
