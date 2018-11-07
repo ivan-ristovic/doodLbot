@@ -12,7 +12,9 @@ namespace doodLbot.Logic
 {
     public sealed class Game 
     {
-        static public readonly (int X, int Y) MapSize = (2000, 2000);
+        public const int MAP_WIDTH = 1000;
+        public const int MAP_HEIGHT = 1000;
+        static public readonly (int X, int Y) MapSize = (MAP_WIDTH, MAP_HEIGHT);
         static public readonly int TickRate = 50;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
@@ -39,6 +41,8 @@ namespace doodLbot.Logic
             }
 
             game.CheckForCollisionsAndUpdateGame();
+
+            game.RemoveProjectilesOutsideOfMap();
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
@@ -100,13 +104,13 @@ namespace doodLbot.Logic
             }
         }
 
-
-
-        public void CheckForCollisionsAndUpdateGame()
+        private void CheckForCollisionsAndUpdateGame()
         {
             CheckForCollisionsEnemiesProjectiles();
             CheckForCollisionsEnemiesHero();
         }
+
+        #region Helper functions
 
         private void CheckForCollisionsEnemiesHero()
         {
@@ -148,5 +152,31 @@ namespace doodLbot.Logic
                 this.hero.DecreaseHelthPoints(kamikaze.Damage);
             }
         }
+
+        private void RemoveProjectilesOutsideOfMap()
+        {
+            IReadOnlyList<Projectile> projectiles = this.hero.Projectiles;
+            foreach (Projectile p in projectiles)
+            {
+                if (IsOutsideOfTheMap(p))
+                {
+                    if (this.hero.TryRemoveProjectile(p))
+                    {
+                        Log.Debug($"Removed projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                    }
+                    else
+                    {
+                        Log.Debug($"Failed to remove projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                    }
+                }
+            }
+        }
+           
+        private bool IsOutsideOfTheMap(Entity e)
+        {
+            return e.Xpos < 0 || e.Xpos > MAP_WIDTH || e.Ypos < 0 || e.Ypos > MAP_HEIGHT;
+        }
+
+        #endregion
     }
 }
