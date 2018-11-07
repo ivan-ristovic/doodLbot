@@ -12,7 +12,7 @@ namespace doodLbot.Logic
 {
     public sealed class Game 
     {
-        public const int MAP_WIDTH = 1000;
+        public const int MAP_WIDTH = 1300;
         public const int MAP_HEIGHT = 1000;
         static public readonly (int X, int Y) MapSize = (MAP_WIDTH, MAP_HEIGHT);
         static public readonly int TickRate = 50;
@@ -53,7 +53,7 @@ namespace doodLbot.Logic
         private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
-        
+        private readonly RateLimiter shootRateLimiter;
 
         public Game(IHubContext<GameHub> hctx)
         {
@@ -62,6 +62,7 @@ namespace doodLbot.Logic
             this.SpawnEnemy();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
+            shootRateLimiter = new RateLimiter();
         }
 
         public void SpawnEnemy()
@@ -99,7 +100,10 @@ namespace doodLbot.Logic
                     this.hero.Yvel = Math.Sin(this.hero.Rotation) * velMultiplier; 
                     break;
                 case ConsoleKey.Spacebar:
-                    this.hero.Fire();
+                    if (!shootRateLimiter.IsCooldownActive())
+                    {
+                        this.hero.Fire();
+                    }
                     break;
             }
         }
