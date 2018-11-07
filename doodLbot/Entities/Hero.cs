@@ -41,5 +41,17 @@ namespace doodLbot.Entities
         {
             return projectiles.TryRemove(p);
         }
+
+        public override void DecreaseHelthPoints(double value)
+        {
+            base.DecreaseHelthPoints(value);
+
+            if (this.Hp == 0)
+            {
+                // TODO when hero's hp == 0 - GAME OVER
+                // For now, we reset hp.
+                this.Hp = 100;
+            }
+        }
     }
 }

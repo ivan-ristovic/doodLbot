@@ -51,8 +51,9 @@ namespace doodLbot.Entities
             this.Yvel = yvel / norm;
         }
 
-        public void DecreaseHelthPoints(double value)
+        public virtual void DecreaseHelthPoints(double value)
         {
+            // TODO: make Hp atomic
             double newHp = this.Hp - value;
             this.Hp = newHp > 0 ? newHp : 0;
         }

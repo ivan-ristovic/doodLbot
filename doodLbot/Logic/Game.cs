@@ -5,6 +5,7 @@ using doodLbot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace doodLbot.Logic
@@ -99,23 +100,52 @@ namespace doodLbot.Logic
             }
         }
 
+
+
         public void CheckForCollisionsAndUpdateGame()
         {
-            Collision[] collisions = CollisionCheck.getCollisions(this.enemies, this.hero.Projectiles);
+            CheckForCollisionsEnemiesProjectiles();
+            CheckForCollisionsEnemiesHero();
+        }
+
+        private void CheckForCollisionsEnemiesHero()
+        {
+            IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
 
             foreach (Collision c in collisions)
             {
-                Enemy e = (Enemy)c.collider1;
-                Projectile p = (Projectile)c.collider2;
-                e.DecreaseHelthPoints(p.Damage);
+                Entity enemy = c.collider1;
+                Entity projectile = c.collider2;
+
+                enemy.DecreaseHelthPoints(projectile.Damage);
 
                 // Removing projectile and enemy (if it's dead)
-                if (e.Hp <= 0)
+                if (enemy.Hp <= 0)
                 {
-                    this.enemies.TryRemove(e);
+                    this.enemies.TryRemove((Enemy)enemy);
                 }
 
-                this.hero.TryRemoveProjectile(p);
+                this.hero.TryRemoveProjectile((Projectile)projectile);
+            }
+        }
+
+        private void CheckForCollisionsEnemiesProjectiles()
+        {
+            List<Entity> heros = new List<Entity>();
+            heros.Add(this.hero);
+            IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
+
+            foreach (Collision c in collisionsWithHero)
+            {
+                Entity hero = c.collider1;
+                Entity kamikaze = c.collider2;
+                kamikaze.DecreaseHelthPoints(hero.Damage);
+
+                // Remove kamikaze from the game
+                // TODO: add animation for the death of kamikaze
+                this.enemies.TryRemove((Enemy)kamikaze);
+
+                this.hero.DecreaseHelthPoints(kamikaze.Damage);
             }
         }
     }
