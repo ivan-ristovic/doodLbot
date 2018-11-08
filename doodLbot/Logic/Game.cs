@@ -30,7 +30,7 @@ namespace doodLbot.Logic
             game.UpdateStateWithControls();
 
             game.hero.Move();
-            //game.hero.Algorithm.ExecuteStep(game.hero);
+            //game.hero.Algorithm.Execute(game.hero);
 
             foreach (Enemy enemy in game.enemies)
             {

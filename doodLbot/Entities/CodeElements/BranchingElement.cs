@@ -17,18 +17,12 @@ namespace doodLbot.Entities.CodeElements
         }
 
 
-        public override bool Execute(Hero hero)
+        public override void Execute(Hero hero)
         {
-            bool finished = this.condition.Evaluate() ? this.thenBlock.Execute(hero) : this.elseBlock.Execute(hero);
-            if (finished)
-                this.Reset();
-            return finished;
-        }
-
-        public override void Reset()
-        {
-            this.thenBlock.Reset();
-            this.elseBlock.Reset();
+            if (this.condition.Evaluate())
+                this.thenBlock.Execute(hero);
+            else
+                this.elseBlock.Execute(hero);
         }
     }
 }
