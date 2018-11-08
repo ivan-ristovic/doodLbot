@@ -22,17 +22,17 @@ namespace doodLbot.Logic
 
     public static class CollisionCheck
     {
-        private static double distanceSquared(double x1, double y1, double x2, double y2)
+        private static double DistanceSquared(double x1, double y1, double x2, double y2)
         {
             return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
         }
 
-        private static bool isColliding(double x1, double y1, double x2, double y2, double r1, double r2)
+        private static bool IsColliding(Entity collider1, Entity collider2, double r1, double r2)
         {
-            return distanceSquared(x1,y1,x2,y2) < (r1+r2)*(r1+r2);
+            return DistanceSquared(collider2.Xpos, collider2.Ypos, collider1.Xpos, collider1.Ypos) < (r1 + r2) * (r1 + r2);
         }
 
-        public static Collision[] getCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
+        public static IReadOnlyList<Collision> GetCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
         {
             List<Collision> collides = new List<Collision>();
             const double radius1 = 20;
@@ -42,17 +42,17 @@ namespace doodLbot.Logic
             {
                 foreach (var collider2 in colliders2)
                 {
-                    if (isColliding(collider2.Xpos, collider2.Ypos, collider1.Xpos, collider1.Ypos, radius1, radius2))
+                    if (IsColliding(collider2, collider1, radius1, radius2))
                     {
                         collides.Add(new Collision(collider1, collider2));
                     }
                 }
             }
 
-            if(collides.Count>0)
+            if (collides.Count > 0)
                 Log.Debug($"Collisions: ({collides.Count})");
-            
-            return collides.ToArray(); ;
+
+            return collides.AsReadOnly();
         }
     }
 }

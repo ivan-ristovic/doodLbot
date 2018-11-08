@@ -15,7 +15,7 @@ namespace doodLbot.Entities
         [JsonProperty("modules")]
         public IReadOnlyList<object> Modules => this.modules.AsReadOnly();
         [JsonProperty("projectiles")]
-        public IReadOnlyList<Projectile> Projectiles => this.projectiles.ToList().AsReadOnly();
+        public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
 
         //public BehaviourAlgorithm Algorithm { get; } = new BehaviourAlgorithm();
 
@@ -40,6 +40,18 @@ namespace doodLbot.Entities
         public bool TryRemoveProjectile(Projectile p)
         {
             return projectiles.TryRemove(p);
+        }
+
+        public override void DecreaseHelthPoints(double value)
+        {
+            base.DecreaseHelthPoints(value);
+
+            if (this.Hp == 0)
+            {
+                // TODO when hero's hp == 0 - GAME OVER
+                // For now, we reset hp.
+                this.Hp = 100;
+            }
         }
     }
 }

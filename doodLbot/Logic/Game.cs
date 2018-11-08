@@ -5,13 +5,16 @@ using doodLbot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace doodLbot.Logic
 {
     public sealed class Game 
     {
-        static public readonly (int X, int Y) MapSize = (2000, 2000);
+        public const int MAP_WIDTH = 1300;
+        public const int MAP_HEIGHT = 1000;
+        static public readonly (int X, int Y) MapSize = (MAP_WIDTH, MAP_HEIGHT);
         static public readonly int TickRate = 50;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
@@ -21,7 +24,9 @@ namespace doodLbot.Logic
         static private void UpdateCallback(object _)
         {
             var game = _ as Game;
-            
+
+            game.UpdateStateWithControls();
+
             game.hero.Move();
             //game.hero.Algorithm.ExecuteStep(game.hero);
 
@@ -39,6 +44,8 @@ namespace doodLbot.Logic
 
             game.CheckForCollisionsAndUpdateGame();
 
+            game.RemoveProjectilesOutsideOfMap();
+
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
         }
 
@@ -49,6 +56,7 @@ namespace doodLbot.Logic
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
         private readonly Controls controls;
+        private readonly RateLimiter shootRateLimiter;
 
         public Game(IHubContext<GameHub> hctx)
         {
@@ -58,6 +66,7 @@ namespace doodLbot.Logic
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
             this.controls = new Controls();
+            this.shootRateLimiter = new RateLimiter();
         }
 
         public void SpawnEnemy()
@@ -82,7 +91,10 @@ namespace doodLbot.Logic
 
             if (controls.IsFire)
             {
-                this.hero.Fire();
+                if (!shootRateLimiter.IsCooldownActive())
+                {
+                    this.hero.Fire();
+                }
             }
             if (controls.IsForward)
             {
@@ -94,7 +106,7 @@ namespace doodLbot.Logic
                 this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velMultiplier;
                 this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velMultiplier;
             }
-            if (!controls.IsForward && controls.IsBackward)
+            if (!controls.IsForward && !controls.IsBackward)
             {
                 this.hero.Xvel = 0;
                 this.hero.Yvel = 0;
@@ -109,24 +121,79 @@ namespace doodLbot.Logic
             }
         }
 
-        public void CheckForCollisionsAndUpdateGame()
+        private void CheckForCollisionsAndUpdateGame()
         {
-            Collision[] collisions = CollisionCheck.getCollisions(this.enemies, this.hero.Projectiles);
+            CheckForCollisionsEnemiesProjectiles();
+            CheckForCollisionsEnemiesHero();
+        }
+
+        #region Helper functions
+
+        private void CheckForCollisionsEnemiesHero()
+        {
+            IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
 
             foreach (Collision c in collisions)
             {
-                Enemy e = (Enemy)c.collider1;
-                Projectile p = (Projectile)c.collider2;
-                e.DecreaseHelthPoints(p.Damage);
+                Entity enemy = c.collider1;
+                Entity projectile = c.collider2;
+
+                enemy.DecreaseHelthPoints(projectile.Damage);
 
                 // Removing projectile and enemy (if it's dead)
-                if (e.Hp <= 0)
+                if (enemy.Hp <= 0)
                 {
-                    this.enemies.TryRemove(e);
+                    this.enemies.TryRemove((Enemy)enemy);
                 }
 
-                this.hero.TryRemoveProjectile(p);
+                this.hero.TryRemoveProjectile((Projectile)projectile);
             }
         }
+
+        private void CheckForCollisionsEnemiesProjectiles()
+        {
+            List<Entity> heros = new List<Entity>();
+            heros.Add(this.hero);
+            IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
+
+            foreach (Collision c in collisionsWithHero)
+            {
+                Entity hero = c.collider1;
+                Entity kamikaze = c.collider2;
+                kamikaze.DecreaseHelthPoints(hero.Damage);
+
+                // Remove kamikaze from the game
+                // TODO: add animation for the death of kamikaze
+                this.enemies.TryRemove((Enemy)kamikaze);
+
+                this.hero.DecreaseHelthPoints(kamikaze.Damage);
+            }
+        }
+
+        private void RemoveProjectilesOutsideOfMap()
+        {
+            IReadOnlyCollection<Projectile> projectiles = this.hero.Projectiles;
+            foreach (Projectile p in projectiles)
+            {
+                if (IsOutsideOfTheMap(p))
+                {
+                    if (this.hero.TryRemoveProjectile(p))
+                    {
+                        Log.Debug($"Removed projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                    }
+                    else
+                    {
+                        Log.Debug($"Failed to remove projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                    }
+                }
+            }
+        }
+           
+        private bool IsOutsideOfTheMap(Entity e)
+        {
+            return e.Xpos < 0 || e.Xpos > MAP_WIDTH || e.Ypos < 0 || e.Ypos > MAP_HEIGHT;
+        }
+
+        #endregion
     }
 }

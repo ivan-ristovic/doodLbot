@@ -4,7 +4,7 @@
     {
         public Kamikaze() : base()
         {
-
+            this.Damage = 20;
         }
     }
 }
