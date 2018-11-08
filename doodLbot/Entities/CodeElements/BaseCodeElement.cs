@@ -2,11 +2,6 @@
 {
     abstract public class BaseCodeElement
     {
-        abstract public bool Execute(Hero hero);
-
-        virtual public void Reset()
-        {
-            
-        }
+        abstract public void Execute(Hero hero);
     }
 }

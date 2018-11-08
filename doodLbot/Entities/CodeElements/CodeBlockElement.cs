@@ -6,37 +6,18 @@ namespace doodLbot.Entities.CodeElements
     public class CodeBlockElement : BaseCodeElement
     {
         private readonly List<BaseCodeElement> codeElements;
-        private int index;
 
 
         public CodeBlockElement(IEnumerable<BaseCodeElement> elements)
         {
             this.codeElements = elements.ToList();
-            this.index = 0;
         }
 
 
-        public override bool Execute(Hero hero)
-        {
-            bool finished = this.codeElements[this.index].Execute(hero);
-
-            if (!finished)
-                return false;
-
-            this.index++;
-            if (this.index == this.codeElements.Count) {
-                this.Reset();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        public override void Reset()
+        public override void Execute(Hero hero)
         {
             foreach (BaseCodeElement element in this.codeElements)
-                element.Reset();
-            this.index = 0;
+                element.Execute(hero);
         }
     }
 }

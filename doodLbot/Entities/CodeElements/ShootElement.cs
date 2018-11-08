@@ -7,10 +7,7 @@
 
         }
 
-        public override bool Execute(Hero hero)
-        {
-            hero.Fire();
-            return true;
-        }
+        public override void Execute(Hero hero)
+            => hero.Fire();
     }
 }
