@@ -48,7 +48,7 @@ namespace doodLbot.Logic
         private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
-        
+        private readonly Controls controls;
 
         public Game(IHubContext<GameHub> hctx)
         {
@@ -57,6 +57,7 @@ namespace doodLbot.Logic
             this.SpawnEnemy();
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
+            this.controls = new Controls();
         }
 
         public void SpawnEnemy()
@@ -66,36 +67,45 @@ namespace doodLbot.Logic
         }
 
 
-        public void UpdateState(GameStateUpdate update)
+        public void UpdateControls(GameStateUpdate update)
         {
             foreach(var (key, isDown) in update.KeyPresses)
             {
-                OnKey(key, isDown);
+                this.controls.OnKey(key, isDown);
             }
         }
 
-        public void OnKey(ConsoleKey key, bool isDown)
+        public void UpdateStateWithControls()
         {
-            double velMultiplier = isDown ? 5 : 0;
-            switch (key)
+            const double velMultiplier = 5;
+            const double rotationAmount = 0.1;
+
+            if (controls.IsFire)
             {
-                case ConsoleKey.A:
-                    this.hero.Rotation -= 0.1;
-                    break;
-                case ConsoleKey.S:
-                    this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velMultiplier;
-                    this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velMultiplier; 
-                    break;
-                case ConsoleKey.D:
-                    this.hero.Rotation += 0.1;
-                    break;
-                case ConsoleKey.W:
-                    this.hero.Xvel = Math.Cos(this.hero.Rotation) * velMultiplier;
-                    this.hero.Yvel = Math.Sin(this.hero.Rotation) * velMultiplier; 
-                    break;
-                case ConsoleKey.Spacebar:
-                    this.hero.Fire();
-                    break;
+                this.hero.Fire();
+            }
+            if (controls.IsForward)
+            {
+                this.hero.Xvel = Math.Cos(this.hero.Rotation) * velMultiplier;
+                this.hero.Yvel = Math.Sin(this.hero.Rotation) * velMultiplier;
+            }
+            if (controls.IsBackward)
+            {
+                this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velMultiplier;
+                this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velMultiplier;
+            }
+            if (!controls.IsForward && controls.IsBackward)
+            {
+                this.hero.Xvel = 0;
+                this.hero.Yvel = 0;
+            }
+            if (controls.IsLeft)
+            {
+                this.hero.Rotation -= rotationAmount;
+            }
+            if (controls.IsRight)
+            {
+                this.hero.Rotation += rotationAmount;
             }
         }
 

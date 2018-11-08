@@ -22,7 +22,7 @@ namespace doodLbot.Hubs
 
         public Task UpdateGameState(GameStateUpdate update)
         {
-            this.game.UpdateState(update);
+            this.game.UpdateControls(update);
             return Task.CompletedTask; 
         }
 
