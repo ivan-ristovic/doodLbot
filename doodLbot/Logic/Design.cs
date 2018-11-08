@@ -12,12 +12,15 @@ namespace doodLbot.Logic
         public static double HeroSpeed { get; private set; }
         public static double BackwardsSpeed { get; private set; }
         public static double RotateAmount { get; private set; }
+        public static double HeroRadiusSize { get; private set; }
+        public static double ProjectileRadiusSize { get; private set; }
         public static double FireCooldown { get; private set; }
         public static double ProjectileDamage { get; private set; }
 
         public static double HeroStartX { get; private set; }
         public static double HeroStartY { get; private set; }
 
+        public static double EnemyRadiusSize { get; private set; }
         public static double EnemySpeed { get; private set; }
         public static double SpawnRange { get; private set; }
         public static double SpawnInterval { get; private set; }
@@ -25,7 +28,6 @@ namespace doodLbot.Logic
         public static double MapWidth { get; private set; }
         public static double MapHeight { get; private set; }
         public static double TickRate { get; private set; }
-
 
         static Design()
         {
@@ -48,6 +50,10 @@ namespace doodLbot.Logic
             MapHeight = 1000;
 
             TickRate = 50;
+
+            EnemyRadiusSize = 20;
+            HeroRadiusSize = 30;
+            ProjectileRadiusSize = 10;
         }
     }
 }
