@@ -159,7 +159,7 @@ namespace doodLbot.Logic
 
         private void RemoveProjectilesOutsideOfMap()
         {
-            IReadOnlyList<Projectile> projectiles = this.hero.Projectiles;
+            IReadOnlyCollection<Projectile> projectiles = this.hero.Projectiles;
             foreach (Projectile p in projectiles)
             {
                 if (IsOutsideOfTheMap(p))
