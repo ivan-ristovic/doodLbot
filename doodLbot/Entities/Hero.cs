@@ -1,7 +1,6 @@
 ﻿using doodLbot.Common;
 using doodLbot.Entities.CodeElements;
 using Newtonsoft.Json;
-
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +22,6 @@ namespace doodLbot.Entities
         private readonly List<object> modules = new List<object>();
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
-
         public Hero() : base()
         {
 
@@ -34,8 +32,8 @@ namespace doodLbot.Entities
 
         }
 
-        public void Fire()
-            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation));
+        public void Fire(double speed, double damage)
+            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation, speed, damage));
         
         public bool TryRemoveProjectile(Projectile p)
         {

@@ -35,8 +35,10 @@ namespace doodLbot.Logic
         public static IReadOnlyList<Collision> GetCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
         {
             List<Collision> collides = new List<Collision>();
-            const double radius1 = 20;
-            const double radius2 = 10;
+            // TODO thees radiuses are sometimes hero, figure out how to assign them correctly
+            // (example: see if entity is hero, then hero radius, etc..)
+            double radius1 = Design.EnemyRadiusSize;
+            double radius2 = Design.ProjectileRadiusSize;
 
             foreach (var collider1 in colliders1)
             {

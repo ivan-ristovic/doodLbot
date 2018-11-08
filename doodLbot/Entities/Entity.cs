@@ -41,14 +41,14 @@ namespace doodLbot.Entities
             this.Ypos += this.Yvel;
         }
 
-        public void VelocityTowards(Entity goal, double withSpeed = 1)
+        public void VelocityTowards(Entity goal, double withSpeed)
         {
             double xvel = goal.Xpos - this.Xpos;
             double yvel = goal.Ypos - this.Ypos;
             double norm = Math.Sqrt( xvel * xvel + yvel * yvel );
             // todo: handle case when norm is 0
-            this.Xvel = xvel / norm;
-            this.Yvel = yvel / norm;
+            this.Xvel = xvel / norm * withSpeed;
+            this.Yvel = yvel / norm * withSpeed;
         }
 
         public virtual void DecreaseHelthPoints(double value)
