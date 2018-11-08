@@ -29,7 +29,7 @@ namespace doodLbot.Hubs
         // TODO remove, this is a communication test
         public Task SendMessage(string user, string message)
         {
-            game.SpawnEnemy();
+            game.SpawnEnemy(doodLbot.Logic.Design.SpawnRange);
             return this.Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 

@@ -4,13 +4,14 @@ namespace doodLbot.Common
 {
     public class RateLimiter
     {
-        private static readonly TimeSpan _cooldownTimeout = TimeSpan.FromSeconds(0.2);
+        private readonly TimeSpan _cooldownTimeout = TimeSpan.FromSeconds(0.2);
 
         private bool cooldown;
         private DateTimeOffset resetTime;
 
-        public RateLimiter()
+        public RateLimiter(double cooldown)
         {
+            this._cooldownTimeout = TimeSpan.FromSeconds(cooldown);
             this.resetTime = DateTimeOffset.UtcNow + _cooldownTimeout;
             this.cooldown = false;
         }

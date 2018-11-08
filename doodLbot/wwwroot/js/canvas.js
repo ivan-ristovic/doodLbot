@@ -378,7 +378,8 @@ function keyboard(keyCode) {
 
   //The `upHandler`
   key.upHandler = event => {
-    if (event.keyCode === key.code) {
+      if (event.keyCode === key.code) {
+      //console.log("released", key.code);
       UPDATES_FOR_BACKEND.addKeyRelease(key.code);
       if (key.isDown && key.release) key.release();
       key.isDown = false;

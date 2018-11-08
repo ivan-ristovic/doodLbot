@@ -12,10 +12,8 @@ namespace doodLbot.Logic
 {
     public sealed class Game 
     {
-        public const int MAP_WIDTH = 1300;
-        public const int MAP_HEIGHT = 1000;
-        static public readonly (int X, int Y) MapSize = (MAP_WIDTH, MAP_HEIGHT);
-        static public readonly int TickRate = 50;
+        static public readonly (double X, double Y) MapSize = (Design.MapWidth, Design.MapHeight);
+        static public readonly double TickRate = Design.TickRate;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
         static private readonly AsyncExecutor _async = new AsyncExecutor();
@@ -32,7 +30,7 @@ namespace doodLbot.Logic
 
             foreach (Enemy enemy in game.enemies)
             {
-                enemy.VelocityTowards(game.hero, 5);
+                enemy.VelocityTowards(game.hero, Design.EnemySpeed);
                 enemy.Move();
             }            
 
@@ -60,19 +58,18 @@ namespace doodLbot.Logic
 
         public Game(IHubContext<GameHub> hctx)
         {
-            this.hero = new Hero(300, 300);
+            this.hero = new Hero(Design.HeroStartX, Design.HeroStartY);
             this.enemies = new ConcurrentHashSet<Enemy>();
-            this.SpawnEnemy();
+            this.SpawnEnemy(Design.SpawnRange);
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
             this.controls = new Controls();
-            this.shootRateLimiter = new RateLimiter();
+            this.shootRateLimiter = new RateLimiter(Design.FireCooldown);
         }
 
-        public void SpawnEnemy()
+        public void SpawnEnemy(double inRange)
         {
-            const double spawnRange = 300;
-            enemies.Add(Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, spawnRange));
+            enemies.Add(Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, inRange));
         }
 
 
@@ -86,25 +83,25 @@ namespace doodLbot.Logic
 
         public void UpdateStateWithControls()
         {
-            const double velMultiplier = 5;
-            const double rotationAmount = 0.1;
+            double velocity = Design.HeroSpeed;
+            double rotationAmount = Design.RotateAmount;
 
             if (controls.IsFire)
             {
                 if (!shootRateLimiter.IsCooldownActive())
                 {
-                    this.hero.Fire();
+                    this.hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
                 }
             }
             if (controls.IsForward)
             {
-                this.hero.Xvel = Math.Cos(this.hero.Rotation) * velMultiplier;
-                this.hero.Yvel = Math.Sin(this.hero.Rotation) * velMultiplier;
+                this.hero.Xvel = Math.Cos(this.hero.Rotation) * velocity;
+                this.hero.Yvel = Math.Sin(this.hero.Rotation) * velocity;
             }
             if (controls.IsBackward)
             {
-                this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velMultiplier;
-                this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velMultiplier;
+                this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velocity;
+                this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velocity;
             }
             if (!controls.IsForward && !controls.IsBackward)
             {
@@ -191,7 +188,7 @@ namespace doodLbot.Logic
            
         private bool IsOutsideOfTheMap(Entity e)
         {
-            return e.Xpos < 0 || e.Xpos > MAP_WIDTH || e.Ypos < 0 || e.Ypos > MAP_HEIGHT;
+            return e.Xpos < 0 || e.Xpos > MapSize.X || e.Ypos < 0 || e.Ypos > MapSize.Y;
         }
 
         #endregion
