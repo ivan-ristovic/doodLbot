@@ -22,7 +22,6 @@ namespace doodLbot.Entities
         private readonly List<object> modules = new List<object>();
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
-
         public Hero() : base()
         {
 

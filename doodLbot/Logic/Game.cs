@@ -23,6 +23,10 @@ namespace doodLbot.Logic
         {
             var game = _ as Game;
 
+            if (!game.enemySpawnLimiter.IsCooldownActive())
+            {
+                game.SpawnEnemy(Design.SpawnRange);
+            }
             game.UpdateStateWithControls();
 
             game.hero.Move();
@@ -55,6 +59,8 @@ namespace doodLbot.Logic
         private readonly IHubContext<GameHub> hubContext;
         private readonly Controls controls;
         private readonly RateLimiter shootRateLimiter;
+        private readonly RateLimiter enemySpawnLimiter;
+
 
         public Game(IHubContext<GameHub> hctx)
         {
@@ -65,6 +71,7 @@ namespace doodLbot.Logic
             this.hubContext = hctx;
             this.controls = new Controls();
             this.shootRateLimiter = new RateLimiter(Design.FireCooldown);
+            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
         }
 
         public void SpawnEnemy(double inRange)
@@ -83,7 +90,6 @@ namespace doodLbot.Logic
 
         public void UpdateStateWithControls()
         {
-            double velocity = Design.HeroSpeed;
             double rotationAmount = Design.RotateAmount;
 
             if (controls.IsFire)
@@ -95,11 +101,13 @@ namespace doodLbot.Logic
             }
             if (controls.IsForward)
             {
+                double velocity = Design.HeroSpeed;
                 this.hero.Xvel = Math.Cos(this.hero.Rotation) * velocity;
                 this.hero.Yvel = Math.Sin(this.hero.Rotation) * velocity;
             }
             if (controls.IsBackward)
             {
+                double velocity = Design.BackwardsSpeed;
                 this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velocity;
                 this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velocity;
             }
