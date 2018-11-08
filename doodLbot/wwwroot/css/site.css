@@ -1,15 +1,53 @@
 html, body {
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: auto;
 }
 
-.body-content {
-    display: flex;
-    flex-flow: column;
-    height: 100vh;
+#game, #game > .row {
+    height: 100%;
+    width: 100%;
+    display: block;
 }
 
 #frame {
-    background-color: #DDDDDD;
-    height: calc(100vh - 150px);
+    height: 100%;
+    border-right: 1px solid #ccc;
+    padding: 0;
 }
+
+#consoleDiv {
+    background: rgba(20,20,20,0.8);
+    color: #45D40C;
+    position: absolute;
+    z-index: 10;
+    top: 0px;
+    width: 100%;
+    height: 200px;
+    overflow-y: scroll;
+    -webkit-transition: all .5s ease; /* Safari */
+    transition: all .5s ease;
+}
+
+    #consoleDiv.hiddenConsole {
+        top: -200px;
+    }
+
+    #consoleDiv > ul {
+        margin: 0;
+        list-style: none;
+        padding: 10px;
+    }
+
+    #consoleDiv li:before {
+        content: '>';
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    #consoleDiv li {
+        word-wrap: break-word;
+        position: relative;
+        padding: 0 0 0 15px;
+    }

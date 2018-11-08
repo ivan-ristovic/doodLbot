@@ -3,20 +3,23 @@
   it's needed for the canvas to properly fit the window -->
 <!-- I don't know how to do this using Razor... -->
 <!--<style>* {padding: 0; margin: 0}</style>-->
-<div id="consoleDiv">
+<div id="consoleDiv" class="hiddenConsole">
     <ul>
-        <li>&nbsp; </li>
-        <li>&nbsp; </li>
-        <li>&nbsp; </li>
         <li>
             Press T to spawn enemy, SPACE to fire a dumb bullet.
         </li>
     </ul>
 </div>
 
-<div id="frame">
-
+<div id="game">
+    <div class="row">
+        <div id="frame" class="col-sm-9">
+        </div>
+        <div class="col-sm-3">
+        </div>
+    </div>
 </div>
+
 
 <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 <script src="~/lib/pixi.js/dist/pixi.min.js"></script>
