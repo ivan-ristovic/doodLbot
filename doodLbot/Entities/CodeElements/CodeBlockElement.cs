@@ -1,17 +1,17 @@
 ﻿using doodLbot.Logic;
+
 using System.Collections.Generic;
-using System.Linq;
 
 namespace doodLbot.Entities.CodeElements
 {
     public class CodeBlockElement : BaseCodeElement
     {
-        private readonly List<BaseCodeElement> codeElements;
+        private readonly ICollection<BaseCodeElement> codeElements;
 
 
-        public CodeBlockElement(IEnumerable<BaseCodeElement> elements)
+        public CodeBlockElement(ICollection<BaseCodeElement> elements)
         {
-            this.codeElements = elements.ToList();
+            this.codeElements = elements;
         }
 
 
