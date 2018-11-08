@@ -8,7 +8,7 @@ namespace doodLbot.Entities.CodeElements
         {
         }
 
-        public override void Execute(Hero hero)
-            =>hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
+        public override void Execute(GameState state)
+            =>state.Hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
     }
 }
