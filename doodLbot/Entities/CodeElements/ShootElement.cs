@@ -1,4 +1,6 @@
-﻿namespace doodLbot.Entities.CodeElements
+﻿using doodLbot.Logic;
+
+namespace doodLbot.Entities.CodeElements
 {
     public class ShootElement : BaseCodeElement
     {
@@ -7,7 +9,7 @@
 
         }
 
-        public override void Execute(Hero hero)
-            => hero.Fire();
+        public override void Execute(GameState state)
+            => state.Hero.Fire();
     }
 }

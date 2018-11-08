@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using doodLbot.Logic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace doodLbot.Entities.CodeElements.ConditionElements
@@ -11,8 +12,10 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         }
 
 
-        public override bool Evaluate(Hero hero = null, IEnumerable<Enemy> enemies = null, IEnumerable<Projectile> projectiles = null)
+        public override bool Evaluate(GameState state)
         {
+            IReadOnlyList<Enemy> enemies = state.Enemies;
+
             if (!enemies?.Any() ?? false)
                 return false;
 

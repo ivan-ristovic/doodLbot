@@ -1,4 +1,5 @@
-﻿using System;
+﻿using doodLbot.Logic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,14 +36,14 @@ namespace doodLbot.Entities.CodeElements
                 this.codeElements.RemoveAt(index);
         }
 
-        public void Execute(Hero hero)
+        public void Execute(GameState state)
         {
             lock (this.codeElementsLock) {
                 if (!this.codeElements.Any())
                     return;
 
                 foreach (BaseCodeElement element in this.codeElements)
-                    element.Execute(hero);
+                    element.Execute(state);
             }
         }
     }

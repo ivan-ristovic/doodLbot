@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using doodLbot.Logic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace doodLbot.Entities.CodeElements
@@ -14,10 +15,10 @@ namespace doodLbot.Entities.CodeElements
         }
 
 
-        public override void Execute(Hero hero)
+        public override void Execute(GameState state)
         {
             foreach (BaseCodeElement element in this.codeElements)
-                element.Execute(hero);
+                element.Execute(state);
         }
     }
 }
