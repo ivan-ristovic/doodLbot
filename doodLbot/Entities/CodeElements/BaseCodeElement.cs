@@ -1,12 +1,9 @@
-﻿namespace doodLbot.Entities.CodeElements
+﻿using doodLbot.Logic;
+
+namespace doodLbot.Entities.CodeElements
 {
     abstract public class BaseCodeElement
     {
-        abstract public bool Execute(Hero hero);
-
-        virtual public void Reset()
-        {
-            
-        }
+        abstract public void Execute(GameState state);
     }
 }

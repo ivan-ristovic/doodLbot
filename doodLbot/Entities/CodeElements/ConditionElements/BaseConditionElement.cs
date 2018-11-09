@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements.ConditionElements
 {
     abstract public class BaseConditionElement
     {
-        abstract public bool Evaluate(Hero hero = null, IEnumerable<Enemy> enemies = null, 
-            IEnumerable<Projectile> projectiles = null);
+        abstract public bool Evaluate(GameState state);
     }
 }

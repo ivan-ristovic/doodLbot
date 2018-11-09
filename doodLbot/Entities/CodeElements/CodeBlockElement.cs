@@ -1,42 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using doodLbot.Logic;
+
+using System.Collections.Generic;
 
 namespace doodLbot.Entities.CodeElements
 {
     public class CodeBlockElement : BaseCodeElement
     {
-        private readonly List<BaseCodeElement> codeElements;
-        private int index;
+        private readonly ICollection<BaseCodeElement> codeElements;
 
 
-        public CodeBlockElement(IEnumerable<BaseCodeElement> elements)
+        public CodeBlockElement(ICollection<BaseCodeElement> elements)
         {
-            this.codeElements = elements.ToList();
-            this.index = 0;
+            this.codeElements = elements;
         }
 
 
-        public override bool Execute(Hero hero)
-        {
-            bool finished = this.codeElements[this.index].Execute(hero);
-
-            if (!finished)
-                return false;
-
-            this.index++;
-            if (this.index == this.codeElements.Count) {
-                this.Reset();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        public override void Reset()
+        public override void Execute(GameState state)
         {
             foreach (BaseCodeElement element in this.codeElements)
-                element.Reset();
-            this.index = 0;
+                element.Execute(state);
         }
     }
 }

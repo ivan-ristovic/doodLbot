@@ -1,4 +1,5 @@
-﻿using System;
+﻿using doodLbot.Logic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,14 +11,12 @@ namespace doodLbot.Entities.CodeElements
 
         private readonly List<BaseCodeElement> codeElements;
         private readonly object codeElementsLock;
-        private int index;
 
 
         public BehaviourAlgorithm()
         {
             this.codeElements = new List<BaseCodeElement>();
             this.codeElementsLock = new object();
-            this.index = 0;
         }
         
 
@@ -37,27 +36,14 @@ namespace doodLbot.Entities.CodeElements
                 this.codeElements.RemoveAt(index);
         }
 
-        public void ExecuteStep(Hero hero)
+        public void Execute(GameState state)
         {
             lock (this.codeElementsLock) {
                 if (!this.codeElements.Any())
                     return;
 
-                if (this.index >= this.codeElements.Count)
-                    this.Reset();
-
-                if (this.codeElements[this.index].Execute(hero))
-                    this.index++;
-            }
-        }
-
-
-        private void Reset()
-        {
-            lock (this.codeElementsLock) {
                 foreach (BaseCodeElement element in this.codeElements)
-                    element.Reset();
-                this.index = 0;
+                    element.Execute(state);
             }
         }
     }

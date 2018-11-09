@@ -1,4 +1,5 @@
 ﻿using doodLbot.Entities.CodeElements.ConditionElements;
+using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -17,18 +18,12 @@ namespace doodLbot.Entities.CodeElements
         }
 
 
-        public override bool Execute(Hero hero)
+        public override void Execute(GameState state)
         {
-            bool finished = this.condition.Evaluate() ? this.thenBlock.Execute(hero) : this.elseBlock.Execute(hero);
-            if (finished)
-                this.Reset();
-            return finished;
-        }
-
-        public override void Reset()
-        {
-            this.thenBlock.Reset();
-            this.elseBlock.Reset();
+            if (this.condition.Evaluate(state))
+                this.thenBlock.Execute(state);
+            else
+                this.elseBlock.Execute(state);
         }
     }
 }
