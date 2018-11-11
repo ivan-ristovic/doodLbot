@@ -1,3 +1,4 @@
+"use strict";
 // https://github.com/kittykatattack/learningPixi
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
@@ -58,11 +59,13 @@ function countTimesPerSecond(shouldPrint) {
     timeSum += diff;
     if (timeSum > 1000) {
         if (shouldPrint) {
-            console.log("fps = ", (frame * 1000) / timeSum);
+            let txt = "fps = " + (frame * 1000) / timeSum;
+            //console.log(txt);
+            document.querySelector("#fps").innerHTML = txt;
         }
         timeSum -= 1000;
         frame = 0;
-        timeSUm = 0;
+        timeSum = 0;
     }
 }
 
@@ -242,8 +245,8 @@ let UPDATES_FOR_BACKEND = new UpdatesForBackend();
 let Application = PIXI.Application,
     loader = PIXI.loader,
     resources = PIXI.loader.resources,
-    Sprite = PIXI.Sprite;
-TextureCache = PIXI.utils.TextureCache;
+    Sprite = PIXI.Sprite,
+    TextureCache = PIXI.utils.TextureCache;
 
 // can use only one texture
 let superFastSprites = new PIXI.particles.ParticleContainer(100, {
