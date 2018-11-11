@@ -26,9 +26,10 @@ var timesRecieved = 0;
 
 function onStateUpdate(gameState) {
     timesRecieved++;
+    FramesSinceLastUpdate = 0;
     //console.log(timesRecieved);
     GAMESTATE = new GameState(gameState);
-    countTimesPerSecond(false);
+    //countTimesPerSecond(true);
     //console.log(gameState);
 }
 
@@ -40,6 +41,10 @@ function sendUpdateToServer(update) {
 
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
+
+var FramesSinceLastUpdate = 0;
+var ServerTickrate = 30; // TODO server should tell client its tickrate
+var MulSpeedsWith = ServerTickrate / 60;
 
 var oldCountTime = performance.now();
 var frame = 0;
@@ -94,13 +99,13 @@ class Entity {
         return healthBar;
     }
 
-    static updateHealthBar(entity, healthBar) {
+    static updateHealthBar(x, y, hp, healthBar) {
         healthBar.position.set(
-            entity.x - healthBar.width / 2,
-            entity.y - healthBar.sprite.height / 2 - 15
+            x - healthBar.width / 2,
+            y - healthBar.sprite.height / 2 - 15
         );
 
-        healthBar.outer.width = (entity.hp / 100) * healthBar.w;
+        healthBar.outer.width = (hp / 100) * healthBar.w;
     }
 }
 
@@ -161,8 +166,12 @@ function updateProjectiles() {
         app.stage.addChild(textr);
     }
     let projectiles = GAMESTATE.projectiles;
+    let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
+        
     for (let i = 0; i < projectiles.length; i++) {
-        ProjectileSprites[i].position.set(projectiles[i].x, projectiles[i].y);
+        let newx = projectiles[i].x + speedMul * projectiles[i].vx;
+        let newy = projectiles[i].y + speedMul * projectiles[i].vy;
+        ProjectileSprites[i].position.set(newx, newy);
         ProjectileSprites[i].visible = true;
     }
 
@@ -189,11 +198,14 @@ function updateEnemies() {
     }
 
     let enemies = GAMESTATE.enemies;
+    let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
     for (let i = 0; i < enemies.length; i++) {
-        EnemySprites[i].position.set(enemies[i].x, enemies[i].y);
+        let newx = enemies[i].x + speedMul * enemies[i].vx;
+        let newy = enemies[i].y + speedMul * enemies[i].vy;
+        EnemySprites[i].position.set(newx, newy);
         EnemySprites[i].visible = true;
         EnemyHps[i].visible = true;
-        Entity.updateHealthBar(enemies[i], EnemyHps[i]);
+        Entity.updateHealthBar(newx, newy, enemies[i].hp, EnemyHps[i]);
     }
 
     // if there are now less enemies than there are sprites, then don't draw them and don't draw their hp bar
@@ -349,12 +361,19 @@ function play(delta) {
     // console.log(delta)
     if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
-        cat.position.set(hero.x, hero.y);
+        let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
+        let newx = hero.x + speedMul * hero.vx;
+        let newy = hero.y + speedMul * hero.vy;
+
+        cat.position.set(newx, newy);
         cat.rotation = hero.rotation;
-        Entity.updateHealthBar(hero, heroHealthBar);
+        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
     }
+    countTimesPerSecond(true);
+
     updateEnemies();
     updateProjectiles();
+    FramesSinceLastUpdate++;
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
 }
