@@ -12,7 +12,6 @@ namespace doodLbot.Logic
 {
     public sealed class Game 
     {
-        static public readonly (double X, double Y) MapSize = (Design.MapWidth, Design.MapHeight);
         static public readonly double TickRate = Design.TickRate;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
@@ -136,7 +135,7 @@ namespace doodLbot.Logic
 
         private void CheckForCollisionsEnemiesHero()
         {
-            IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
+            var collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
 
             foreach (Collision c in collisions)
             {
@@ -159,7 +158,7 @@ namespace doodLbot.Logic
         {
             List<Entity> heros = new List<Entity>();
             heros.Add(this.hero);
-            IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
+            var collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
 
             foreach (Collision c in collisionsWithHero)
             {
@@ -177,10 +176,10 @@ namespace doodLbot.Logic
 
         private void RemoveProjectilesOutsideOfMap()
         {
-            IReadOnlyCollection<Projectile> projectiles = this.hero.Projectiles;
+            var projectiles = this.hero.Projectiles;
             foreach (Projectile p in projectiles)
             {
-                if (IsOutsideOfTheMap(p))
+                if (p.IsOutsideBounds(Design.MapSize))
                 {
                     if (this.hero.TryRemoveProjectile(p))
                     {
@@ -192,11 +191,6 @@ namespace doodLbot.Logic
                     }
                 }
             }
-        }
-           
-        private bool IsOutsideOfTheMap(Entity e)
-        {
-            return e.Xpos < 0 || e.Xpos > MapSize.X || e.Ypos < 0 || e.Ypos > MapSize.Y;
         }
 
         #endregion

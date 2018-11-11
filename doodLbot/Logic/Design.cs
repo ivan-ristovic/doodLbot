@@ -29,14 +29,21 @@ namespace doodLbot.Logic
         public static double MapHeight { get; private set; }
         public static double TickRate { get; private set; }
 
+        public static (double X, double Y) MapSize { get => (MapWidth, MapHeight); }
+
         static Design()
         {
-            ProjectileSpeed = 6;
-            HeroSpeed = 5;
-            BackwardsSpeed = 2;
-            EnemySpeed = 2;
+            TickRate = 20;
+
+            // all speeds are calculated relative to the 50 tickrate
+            double adjust = 50 / TickRate;
+
+            ProjectileSpeed = 6 * adjust;
+            HeroSpeed = 5 * adjust;
+            BackwardsSpeed = 2 * adjust;
+            EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
-            RotateAmount = 0.05;
+            RotateAmount = 0.05 * adjust;
 
             HeroStartX = 300;
             HeroStartY = 300;
@@ -48,8 +55,6 @@ namespace doodLbot.Logic
 
             MapWidth = 1900;
             MapHeight = 1000;
-
-            TickRate = 50;
 
             EnemyRadiusSize = 20;
             HeroRadiusSize = 30;

@@ -39,6 +39,14 @@ namespace doodLbot.Entities
         {
             this.Xpos += this.Xvel;
             this.Ypos += this.Yvel;
+            OnMove();
+        }
+
+        // this is a way to override Move functionallity
+        // without having to repeat default Move code
+        protected virtual void OnMove()
+        {
+
         }
 
         public void VelocityTowards(Entity goal, double withSpeed)
@@ -56,6 +64,11 @@ namespace doodLbot.Entities
             // TODO: make Hp atomic
             double newHp = this.Hp - value;
             this.Hp = newHp > 0 ? newHp : 0;
+        }
+
+        public bool IsOutsideBounds((double X, double Y) bounds)
+        {
+            return Xpos < 0 || Xpos > bounds.X || Ypos < 0 || Ypos > bounds.Y;
         }
     }
 }

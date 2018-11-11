@@ -3,6 +3,7 @@ using doodLbot.Entities.CodeElements;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace doodLbot.Entities
 {
@@ -30,6 +31,18 @@ namespace doodLbot.Entities
         public Hero(double x, double y) : base(x, y)
         {
 
+        }
+
+        protected override void OnMove()
+        {
+            var map = Logic.Design.MapSize;
+            if (this.IsOutsideBounds(map))
+            {
+                this.Xpos = Math.Max(0, this.Xpos);
+                this.Ypos = Math.Max(0, this.Ypos);
+                this.Xpos = Math.Min(map.X, this.Xpos);
+                this.Ypos = Math.Min(map.Y, this.Ypos);
+            }
         }
 
         public void Fire(double speed, double damage)
