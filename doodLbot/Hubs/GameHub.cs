@@ -13,10 +13,12 @@ namespace doodLbot.Hubs
     {
         private readonly Game game;
 
+
         public GameHub(Game game)
         {
             this.game = game;
         }
+
 
         public Task UpdateGameState(GameStateUpdate update)
         {
