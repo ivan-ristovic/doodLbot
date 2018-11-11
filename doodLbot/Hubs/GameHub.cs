@@ -1,4 +1,5 @@
 ﻿using doodLbot.Common;
+using doodLbot.Entities.CodeElements;
 using doodLbot.Logic;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -35,5 +36,11 @@ namespace doodLbot.Hubs
 
         public Task SendUpdatesToClient(GameState update)
             => this.Clients.All.SendAsync("GameStateUpdateRecieved", update);
+
+        public Task AlgorithmUpdated(BehaviourAlgorithm algorithm)
+        {
+            this.game.GameState.Hero.Algorithm = algorithm;
+            return Task.CompletedTask;
+        }
     }
 }
