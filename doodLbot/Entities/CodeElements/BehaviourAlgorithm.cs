@@ -1,5 +1,7 @@
 ﻿using doodLbot.Logic;
-using System;
+
+using Newtonsoft.Json;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +9,7 @@ namespace doodLbot.Entities.CodeElements
 {
     public class BehaviourAlgorithm
     {
+        [JsonProperty("elements")]
         public IReadOnlyList<BaseCodeElement> CodeElements => this.codeElements.AsReadOnly();
 
         private readonly List<BaseCodeElement> codeElements;

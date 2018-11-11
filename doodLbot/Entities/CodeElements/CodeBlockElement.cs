@@ -1,23 +1,24 @@
 ﻿using doodLbot.Logic;
-
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace doodLbot.Entities.CodeElements
 {
     public class CodeBlockElement : BaseCodeElement
     {
-        private readonly ICollection<BaseCodeElement> codeElements;
+        [JsonProperty("elements")]
+        private readonly ICollection<BaseCodeElement> CodeElements;
 
 
         public CodeBlockElement(ICollection<BaseCodeElement> elements)
         {
-            this.codeElements = elements;
+            this.CodeElements = elements;
         }
 
 
         public override void Execute(GameState state)
         {
-            foreach (BaseCodeElement element in this.codeElements)
+            foreach (BaseCodeElement element in this.CodeElements)
                 element.Execute(state);
         }
     }
