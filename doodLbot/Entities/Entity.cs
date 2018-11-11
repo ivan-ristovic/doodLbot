@@ -12,9 +12,9 @@ namespace doodLbot.Entities
         public double Ypos { get; protected set; }
         [JsonProperty("rotation")]
         public double Rotation { get; set; }
-        [JsonProperty("vy")]
-        public double Xvel { get; set; }
         [JsonProperty("vx")]
+        public double Xvel { get; set; }
+        [JsonProperty("vy")]
         public double Yvel { get; set; }
         [JsonProperty("hp")]
         public double Hp { get; protected set; }
