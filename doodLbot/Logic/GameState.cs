@@ -22,7 +22,6 @@ namespace doodLbot.Logic
         private readonly List<Enemy> enemies;
         private readonly List<Projectile> projectiles = new List<Projectile>();
 
-
         public GameState(Hero hero, IEnumerable<Enemy> enemies)
         {
             this.Hero = hero;

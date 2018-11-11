@@ -40,8 +40,35 @@ function sendUpdateToServer(update) {
     });
 }
 
+function sendCodeUpdateToServer(code) {
+    connection.invoke("algorithmUpdated", code).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+// stores codeBlocks data as an object
+let CodeBlocks = null;
+
+function updateCodeBlocks(data) {
+    CodeBlocks = data;
+    console.log(data);
+    let div = $("<div></div>").text("my type is " + data.elements[0].type)
+        .css('background', '#ee1122');
+
+    let checkbox = $('<input />', { type: 'checkbox', id: 'isOn', value: data.elements[0].isOn })
+    checkbox.change(function () {
+        console.log("Is this checked?", this.checked);
+        CodeBlocks.elements[0].isOn = this.checked;
+        sendCodeUpdateToServer(CodeBlocks);
+    });
+    div.append(checkbox);
+    $("#codeBlocks").append(div);
+}
+
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
+connection.on("UpdateCodeBlocks", updateCodeBlocks);
+
 
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = 30; // TODO server should tell client its tickrate

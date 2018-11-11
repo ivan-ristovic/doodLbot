@@ -14,12 +14,10 @@ namespace doodLbot.Hubs
     {
         private readonly Game game;
 
-
         public GameHub(Game game)
         {
             this.game = game;
         }
-
 
         public Task UpdateGameState(GameStateUpdate update)
         {
@@ -34,6 +32,13 @@ namespace doodLbot.Hubs
             return this.Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
+        public Task SendCodeUpdate(BehaviourAlgorithm alg)
+        {
+            return this.Clients.All.SendAsync("UpdateCodeBlocks", alg);
+        }
+
+        // TODO well these aren't used because Hub interface doesnt know about them.
+        // we just manually send them from Game.cs
         public Task SendUpdatesToClient(GameState update)
             => this.Clients.All.SendAsync("GameStateUpdateRecieved", update);
 

@@ -17,6 +17,9 @@ namespace doodLbot.Logic
 
         static private readonly AsyncExecutor _async = new AsyncExecutor();
 
+        // TODO track if code blocks have changed
+        static bool codeBlocksChanged = true;
+
         // executes one tick of the game
         static private void UpdateCallback(object _)
         {
@@ -48,6 +51,15 @@ namespace doodLbot.Logic
             game.RemoveProjectilesOutsideOfMap();
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
+
+            // test
+            
+            if (codeBlocksChanged)
+            {
+                codeBlocksChanged = false;
+                _async.Execute(game.hubContext.Clients.All.SendAsync("UpdateCodeBlocks", game.GameState.Hero.Algorithm));
+            }
+            // test
         }
 
         public GameState GameState => new GameState(this.hero, this.enemies);
@@ -60,10 +72,13 @@ namespace doodLbot.Logic
         private readonly RateLimiter shootRateLimiter;
         private readonly RateLimiter enemySpawnLimiter;
 
-
         public Game(IHubContext<GameHub> hctx)
         {
             this.hero = new Hero(Design.HeroStartX, Design.HeroStartY);
+            // testing begin
+            var e = new Entities.CodeElements.ShootElement();
+            hero.Algorithm.Insert(e);
+            // testing end
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy(Design.SpawnRange);
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
@@ -77,7 +92,6 @@ namespace doodLbot.Logic
         {
             enemies.Add(Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, inRange));
         }
-
 
         public void UpdateControls(GameStateUpdate update)
         {
@@ -183,11 +197,13 @@ namespace doodLbot.Logic
                 {
                     if (this.hero.TryRemoveProjectile(p))
                     {
-                        Log.Debug($"Removed projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                        //Log.Debug($"Removed projectile on location: " +
+                        //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
                     }
                     else
                     {
-                        Log.Debug($"Failed to remove projectile on location: ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                        Log.Debug($"Failed to remove projectile on location:" +
+                            $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
                     }
                 }
             }
