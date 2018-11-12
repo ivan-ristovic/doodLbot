@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace doodLbot.Logic
 {
-    public sealed class Game 
+    public sealed class Game
     {
         static public readonly double TickRate = Design.TickRate;
         static public TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
@@ -38,7 +38,7 @@ namespace doodLbot.Logic
             {
                 enemy.VelocityTowards(game.hero, Design.EnemySpeed);
                 enemy.Move();
-            }            
+            }
 
             foreach (var projectile in game.hero.Projectiles)
             {
@@ -53,7 +53,7 @@ namespace doodLbot.Logic
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
 
             // test
-            
+
             if (codeBlocksChanged)
             {
                 codeBlocksChanged = false;
@@ -75,10 +75,6 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.hero = new Hero(Design.HeroStartX, Design.HeroStartY);
-            // testing begin
-            var e = new Entities.CodeElements.ShootElement();
-            hero.Algorithm.Insert(e);
-            // testing end
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy(Design.SpawnRange);
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
@@ -86,6 +82,25 @@ namespace doodLbot.Logic
             this.controls = new Controls();
             this.shootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
+
+            // testing begin
+            var isEnemyNear = new Entities.CodeElements.ConditionElements.IsEnemyNearCondition();
+
+            var shootElement = new Entities.CodeElements.ShootElement();
+            var shootElementList = new List<Entities.CodeElements.BaseCodeElement>();
+            shootElementList.Add(shootElement);
+
+            var idleElement = new Entities.CodeElements.IdleElement();
+            var idleElementList = new List<Entities.CodeElements.BaseCodeElement>();
+            idleElementList.Add(idleElement);
+
+            var branchingElement = new Entities.CodeElements.BranchingElement(
+                isEnemyNear,
+                new Entities.CodeElements.CodeBlockElement(shootElementList),
+                new Entities.CodeElements.CodeBlockElement(idleElementList));
+
+            hero.Algorithm.Insert(branchingElement);
+            // testing end
         }
 
         public void SpawnEnemy(double inRange)
@@ -95,7 +110,7 @@ namespace doodLbot.Logic
 
         public void UpdateControls(GameStateUpdate update)
         {
-            foreach(var (key, isDown) in update.KeyPresses)
+            foreach (var (key, isDown) in update.KeyPresses)
             {
                 this.controls.OnKey(key, isDown);
             }

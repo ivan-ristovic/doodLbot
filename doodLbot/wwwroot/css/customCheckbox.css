@@ -7,7 +7,7 @@
 	[type="checkbox"]:checked + label,
 	[type="checkbox"]:not(:checked) + label {
 		/*position: relative;*/
-		padding-left: 28px;
+		padding-right: 20px;
 		cursor: pointer;
 		line-height: 20px;
 		display: inline-block;

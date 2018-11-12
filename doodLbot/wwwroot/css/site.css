@@ -72,12 +72,15 @@ html, body {
         margin: 0 4px;
     }
 
-/*https://www.schemecolor.com/wp-content/themes/colorsite/include/cc5.php?color0=fddfdf&color1=fcf7de&color2=defde0&color3=def3fd&color4=f0defd&pn=Beautiful%20Light%20Pastels*/
-.ShootElement {
-    background: #fddffd !important;
+/*https://www.w3schools.com/colors/colors_crayola.asp Silver Colors*/
+.ShootElement,
+.ShootElement [type="checkbox"]:checked + label:after,
+.ShootElement [type="checkbox"]:not(:checked) + label:after {
+    background: #C39953 !important;
 }
 
-    .ShootElement [type="checkbox"]:checked + label:after,
-    .ShootElement [type="checkbox"]:not(:checked) + label:after {
-        background: #fddffd !important;
-    }
+.BranchingElement,
+.BranchingElement [type="checkbox"]:checked + label:after,
+.BranchingElement [type="checkbox"]:not(:checked) + label:after {
+    background: #6EAEA1 !important;
+}
