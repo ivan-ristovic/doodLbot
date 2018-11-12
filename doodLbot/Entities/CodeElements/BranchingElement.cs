@@ -18,8 +18,8 @@ namespace doodLbot.Entities.CodeElements
         public BranchingElement(BaseConditionElement condition, CodeBlockElement thenBlock, CodeBlockElement elseBlock)
         {
             this.Condition = condition;
-            this.ThenBlock = ThenBlock;
-            this.ElseBlock = ElseBlock;
+            this.ThenBlock = thenBlock;
+            this.ElseBlock = elseBlock;
         }
 
 
