@@ -7,7 +7,8 @@ namespace doodLbot.Entities.CodeElements
     {
         [JsonProperty("type")]
         public string Type => this.GetType().Name;
-
+        [JsonProperty("isActive")]
+        public bool isActive = false;
 
         abstract public void Execute(GameState state);
     }

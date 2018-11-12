@@ -7,7 +7,7 @@ html, body {
 #game, #game > .row {
     height: 100%;
     width: 100%;
-    display: block;
+    margin: 0;
 }
 
 #frame {
@@ -50,4 +50,34 @@ html, body {
         word-wrap: break-word;
         position: relative;
         padding: 0 0 0 15px;
+    }
+
+#codeBlocks {
+    padding-top: 25px;
+}
+
+.codeBlock {
+    padding-top: 4px;
+    padding-bottom: 80px;
+}
+
+    .codeBlock > .title {
+        text-align: center;
+        position: relative;
+        font-weight: 500;
+    }
+
+    .codeBlock > hr {
+        margin-top: 0;
+        margin: 0 4px;
+    }
+
+/*https://www.schemecolor.com/wp-content/themes/colorsite/include/cc5.php?color0=fddfdf&color1=fcf7de&color2=defde0&color3=def3fd&color4=f0defd&pn=Beautiful%20Light%20Pastels*/
+.ShootElement {
+    background: #fddffd !important;
+}
+
+    .ShootElement [type="checkbox"]:checked + label:after,
+    .ShootElement [type="checkbox"]:not(:checked) + label:after {
+        background: #fddffd !important;
     }

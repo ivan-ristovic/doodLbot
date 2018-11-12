@@ -3,23 +3,24 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function(user, message) {
     var li = document.createElement("li");
     li.innerHTML = user + " says " + message;
     document.querySelector("#consoleDiv ul").appendChild(li);
     console.log("Recieved message!", user, message);
 });
 
-// on ~ press
+// on '~' press
 let consoleKeyFunc = () => {
     $("#consoleDiv").toggleClass("hiddenConsole");
     event.preventDefault();
 }
 
+// on 't' press
 let testKeyFunc = () => {
     connection
         .invoke("SendMessage", "user69", "thisIsTheMessage")
-        .catch(function (err) {
+        .catch(function(err) {
             return console.error(err.toString());
         });
 };
@@ -35,13 +36,55 @@ function onStateUpdate(gameState) {
 }
 
 function sendUpdateToServer(update) {
-    connection.invoke("updateGameState", update).catch(function (err) {
+    connection.invoke("updateGameState", update).catch(function(err) {
         return console.error(err.toString());
     });
 }
 
+function sendCodeUpdateToServer(code) {
+    connection.invoke("algorithmUpdated", code).catch(function(err) {
+        return console.error(err.toString());
+    });
+}
+
+// stores codeBlocks data as an object
+let CodeBlocks = null;
+
+function updateCodeBlocks(data) {
+    CodeBlocks = data;
+    console.log(data);
+    let div = $("<div />")
+        .addClass("card")
+        .addClass("codeBlock")
+        .addClass(data.elements[0].type);
+
+    let checkbox = $("<input />", { type: 'checkbox', id: 'isOn', value: data.elements[0].isOn });
+    let label = $("<label />", { for: "isOn" }).text(data.elements[0].type);
+
+    let title = $("<div />")
+        .addClass("title")
+
+
+    checkbox.change(function() {
+        console.log("Is this checked?", this.checked);
+        CodeBlocks.elements[0].isOn = this.checked;
+        sendCodeUpdateToServer(CodeBlocks);
+    });
+
+    title.append(checkbox);
+    title.append(label);
+
+
+    div.append(title);
+    div.append($("<hr/>"));
+
+    $("#codeBlocks").append(div);
+}
+
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
+connection.on("UpdateCodeBlocks", updateCodeBlocks);
+
 
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = 30; // TODO server should tell client its tickrate
@@ -170,7 +213,7 @@ function updateProjectiles() {
     }
     let projectiles = GAMESTATE.projectiles;
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
-        
+
     for (let i = 0; i < projectiles.length; i++) {
         let newx = projectiles[i].x + speedMul * projectiles[i].vx;
         let newy = projectiles[i].y + speedMul * projectiles[i].vy;
@@ -220,6 +263,7 @@ function updateEnemies() {
         EnemyHps[i].visible = false;
     }
 }
+
 let GAMESTATE = new GameState();
 
 // holds information that backend needs for updating game-state
@@ -427,7 +471,7 @@ function keyboard(keyCode) {
 }
 
 PIXI.utils.sayHello(type);
-connection.start().catch(function (err) {
+connection.start().catch(function(err) {
     return console.error(err.toString());
 });
 resize();
