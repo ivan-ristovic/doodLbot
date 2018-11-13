@@ -10,6 +10,7 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("isActive")]
         public bool isActive = false;
 
+
         abstract public void Execute(GameState state);
     }
 }

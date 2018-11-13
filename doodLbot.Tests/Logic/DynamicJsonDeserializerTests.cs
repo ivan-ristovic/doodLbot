@@ -1,8 +1,9 @@
 ﻿using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
-using doodLbot.Hubs;
 using doodLbot.Logic;
+
 using NUnit.Framework;
+
 using System.Linq;
 
 namespace doodLbot.Tests.Logic

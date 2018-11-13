@@ -39,7 +39,7 @@ namespace doodLbot.Entities
         {
             this.Xpos += this.Xvel;
             this.Ypos += this.Yvel;
-            OnMove();
+            this.OnMove();
         }
 
         // this is a way to override Move functionallity
@@ -68,7 +68,7 @@ namespace doodLbot.Entities
 
         public bool IsOutsideBounds((double X, double Y) bounds)
         {
-            return Xpos < 0 || Xpos > bounds.X || Ypos < 0 || Ypos > bounds.Y;
+            return this.Xpos < 0 || this.Xpos > bounds.X || this.Ypos < 0 || this.Ypos > bounds.Y;
         }
     }
 }

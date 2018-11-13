@@ -9,14 +9,12 @@ namespace doodLbot.Entities.CodeElements
             
         }
 
+
         public override void Execute(GameState state)
         {
-            if (!isActive)
-            {
+            if (!this.isActive)
                 return;
-            }
             state.Hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
         }
-            
     }
 }

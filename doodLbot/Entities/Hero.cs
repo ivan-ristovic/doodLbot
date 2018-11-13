@@ -17,6 +17,7 @@ namespace doodLbot.Entities
         private readonly List<object> gear = new List<object>();
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
+
         public Hero() : base()
         {
 
@@ -26,6 +27,7 @@ namespace doodLbot.Entities
         {
 
         }
+
 
         protected override void OnMove()
         {
@@ -44,7 +46,7 @@ namespace doodLbot.Entities
         
         public bool TryRemoveProjectile(Projectile p)
         {
-            return projectiles.TryRemove(p);
+            return this.projectiles.TryRemove(p);
         }
 
         public override void DecreaseHelthPoints(double value)

@@ -1,15 +1,8 @@
-﻿using doodLbot.Common;
-using doodLbot.Entities.CodeElements;
-using doodLbot.Entities.CodeElements.ConditionElements;
+﻿using doodLbot.Entities.CodeElements;
 using doodLbot.Logic;
+
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Serilog;
-using Serilog.Core;
-using System;
-using System.Collections.Generic;
+
 using System.Threading.Tasks;
 
 namespace doodLbot.Hubs
@@ -18,10 +11,12 @@ namespace doodLbot.Hubs
     {
         private readonly Game game;
 
+
         public GameHub(Game game)
         {
             this.game = game;
         }
+
 
         public Task UpdateGameState(GameStateUpdate update)
         {
@@ -32,7 +27,7 @@ namespace doodLbot.Hubs
         // TODO remove, this is a communication test
         public Task SendMessage(string user, string message)
         {
-            game.SpawnEnemy(doodLbot.Logic.Design.SpawnRange);
+            this.game.SpawnEnemy(Design.SpawnRange);
             return this.Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
