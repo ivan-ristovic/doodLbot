@@ -4,8 +4,14 @@ using System.Linq;
 
 namespace doodLbot.Entities.CodeElements.ConditionElements
 {
+    /// <summary>
+    /// Represents a condition element that evaluates to true if an enemy is near the hero.
+    /// </summary>
     public class IsEnemyNearCondition : BaseConditionElement
     {
+        /// <summary>
+        /// Constructs a new IsEnemyNearCondition element.
+        /// </summary>
         public IsEnemyNearCondition()
         {
 

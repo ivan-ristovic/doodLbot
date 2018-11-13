@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace doodLbot.Logic
+﻿namespace doodLbot.Logic
 {
-    // holds all game design parameters
+    /// <summary>
+    /// Represents game design parameters.
+    /// </summary>
     public static class Design
     {
         public static double ProjectileSpeed { get; private set; }
@@ -29,7 +26,8 @@ namespace doodLbot.Logic
         public static double MapHeight { get; private set; }
         public static double TickRate { get; private set; }
 
-        public static (double X, double Y) MapSize { get => (MapWidth, MapHeight); }
+        public static (double X, double Y) MapSize => (MapWidth, MapHeight);
+
 
         static Design()
         {

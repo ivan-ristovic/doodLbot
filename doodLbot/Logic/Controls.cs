@@ -1,22 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace doodLbot.Logic
 {
+    /// <summary>
+    /// Represent a set of player controls.
+    /// </summary>
     public class Controls
     {
-        public bool IsFire { get; private set; } = false;
-        public bool IsForward { get; private set; } = false;
-        public bool IsBackward { get; private set; } = false;
-        public bool IsLeft { get; private set; } = false;
-        public bool IsRight { get; private set; } = false;
+        public bool IsFire { get; private set; }
+        public bool IsForward { get; private set; }
+        public bool IsBackward { get; private set; }
+        public bool IsLeft { get; private set; }
+        public bool IsRight { get; private set; }
 
+
+        /// <summary>
+        /// Action executed when the key is pressed or released.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isDown"></param>
         public void OnKey(ConsoleKey key, bool isDown)
         {
-            switch (key)
-            {
+            switch (key) {
                 case ConsoleKey.A:
                     this.IsLeft = isDown;
                     break;

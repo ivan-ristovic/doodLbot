@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace doodLbot.Logic
 {
+    /// <summary>
+    /// Represent a game state update that is sent from the clients to the backend.
+    /// </summary>
     public sealed class GameStateUpdate
     {
         public TimeSpan TimeSinceLastUpdate { get; }

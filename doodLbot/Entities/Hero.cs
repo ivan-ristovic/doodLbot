@@ -49,9 +49,9 @@ namespace doodLbot.Entities
             return this.projectiles.TryRemove(p);
         }
 
-        public override void DecreaseHelthPoints(double value)
+        public override void DecreaseHealthPoints(double value)
         {
-            base.DecreaseHelthPoints(value);
+            base.DecreaseHealthPoints(value);
 
             if (this.Hp == 0)
             {

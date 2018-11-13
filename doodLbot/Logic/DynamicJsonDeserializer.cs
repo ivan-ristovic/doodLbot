@@ -7,8 +7,16 @@ using System.Collections.Generic;
 
 namespace doodLbot.Logic
 {
+    /// <summary>
+    /// Deserializes JSON strings to classes needed for game logic.
+    /// </summary>
     static public class DynamicJsonDeserializer
     {
+        /// <summary>
+        /// Deserializes JSON string to BehaviourAlgorithm.
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns>Deserialized BehaviourAlgorithm object.</returns>
         static public BehaviourAlgorithm ToBehaviourAlgorithm(string json)
         {
             var jsonVal = JArray.Parse(json) as JArray;

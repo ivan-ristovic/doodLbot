@@ -7,7 +7,9 @@ using System.Linq;
 
 namespace doodLbot.Logic
 {
-    // used to send game data to client
+    /// <summary>
+    /// Represent a game state that will be sent to clients so they can update the game view.
+    /// </summary>
     public sealed class GameState
     {
         [JsonProperty("hero")]
@@ -22,6 +24,12 @@ namespace doodLbot.Logic
         private readonly List<Enemy> enemies;
         private readonly List<Projectile> projectiles = new List<Projectile>();
 
+
+        /// <summary>
+        /// Constructs a new GameState object containing the hero and spawned enemies.
+        /// </summary>
+        /// <param name="hero"></param>
+        /// <param name="enemies"></param>
         public GameState(Hero hero, IEnumerable<Enemy> enemies)
         {
             this.Hero = hero;

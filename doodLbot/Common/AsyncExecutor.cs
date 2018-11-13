@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 
 namespace doodLbot.Common
 {
+    /// <summary>
+    /// Executes methods in asynchronous manner. Used in event handlers where async methods are not
+    /// allowed.
+    /// </summary>
     public class AsyncExecutor
     {
         private readonly SemaphoreSlim sem;
@@ -15,6 +19,10 @@ namespace doodLbot.Common
         }
 
 
+        /// <summary>
+        /// Awaits for a Task asynchronously.
+        /// </summary>
+        /// <param name="task">Task to execute.</param>
         public void Execute(Task task)
         {
             this.sem.Wait();
@@ -39,6 +47,12 @@ namespace doodLbot.Common
                 throw tex;
         }
 
+        /// <summary>
+        /// Awaits for a Task asynchronously and returns result of type <typeparamref name="T"/>. 
+        /// </summary>
+        /// <typeparam name="T">Task return value type.</typeparam>
+        /// <param name="task">Task to execute.</param>
+        /// <returns></returns>
         public T Execute<T>(Task<T> task)
         {
             this.sem.Wait();

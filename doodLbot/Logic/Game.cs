@@ -12,6 +12,9 @@ using System.Threading;
 
 namespace doodLbot.Logic
 {
+    /// <summary>
+    /// Represents a doodLbot game.
+    /// </summary>
     public sealed class Game
     {
         public static readonly double TickRate = Design.TickRate;
@@ -22,7 +25,10 @@ namespace doodLbot.Logic
         // TODO track if code blocks have changed
         private static bool codeBlocksChanged = true;
 
-        // executes one tick of the game
+        /// <summary>
+        /// Callback executed on each game tick.
+        /// </summary>
+        /// <param name="_"></param>
         private static void UpdateCallback(object _)
         {
             var game = _ as Game;
@@ -42,7 +48,7 @@ namespace doodLbot.Logic
 
             foreach (Projectile projectile in game.hero.Projectiles) {
                 projectile.Move();
-                // Remove projectiles 
+                // TODO: remove projectiles 
             }
 
             game.CheckForCollisionsAndUpdateGame();
@@ -51,13 +57,12 @@ namespace doodLbot.Logic
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
 
-            // test
-
+            // begin test
             if (codeBlocksChanged) {
                 codeBlocksChanged = false;
                 _async.Execute(game.hubContext.Clients.All.SendAsync("UpdateCodeBlocks", game.GameState.Hero.Algorithm));
             }
-            // test
+            // end test
         }
 
         public GameState GameState => new GameState(this.hero, this.enemies);
@@ -71,6 +76,10 @@ namespace doodLbot.Logic
         private readonly RateLimiter enemySpawnLimiter;
 
 
+        /// <summary>
+        /// Constructs a new Game which uses a HubContext interface to send data to clients.
+        /// </summary>
+        /// <param name="hctx"></param>
         public Game(IHubContext<GameHub> hctx)
         {
             this.hero = new Hero(Design.HeroStartX, Design.HeroStartY);
@@ -82,7 +91,7 @@ namespace doodLbot.Logic
             this.shootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
 
-            // testing begin
+            // begin test
             var shootElementList = new List<BaseCodeElement> {
                 new ShootElement(),
                 new ShootElement(),
@@ -104,19 +113,30 @@ namespace doodLbot.Logic
             this.hero.Algorithm.Insert(branchingElement);
             this.hero.Algorithm.Insert(new IdleElement());
             this.hero.Algorithm.Insert(new ShootElement());
-            // testing end
+            // end test
         }
 
-        private object newIsEnemyNearCondition() => throw new NotImplementedException();
-        public void SpawnEnemy(double inRange) => this.enemies.Add(Enemy.Spawn<Kamikaze>(this.hero.Xpos, this.hero.Ypos, inRange));
 
+        /// <summary>
+        /// Spawns an enemy in the given square radius around the hero.
+        /// </summary>
+        /// <param name="inRange"></param>
+        public void SpawnEnemy(double inRange) 
+            => this.enemies.Add(Enemy.Spawn<Kamikaze>(this.hero.Xpos, this.hero.Ypos, inRange));
+
+        /// <summary>
+        /// Updates the current hero controls based on the update received from the frontend.
+        /// </summary>
+        /// <param name="update"></param>
         public void UpdateControls(GameStateUpdate update)
         {
-            foreach ((ConsoleKey key, bool isDown) in update.KeyPresses) {
+            foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
                 this.controls.OnKey(key, isDown);
-            }
         }
 
+        /// <summary>
+        /// Updates the hero movement based on the controls pressed/released.
+        /// </summary>
         public void UpdateStateWithControls()
         {
             double rotationAmount = Design.RotateAmount;
@@ -162,10 +182,10 @@ namespace doodLbot.Logic
             IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
 
             foreach (Collision c in collisions) {
-                Entity enemy = c.collider1;
-                Entity projectile = c.collider2;
+                Entity enemy = c.Collider1;
+                Entity projectile = c.Collider2;
 
-                enemy.DecreaseHelthPoints(projectile.Damage);
+                enemy.DecreaseHealthPoints(projectile.Damage);
 
                 // Removing projectile and enemy (if it's dead)
                 if (enemy.Hp <= 0) {
@@ -184,15 +204,15 @@ namespace doodLbot.Logic
             IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
 
             foreach (Collision c in collisionsWithHero) {
-                Entity hero = c.collider1;
-                Entity kamikaze = c.collider2;
-                kamikaze.DecreaseHelthPoints(hero.Damage);
+                Entity hero = c.Collider1;
+                Entity kamikaze = c.Collider2;
+                kamikaze.DecreaseHealthPoints(hero.Damage);
 
                 // Remove kamikaze from the game
                 // TODO: add animation for the death of kamikaze
                 this.enemies.TryRemove((Enemy)kamikaze);
 
-                this.hero.DecreaseHelthPoints(kamikaze.Damage);
+                this.hero.DecreaseHealthPoints(kamikaze.Damage);
             }
         }
 
