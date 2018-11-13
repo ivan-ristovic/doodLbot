@@ -39,7 +39,8 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="index">Position in the algorithm element list.</param>
         public void Insert(BaseCodeElement element, int? index = null)
         {
-            lock (this.codeElementsLock) {
+            lock (this.codeElementsLock)
+            {
                 if (index is null)
                     this.codeElements.Add(element);
                 else
@@ -63,7 +64,8 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="state"></param>
         public void Execute(GameState state)
         {
-            lock (this.codeElementsLock) {
+            lock (this.codeElementsLock)
+            {
                 if (!this.codeElements.Any())
                     return;
 

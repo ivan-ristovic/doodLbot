@@ -32,7 +32,7 @@ namespace doodLbot.Hubs
         public Task UpdateGameState(GameStateUpdate update)
         {
             this.game.UpdateControls(update);
-            return Task.CompletedTask; 
+            return Task.CompletedTask;
         }
 
         // TODO remove, this is a communication test
@@ -48,9 +48,21 @@ namespace doodLbot.Hubs
         }
 
         /// <summary>
-        /// Forces all clients to update their hero behaviour algorithms.
+        /// Fired when client is ready for initial sync.
         /// </summary>
-        /// <param name="alg"></param>
+        /// <returns></returns>
+        public Task ClientIsReady()
+        {
+            var data = new
+            {
+                algorithm = game.GameState.Hero.Algorithm,
+                mapSize = Design.MapSize
+            };
+
+            // TODO change when multiplayer is done
+            return this.Clients.All.SendAsync("InitClient", data);
+        }
+
         public Task SendCodeUpdate(BehaviourAlgorithm alg)
         {
             // TODO this should be changed when multiplayer happens, because each hero

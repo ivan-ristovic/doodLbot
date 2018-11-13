@@ -1,9 +1,10 @@
 "use strict";
 // https://github.com/kittykatattack/learningPixi
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+console.log(connection.on);
 
-connection.on("ReceiveMessage", function(user, message) {
+connection.on("ReceiveMessage", function (user, message) {
     var li = document.createElement("li");
     li.innerHTML = user + " says " + message;
     document.querySelector("#consoleDiv ul").appendChild(li);
@@ -20,7 +21,7 @@ let consoleKeyFunc = () => {
 let testKeyFunc = () => {
     connection
         .invoke("SendMessage", "user69", "thisIsTheMessage")
-        .catch(function(err) {
+        .catch(function (err) {
             return console.error(err.toString());
         });
 };
@@ -36,13 +37,13 @@ function onStateUpdate(gameState) {
 }
 
 function sendUpdateToServer(update) {
-    connection.invoke("updateGameState", update).catch(function(err) {
+    connection.invoke("updateGameState", update).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
 function sendCodeUpdateToServer(code) {
-    connection.invoke("algorithmUpdated", code).catch(function(err) {
+    connection.invoke("algorithmUpdated", code).catch(function (err) {
         return console.error(err.toString());
     });
 }
@@ -50,14 +51,14 @@ function sendCodeUpdateToServer(code) {
 // stores codeBlocks data as an object
 let CodeBlocks = null;
 
-function createBlockLayout() {
+function createBlockLayout(domBlockIdNum) {
     let div = $("<div />")
         .addClass("card")
         .addClass("codeBlock")
 
-    let checkbox = $("<input />", { type: 'checkbox', id: 'isOn' }).
+    let checkbox = $("<input />", { type: 'checkbox', id: domBlockIdNum }).
         addClass("isOnCheckbox");
-    let label = $("<label />", { for: "isOn" }).
+    let label = $("<label />", { for: domBlockIdNum }).
         addClass("titleLabel");
 
     let title = $("<div />")
@@ -74,11 +75,11 @@ function createBlockLayout() {
 
 function addBlockType(blockDiv, blockJson) {
     let type = blockJson.type;
-    let isOn = blockJson.isOn;
+    let isActive = blockJson.isActive;
 
     blockDiv.addClass(type);
 
-    $($(blockDiv).find(".isOnCheckbox")[0]).val(isOn);
+    $($(blockDiv).find(".isOnCheckbox")[0]).val(isActive);
     $($(blockDiv).find(".titleLabel")[0]).text(type);
 
     return blockDiv;
@@ -94,8 +95,8 @@ function addBranchingData(blockDiv) {
     return blockDiv;
 }
 
-function createBlockType(blockJson) {
-    var basicBlock = createBlockLayout();
+function createBlockType(blockJson, domBlockIdNum) {
+    var basicBlock = createBlockLayout(domBlockIdNum);
     var blockType = addBlockType(basicBlock, blockJson);
 
     if (blockJson.type == "BranchingElement") {
@@ -108,12 +109,9 @@ function createBlockType(blockJson) {
 }
 
 function appendBlockAndChildren(blockJson, whereToAppend) {
-    var blockDiv = createBlockType(blockJson);
+    var blockDiv = createBlockType(blockJson, codeBlockIdNum);
     whereToAppend.append(blockDiv);
-
-    console.log("IN FUNC");
-    console.log(blockJson.type)
-    console.log(blockJson)
+    codeBlockIdNum += 1;
 
     if (blockJson.type == "BranchingElement") {
         appendBlockAndChildren(blockJson.cond, blockDiv.find(".branchingIf"));
@@ -126,20 +124,79 @@ function appendBlockAndChildren(blockJson, whereToAppend) {
     }
 }
 
+var codeBlockIdNum = 0;
+
 function updateCodeBlocks(data) {
     CodeBlocks = data;
-    console.log(data);
+    codeBlockIdNum = 0;
 
+    $("#codeBlocks").innerHTML = "";
     for (var i = 0; i < data.elements.length; i++) {
-        console.log("block:");
-        console.log(data.elements[i]);
         appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
     }
+
+    // test
+    let x = generateCodeBlocksJson($("#codeBlocks"));
+}
+
+function generateCodeBlocksJson(container) {
+    if (!container)
+        return;
+
+    let containerChildren = $(container).children();
+    let arr = containerChildren.map(function (index) {
+        let type = $(containerChildren[index]).find(".titleLabel")[0].innerHTML;
+
+        var jsonData = {
+            "type": type,
+        }
+
+        if (type === "BranchingElement") {
+            jsonData.cond = generateCodeBlocksJson($(containerChildren[index]).find(".branchingIf")[0]);
+            jsonData.then = generateCodeBlocksJson($(containerChildren[index]).find(".branchingThen")[0]);
+            jsonData.else = generateCodeBlocksJson($(containerChildren[index]).find(".branchingElse")[0]);
+        }
+
+        if (!$(containerChildren[index]).is("#codeBlocks")) {
+            let isChecked = $(containerChildren[index]).find("input")[0].value == "checked";
+            jsonData.isActive = isChecked;
+        }
+
+        return jsonData;
+    })
+    let a = arr.toArray();
+
+    if ($(container).hasClass("branchingIf")) {
+        // branching if only has 1 child
+        a = a[0];
+    } else {
+        a = { "elements": a };
+        if ($(container).hasClass("branchingThen") ||
+            $(container).hasClass("branchingElse")) {
+            a.type = "CodeBlockElement";
+        }
+    }
+
+    if (!$(container).is("#codeBlocks")) {
+        let isChecked = $(container).find("input")[0].value == "checked";
+        a.isActive = isChecked;
+    }
+
+    return a;
 }
 
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
 connection.on("UpdateCodeBlocks", updateCodeBlocks);
+connection.on("InitClient", initClient);
+
+function initClient(data) {
+    let alg = data.algorithm;
+    updateCodeBlocks(alg);
+    // TODO, set all other data here,
+    // example: map with/height
+}
+
 
 
 var FramesSinceLastUpdate = 0;
@@ -527,8 +584,13 @@ function keyboard(keyCode) {
 }
 
 PIXI.utils.sayHello(type);
-connection.start().catch(function(err) {
+resize();
+
+connection.start().then(function () {
+    console.log('connection started');
+    connection.invoke("ClientIsReady").catch(function (err) {
+        return console.error(err.toString());
+    });
+}).catch(function (err) {
     return console.error(err.toString());
 });
-resize();
-// use new Container() when grouping of sprites is needed
