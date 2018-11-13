@@ -3,7 +3,7 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-connection.on("ReceiveMessage", function(user, message) {
+connection.on("ReceiveMessage", function (user, message) {
     var li = document.createElement("li");
     li.innerHTML = user + " says " + message;
     document.querySelector("#consoleDiv ul").appendChild(li);
@@ -20,7 +20,7 @@ let consoleKeyFunc = () => {
 let testKeyFunc = () => {
     connection
         .invoke("SendMessage", "user69", "thisIsTheMessage")
-        .catch(function(err) {
+        .catch(function (err) {
             return console.error(err.toString());
         });
 };
@@ -36,13 +36,13 @@ function onStateUpdate(gameState) {
 }
 
 function sendUpdateToServer(update) {
-    connection.invoke("updateGameState", update).catch(function(err) {
+    connection.invoke("updateGameState", update).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
 function sendCodeUpdateToServer(code) {
-    connection.invoke("algorithmUpdated", code).catch(function(err) {
+    connection.invoke("algorithmUpdated", code).catch(function (err) {
         return console.error(err.toString());
     });
 }
@@ -50,14 +50,14 @@ function sendCodeUpdateToServer(code) {
 // stores codeBlocks data as an object
 let CodeBlocks = null;
 
-function createBlockLayout(dodeBlockIdNum) {
+function createBlockLayout(domBlockIdNum) {
     let div = $("<div />")
         .addClass("card")
         .addClass("codeBlock")
 
-    let checkbox = $("<input />", { type: 'checkbox', id: dodeBlockIdNum, checked: true }).
+    let checkbox = $("<input />", { type: 'checkbox', id: domBlockIdNum }).
         addClass("isOnCheckbox");
-    let label = $("<label />", { for: dodeBlockIdNum }).
+    let label = $("<label />", { for: domBlockIdNum }).
         addClass("titleLabel");
 
     let title = $("<div />")
@@ -74,11 +74,11 @@ function createBlockLayout(dodeBlockIdNum) {
 
 function addBlockType(blockDiv, blockJson) {
     let type = blockJson.type;
-    let isOn = blockJson.isOn;
+    let isActive = blockJson.isActive;
 
     blockDiv.addClass(type);
 
-    $($(blockDiv).find(".isOnCheckbox")[0]).val(isOn);
+    $($(blockDiv).find(".isOnCheckbox")[0]).val(isActive);
     $($(blockDiv).find(".titleLabel")[0]).text(type);
 
     return blockDiv;
@@ -94,8 +94,8 @@ function addBranchingData(blockDiv) {
     return blockDiv;
 }
 
-function createBlockType(blockJson, dodeBlockIdNum) {
-    var basicBlock = createBlockLayout(dodeBlockIdNum);
+function createBlockType(blockJson, domBlockIdNum) {
+    var basicBlock = createBlockLayout(domBlockIdNum);
     var blockType = addBlockType(basicBlock, blockJson);
 
     if (blockJson.type == "BranchingElement") {
@@ -111,10 +111,6 @@ function appendBlockAndChildren(blockJson, whereToAppend) {
     var blockDiv = createBlockType(blockJson, codeBlockIdNum);
     whereToAppend.append(blockDiv);
     codeBlockIdNum += 1;
-
-    //console.log("IN FUNC");
-    //console.log(blockJson.type)
-    //console.log(blockJson)
 
     if (blockJson.type == "BranchingElement") {
         appendBlockAndChildren(blockJson.cond, blockDiv.find(".branchingIf"));
@@ -136,15 +132,13 @@ function updateCodeBlocks(data) {
     codeBlockIdNum = 0;
 
     for (var i = 0; i < data.elements.length; i++) {
-        //console.log("block:");
-        //console.log(data.elements[i]);
         appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
     }
 
     // test
     let x = generateCodeBlocksJson($("#codeBlocks"));
     console.log(x);
-    console.log(x.toString());
+    //console.log(x.toString());
 }
 
 function generateCodeBlocksJson(container) {
@@ -152,7 +146,7 @@ function generateCodeBlocksJson(container) {
         return;
 
     let containerChildren = $(container).children();
-    let arr = containerChildren.map(function(index) {
+    let arr = containerChildren.map(function (index) {
         let type = $(containerChildren[index]).find(".titleLabel")[0].innerHTML;
 
         var jsonData = {
@@ -165,9 +159,32 @@ function generateCodeBlocksJson(container) {
             jsonData.else = generateCodeBlocksJson($(containerChildren[index]).find(".branchingElse")[0]);
         }
 
+        if (!$(containerChildren[index]).is("#codeBlocks")) {
+            let isChecked = $(containerChildren[index]).find("input")[0].value == "checked";
+            jsonData.isActive = isChecked;
+        }
+
         return jsonData;
     })
-    return arr.toArray();
+    let a = arr.toArray();
+
+    if ($(container).hasClass("branchingIf")) {
+        // branching if only has 1 child
+        a = a[0];
+    } else {
+        a = { "elements": a };
+        if ($(container).hasClass("branchingThen") ||
+            $(container).hasClass("branchingElse")) {
+            a.type = "CodeBlockElement";
+        }
+    }
+
+    if (!$(container).is("#codeBlocks")) {
+        let isChecked = $(container).find("input")[0].value == "checked";
+        a.isActive = isChecked;
+    }
+
+    return a;
 }
 
 // server pushes data to client
@@ -559,7 +576,7 @@ function keyboard(keyCode) {
 }
 
 PIXI.utils.sayHello(type);
-connection.start().catch(function(err) {
+connection.start().catch(function (err) {
     return console.error(err.toString());
 });
 resize();
