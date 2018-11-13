@@ -18,7 +18,7 @@ namespace doodLbot.Logic
         static private readonly AsyncExecutor _async = new AsyncExecutor();
 
         // TODO track if code blocks have changed
-        static bool codeBlocksChanged = true;
+        static bool codeBlocksChanged = false;
 
         // executes one tick of the game
         static private void UpdateCallback(object _)

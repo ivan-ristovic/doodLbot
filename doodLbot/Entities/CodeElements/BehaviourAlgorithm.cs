@@ -15,17 +15,16 @@ namespace doodLbot.Entities.CodeElements
         private readonly List<BaseCodeElement> codeElements;
         private readonly object codeElementsLock;
 
-
         public BehaviourAlgorithm()
         {
             this.codeElements = new List<BaseCodeElement>();
             this.codeElementsLock = new object();
         }
-        
 
         public void Insert(BaseCodeElement element, int? index = null)
         {
-            lock (this.codeElementsLock) {
+            lock (this.codeElementsLock)
+            {
                 if (index is null)
                     this.codeElements.Add(element);
                 else
@@ -41,7 +40,8 @@ namespace doodLbot.Entities.CodeElements
 
         public void Execute(GameState state)
         {
-            lock (this.codeElementsLock) {
+            lock (this.codeElementsLock)
+            {
                 if (!this.codeElements.Any())
                     return;
 

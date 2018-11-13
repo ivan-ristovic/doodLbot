@@ -1,7 +1,8 @@
 "use strict";
 // https://github.com/kittykatattack/learningPixi
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+console.log(connection.on);
 
 connection.on("ReceiveMessage", function (user, message) {
     var li = document.createElement("li");
@@ -127,18 +128,15 @@ var codeBlockIdNum = 0;
 
 function updateCodeBlocks(data) {
     CodeBlocks = data;
-    console.log(data);
-
     codeBlockIdNum = 0;
 
+    $("#codeBlocks").innerHTML = "";
     for (var i = 0; i < data.elements.length; i++) {
         appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
     }
 
     // test
     let x = generateCodeBlocksJson($("#codeBlocks"));
-    console.log(x);
-    //console.log(x.toString());
 }
 
 function generateCodeBlocksJson(container) {
@@ -190,6 +188,16 @@ function generateCodeBlocksJson(container) {
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
 connection.on("UpdateCodeBlocks", updateCodeBlocks);
+connection.on("InitClient", initClient);
+
+function initClient(data) {
+    let alg = data.algorithm;
+    updateCodeBlocks(alg);
+    // TODO, set all other data here,
+    // example: map with/height
+}
+
+
 
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = 30; // TODO server should tell client its tickrate
@@ -576,8 +584,13 @@ function keyboard(keyCode) {
 }
 
 PIXI.utils.sayHello(type);
-connection.start().catch(function (err) {
+resize();
+
+connection.start().then(function () {
+    console.log('connection started');
+    connection.invoke("ClientIsReady").catch(function (err) {
+        return console.error(err.toString());
+    });
+}).catch(function (err) {
     return console.error(err.toString());
 });
-resize();
-// use new Container() when grouping of sprites is needed

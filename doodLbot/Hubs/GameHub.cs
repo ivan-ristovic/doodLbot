@@ -26,18 +26,27 @@ namespace doodLbot.Hubs
         public Task UpdateGameState(GameStateUpdate update)
         {
             this.game.UpdateControls(update);
-            return Task.CompletedTask; 
+            return Task.CompletedTask;
         }
 
         // TODO remove, this is a communication test
         public Task SendMessage(string user, string message)
         {
-
             // TODO remove
             this.AlgorithmUpdated(null);
 
-            game.SpawnEnemy(doodLbot.Logic.Design.SpawnRange);
+            game.SpawnEnemy(Design.SpawnRange);
             return this.Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
+
+        public Task ClientIsReady()
+        {
+            var data = new
+            {
+                algorithm = game.GameState.Hero.Algorithm,
+                mapSize = Design.MapSize
+            };
+            return this.Clients.All.SendAsync("InitClient", data);
         }
 
         public Task SendCodeUpdate(BehaviourAlgorithm alg)
@@ -62,7 +71,7 @@ namespace doodLbot.Hubs
             dynamic elements = jsonVal;
 
             var algorithm = new BehaviourAlgorithm();
-            foreach (dynamic element in elements) 
+            foreach (dynamic element in elements)
                 algorithm.Insert(DeserializeCodeElementInternal(element));
 
             this.game.GameState.Hero.Algorithm = algorithm;
@@ -71,7 +80,8 @@ namespace doodLbot.Hubs
 
             BaseCodeElement DeserializeCodeElementInternal(dynamic element)
             {
-                switch ((string)element["type"]) {
+                switch ((string)element["type"])
+                {
                     case "ShootElement":
                         return new ShootElement();
                     case "CodeBlockElement":
@@ -87,8 +97,8 @@ namespace doodLbot.Hubs
                         foreach (dynamic child in element.@else)
                             elseBlock.Add(DeserializeCodeElementInternal(child));
                         return new BranchingElement(
-                            DeserializeConditionElementInternal(element["cond"]), 
-                            new CodeBlockElement(thenBlock), 
+                            DeserializeConditionElementInternal(element["cond"]),
+                            new CodeBlockElement(thenBlock),
                             new CodeBlockElement(elseBlock)
                         );
                     default:
@@ -98,7 +108,8 @@ namespace doodLbot.Hubs
 
             BaseConditionElement DeserializeConditionElementInternal(dynamic element)
             {
-                switch ((string)element["type"]) {
+                switch ((string)element["type"])
+                {
                     case "IsEnemyNearCondition":
                         return new IsEnemyNearCondition();
                     default:
