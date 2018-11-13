@@ -1,5 +1,7 @@
 ﻿using doodLbot.Logic;
+
 using Newtonsoft.Json;
+
 using System.Collections.Generic;
 
 namespace doodLbot.Entities.CodeElements
@@ -7,12 +9,12 @@ namespace doodLbot.Entities.CodeElements
     public class CodeBlockElement : BaseCodeElement
     {
         [JsonProperty("elements")]
-        private readonly ICollection<BaseCodeElement> CodeElements;
+        public IReadOnlyCollection<BaseCodeElement> CodeElements { get; }
 
 
         public CodeBlockElement(ICollection<BaseCodeElement> elements)
         {
-            this.CodeElements = elements;
+            this.CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
         }
 
 
