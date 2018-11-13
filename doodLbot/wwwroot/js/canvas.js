@@ -1,229 +1,57 @@
 "use strict";
 // https://github.com/kittykatattack/learningPixi
 
-let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
-console.log(connection.on);
-
-connection.on("ReceiveMessage", function (user, message) {
-    var li = document.createElement("li");
-    li.innerHTML = user + " says " + message;
-    document.querySelector("#consoleDiv ul").appendChild(li);
-    console.log("Recieved message!", user, message);
-});
-
-// on '~' press
-let consoleKeyFunc = () => {
-    $("#consoleDiv").toggleClass("hiddenConsole");
-    event.preventDefault();
-}
-
-// on 't' press
-let testKeyFunc = () => {
-    connection
-        .invoke("SendMessage", "user69", "thisIsTheMessage")
-        .catch(function (err) {
-            return console.error(err.toString());
-        });
-};
-var timesRecieved = 0;
-
 function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
     //console.log(timesRecieved);
     GAMESTATE = new GameState(gameState);
-    //countTimesPerSecond(true);
+    //counter.countTimesPerSecond(true);
     //console.log(gameState);
 }
-
-function sendUpdateToServer(update) {
-    connection.invoke("updateGameState", update).catch(function (err) {
-        return console.error(err.toString());
-    });
-}
-
-function sendCodeUpdateToServer(code) {
-    connection.invoke("algorithmUpdated", code).catch(function (err) {
-        return console.error(err.toString());
-    });
-}
-
-// stores codeBlocks data as an object
-let CodeBlocks = null;
-
-function createBlockLayout(domBlockIdNum) {
-    let div = $("<div />")
-        .addClass("card")
-        .addClass("codeBlock")
-
-    let checkbox = $("<input />", { type: 'checkbox', id: domBlockIdNum }).
-        addClass("isOnCheckbox");
-    let label = $("<label />", { for: domBlockIdNum }).
-        addClass("titleLabel");
-
-    let title = $("<div />")
-        .addClass("title")
-
-    title.append(checkbox);
-    title.append(label);
-
-    div.append(title);
-    div.append($("<hr/>"));
-
-    return div;
-}
-
-function addBlockType(blockDiv, blockJson) {
-    let type = blockJson.type;
-    let isActive = blockJson.isActive;
-
-    blockDiv.addClass(type);
-
-    $($(blockDiv).find(".isOnCheckbox")[0]).val(isActive);
-    $($(blockDiv).find(".titleLabel")[0]).text(type);
-
-    return blockDiv;
-}
-
-function addBranchingData(blockDiv) {
-    blockDiv.append($("<div />").addClass("branchingIf").addClass("dropPart"));
-    blockDiv.append("<hr />");
-    blockDiv.append($("<div />").addClass("branchingThen").addClass("dropPart"));
-    blockDiv.append("<hr />");
-    blockDiv.append($("<div />").addClass("branchingElse").addClass("dropPart"));
-
-    return blockDiv;
-}
-
-function createBlockType(blockJson, domBlockIdNum) {
-    var basicBlock = createBlockLayout(domBlockIdNum);
-    var blockType = addBlockType(basicBlock, blockJson);
-
-    if (blockJson.type == "BranchingElement") {
-        blockType = addBranchingData(blockType);
-    } else {
-        blockType.append("<div />").addClass("dropPart");
-    }
-
-    return blockType;
-}
-
-function appendBlockAndChildren(blockJson, whereToAppend) {
-    var blockDiv = createBlockType(blockJson, codeBlockIdNum);
-    whereToAppend.append(blockDiv);
-    codeBlockIdNum += 1;
-
-    if (blockJson.type == "BranchingElement") {
-        appendBlockAndChildren(blockJson.cond, blockDiv.find(".branchingIf"));
-        for (var i = 0; i < blockJson.then.elements.length; i++) {
-            appendBlockAndChildren(blockJson.then.elements[i], blockDiv.find(".branchingThen"));
-        }
-        for (var i = 0; i < blockJson.else.elements.length; i++) {
-            appendBlockAndChildren(blockJson.else.elements[i], blockDiv.find(".branchingElse"));
-        }
-    }
-}
-
-var codeBlockIdNum = 0;
-
-function updateCodeBlocks(data) {
-    CodeBlocks = data;
-    codeBlockIdNum = 0;
-
-    $("#codeBlocks").innerHTML = "";
-    for (var i = 0; i < data.elements.length; i++) {
-        appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
-    }
-
-    // test
-    let x = generateCodeBlocksJson($("#codeBlocks"));
-}
-
-function generateCodeBlocksJson(container) {
-    if (!container)
-        return;
-
-    let containerChildren = $(container).children();
-    let arr = containerChildren.map(function (index) {
-        let type = $(containerChildren[index]).find(".titleLabel")[0].innerHTML;
-
-        var jsonData = {
-            "type": type,
-        }
-
-        if (type === "BranchingElement") {
-            jsonData.cond = generateCodeBlocksJson($(containerChildren[index]).find(".branchingIf")[0]);
-            jsonData.then = generateCodeBlocksJson($(containerChildren[index]).find(".branchingThen")[0]);
-            jsonData.else = generateCodeBlocksJson($(containerChildren[index]).find(".branchingElse")[0]);
-        }
-
-        if (!$(containerChildren[index]).is("#codeBlocks")) {
-            let isChecked = $(containerChildren[index]).find("input")[0].value == "checked";
-            jsonData.isActive = isChecked;
-        }
-
-        return jsonData;
-    })
-    let a = arr.toArray();
-
-    if ($(container).hasClass("branchingIf")) {
-        // branching if only has 1 child
-        a = a[0];
-    } else {
-        a = { "elements": a };
-        if ($(container).hasClass("branchingThen") ||
-            $(container).hasClass("branchingElse")) {
-            a.type = "CodeBlockElement";
-        }
-    }
-
-    if (!$(container).is("#codeBlocks")) {
-        let isChecked = $(container).find("input")[0].value == "checked";
-        a.isActive = isChecked;
-    }
-
-    return a;
-}
-
-// server pushes data to client
-connection.on("StateUpdate", onStateUpdate);
-connection.on("UpdateCodeBlocks", updateCodeBlocks);
-connection.on("InitClient", initClient);
-
-function initClient(data) {
-    let alg = data.algorithm;
-    updateCodeBlocks(alg);
-    // TODO, set all other data here,
-    // example: map with/height
-}
-
-
 
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = 30; // TODO server should tell client its tickrate
 var MulSpeedsWith = ServerTickrate / 60;
 
-var oldCountTime = performance.now();
-var frame = 0;
-var timeSum = 0;
+// sprites
+let cat;
+let heroHealthBar;
 
-function countTimesPerSecond(shouldPrint) {
-    const now = performance.now();
-    let diff = now - oldCountTime;
-    oldCountTime = now;
-    frame++;
-    timeSum += diff;
-    if (timeSum > 1000) {
-        if (shouldPrint) {
-            let txt = "fps = " + (frame * 1000) / timeSum;
-            //console.log(txt);
-            document.querySelector("#fps").innerHTML = txt;
+// currently is only assigned to play inside setup(),
+// but can be assigned to something else if needed, eg. menu.
+let WhatToRender;
+
+let enemyTexture;
+
+let EnemySprites = [];
+let ProjectileSprites = [];
+let EnemyHps = [];
+
+let Counter = function(){
+    var oldCountTime = performance.now();
+    var frame = 0;
+    var timeSum = 0;
+    this.countTimesPerSecond = function (shouldPrint) {
+        const now = performance.now();
+        let diff = now - oldCountTime;
+        oldCountTime = now;
+        frame++;
+        timeSum += diff;
+        if (timeSum > 1000) {
+            if (shouldPrint) {
+                let txt = "fps = " + (frame * 1000) / timeSum;
+                //console.log(txt);
+                document.querySelector("#fps").innerHTML = txt;
+            }
+            timeSum -= 1000;
+            frame = 0;
+            timeSum = 0;
         }
-        timeSum -= 1000;
-        frame = 0;
-        timeSum = 0;
     }
 }
+
+let counter = new Counter();
 
 // parent class for hero and enemies
 class Entity {
@@ -274,9 +102,6 @@ class Enemy extends Entity { }
 
 // holds all needed game-state, which will be updated by backend
 class GameState {
-    // this.hero
-    // this.enemies = []
-    // this.bullets = []
     constructor(obj) {
         if (obj !== undefined) {
             let cast = Object.assign(this, obj);
@@ -284,6 +109,7 @@ class GameState {
         }
         console.log("WARNIG! GameState invalid obj");
     }
+
     getEnemies() {
         return this.enemies;
     }
@@ -300,18 +126,7 @@ class GameState {
         }
         sendUpdateToServer(data);
     }
-
-    // dummy placeholder instead of server update
-    dummy() {
-        let hero = GAMESTATE.getHero();
-        hero.x += hero.vx;
-        hero.y += hero.vy;
-    }
 }
-
-let EnemySprites = [];
-let ProjectileSprites = [];
-let EnemyHps = [];
 
 function updateProjectiles() {
     // TODO - maybe it can be nicely merged with updateEnemies(),
@@ -441,13 +256,6 @@ function resize() {
 // The stage object is the root container for all the visible things in your scene.
 // Whatever you put inside the stage will be rendered on the canvas.
 // app.stage
-
-// images need to be added to texture cache for gpu
-
-// importing images from local filesystem is prohibited
-// Instead, you need to run a local server to serve your files.
-
-// spritesheet is an efficient way to store multiple sprites
 loader
     .add([
         "images/hero.png",
@@ -461,21 +269,9 @@ loader
 
 function loadProgressHandler(loader, resource) {
     console.log("loading");
-    //Display the file `url` currently being loaded
     console.log("loading: " + resource.url);
-    //Display the percentage of files currently loaded
     console.log("progress: " + loader.progress + "%");
 }
-
-// sprites
-let cat;
-let heroHealthBar;
-
-// currently is only assigned to play inside setup(),
-// but can be assigned to something else if needed, eg. menu.
-let WhatToRender;
-
-let enemyTexture;
 
 function setup() {
     console.log("All files loaded");
@@ -493,18 +289,6 @@ function setup() {
     app.stage.addChild(cat);
     app.stage.addChild(heroHealthBar);
 
-    let left = keyboard(65),
-        up = keyboard(87),
-        right = keyboard(68),
-        down = keyboard(83),
-        space = keyboard(32);
-
-    let testKey = keyboard(84);
-    testKey.press = testKeyFunc;
-
-    let consoleKey = keyboard(192);
-    consoleKey.press = consoleKeyFunc;
-
     WhatToRender = play;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
@@ -513,12 +297,10 @@ function setup() {
 // delta is 1 if running at 100% performance
 // creates frame-independent transformation
 function gameLoop(delta) {
-    // console.log(delta)
     WhatToRender(delta);
 }
 
 function play(delta) {
-    // console.log(delta)
     if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
         let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
@@ -529,7 +311,7 @@ function play(delta) {
         cat.rotation = hero.rotation;
         Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
     }
-    countTimesPerSecond(true);
+    counter.countTimesPerSecond(true);
 
     updateEnemies();
     updateProjectiles();
@@ -537,60 +319,13 @@ function play(delta) {
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
 }
-//Add the canvas that Pixi automatically created for you to the HTML document
 
 let type = "WebGL";
 if (!PIXI.utils.isWebGLSupported()) {
     type = "canvas";
 }
 
-// listens for the given keyCode
-function keyboard(keyCode) {
-    let key = {};
-    key.code = keyCode;
-    key.isDown = false;
-    key.isUp = true;
-    key.press = undefined;
-    key.release = undefined;
-    //The `downHandler`
-    key.downHandler = event => {
-        if (event.keyCode === key.code) {
-            //console.log("pressed", key.code);
-            UPDATES_FOR_BACKEND.addKeyPress(key.code);
-            if (key.isUp && key.press) key.press();
-            key.isDown = true;
-            key.isUp = false;
-            event.preventDefault();
-            return;
-        }
-    };
-
-    //The `upHandler`
-    key.upHandler = event => {
-        if (event.keyCode === key.code) {
-            UPDATES_FOR_BACKEND.addKeyRelease(key.code);
-            if (key.isDown && key.release) key.release();
-            key.isDown = false;
-            key.isUp = true;
-            event.preventDefault();
-            return;
-        }
-    };
-
-    //Attach event listeners
-    window.addEventListener("keydown", key.downHandler.bind(key), false);
-    window.addEventListener("keyup", key.upHandler.bind(key), false);
-    return key;
-}
-
 PIXI.utils.sayHello(type);
 resize();
 
-connection.start().then(function () {
-    console.log('connection started');
-    connection.invoke("ClientIsReady").catch(function (err) {
-        return console.error(err.toString());
-    });
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+startConnection();
