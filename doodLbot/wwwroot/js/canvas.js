@@ -50,35 +50,91 @@ function sendCodeUpdateToServer(code) {
 // stores codeBlocks data as an object
 let CodeBlocks = null;
 
-function updateCodeBlocks(data) {
-    CodeBlocks = data;
-    console.log(data);
+function createBlockLayout() {
     let div = $("<div />")
         .addClass("card")
         .addClass("codeBlock")
-        .addClass(data.elements[0].type);
 
-    let checkbox = $("<input />", { type: 'checkbox', id: 'isOn', value: data.elements[0].isOn });
-    let label = $("<label />", { for: "isOn" }).text(data.elements[0].type);
+    let checkbox = $("<input />", { type: 'checkbox', id: 'isOn' }).
+        addClass("isOnCheckbox");
+    let label = $("<label />", { for: "isOn" }).
+        addClass("titleLabel");
 
     let title = $("<div />")
         .addClass("title")
 
-
-    checkbox.change(function() {
-        console.log("Is this checked?", this.checked);
-        CodeBlocks.elements[0].isOn = this.checked;
-        sendCodeUpdateToServer(CodeBlocks);
-    });
-
     title.append(checkbox);
     title.append(label);
-
 
     div.append(title);
     div.append($("<hr/>"));
 
-    $("#codeBlocks").append(div);
+    return div;
+}
+
+function addBlockType(blockDiv, blockJson) {
+    let type = blockJson.type;
+    let isOn = blockJson.isOn;
+
+    blockDiv.addClass(type);
+
+    $($(blockDiv).find(".isOnCheckbox")[0]).val(isOn);
+    $($(blockDiv).find(".titleLabel")[0]).text(type);
+
+    return blockDiv;
+}
+
+function addBranchingData(blockDiv) {
+    blockDiv.append($("<div />").addClass("branchingIf").addClass("dropPart"));
+    blockDiv.append("<hr />");
+    blockDiv.append($("<div />").addClass("branchingThen").addClass("dropPart"));
+    blockDiv.append("<hr />");
+    blockDiv.append($("<div />").addClass("branchingElse").addClass("dropPart"));
+
+    return blockDiv;
+}
+
+function createBlockType(blockJson) {
+    var basicBlock = createBlockLayout();
+    var blockType = addBlockType(basicBlock, blockJson);
+
+    if (blockJson.type == "BranchingElement") {
+        blockType = addBranchingData(blockType);
+    } else {
+        blockType.append("<div />").addClass("dropPart");
+    }
+
+    return blockType;
+}
+
+function appendBlockAndChildren(blockJson, whereToAppend) {
+    var blockDiv = createBlockType(blockJson);
+    whereToAppend.append(blockDiv);
+
+    console.log("IN FUNC");
+    console.log(blockJson.type)
+    console.log(blockJson)
+
+    if (blockJson.type == "BranchingElement") {
+        appendBlockAndChildren(blockJson.cond, blockDiv.find(".branchingIf"));
+        for (var i = 0; i < blockJson.then.elements.length; i++) {
+            appendBlockAndChildren(blockJson.then.elements[i], blockDiv.find(".branchingThen"));
+        }
+        for (var i = 0; i < blockJson.else.elements.length; i++) {
+            appendBlockAndChildren(blockJson.else.elements[i], blockDiv.find(".branchingElse"));
+        }
+    }
+}
+
+function updateCodeBlocks(data) {
+    CodeBlocks = data;
+    console.log(data);
+
+    for (var i = 0; i < data.elements.length; i++) {
+        console.log("block:");
+        console.log(data.elements[i]);
+        appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
+    }
 }
 
 // server pushes data to client

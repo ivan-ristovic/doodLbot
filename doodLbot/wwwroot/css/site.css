@@ -58,7 +58,7 @@ html, body {
 
 .codeBlock {
     padding-top: 4px;
-    padding-bottom: 80px;
+    margin: 10px;
 }
 
     .codeBlock > .title {
@@ -72,6 +72,10 @@ html, body {
         margin: 0 4px;
     }
 
+    .codeBlock .dropPart {
+        padding: 20px 0;
+    }
+
 /*https://www.w3schools.com/colors/colors_crayola.asp Silver Colors*/
 .ShootElement,
 .ShootElement [type="checkbox"]:checked + label:after,
@@ -83,4 +87,10 @@ html, body {
 .BranchingElement [type="checkbox"]:checked + label:after,
 .BranchingElement [type="checkbox"]:not(:checked) + label:after {
     background: #6EAEA1 !important;
+}
+
+.IdleElement,
+.IdleElement [type="checkbox"]:checked + label:after,
+.IdleElement [type="checkbox"]:not(:checked) + label:after {
+    background: #A6A6A6 !important;
 }

@@ -89,9 +89,13 @@ namespace doodLbot.Logic
             var shootElement = new Entities.CodeElements.ShootElement();
             var shootElementList = new List<Entities.CodeElements.BaseCodeElement>();
             shootElementList.Add(shootElement);
+            shootElementList.Add(shootElement);
+            shootElementList.Add(shootElement);
 
             var idleElement = new Entities.CodeElements.IdleElement();
             var idleElementList = new List<Entities.CodeElements.BaseCodeElement>();
+            idleElementList.Add(idleElement);
+            idleElementList.Add(shootElement);
             idleElementList.Add(idleElement);
 
             var branchingElement = new Entities.CodeElements.BranchingElement(
@@ -100,6 +104,8 @@ namespace doodLbot.Logic
                 new Entities.CodeElements.CodeBlockElement(idleElementList));
 
             hero.Algorithm.Insert(branchingElement);
+            hero.Algorithm.Insert(idleElement);
+            hero.Algorithm.Insert(shootElement);
             // testing end
         }
 
