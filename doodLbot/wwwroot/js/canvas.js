@@ -50,14 +50,14 @@ function sendCodeUpdateToServer(code) {
 // stores codeBlocks data as an object
 let CodeBlocks = null;
 
-function createBlockLayout() {
+function createBlockLayout(dodeBlockIdNum) {
     let div = $("<div />")
         .addClass("card")
         .addClass("codeBlock")
 
-    let checkbox = $("<input />", { type: 'checkbox', id: 'isOn' }).
+    let checkbox = $("<input />", { type: 'checkbox', id: dodeBlockIdNum, checked: true }).
         addClass("isOnCheckbox");
-    let label = $("<label />", { for: "isOn" }).
+    let label = $("<label />", { for: dodeBlockIdNum }).
         addClass("titleLabel");
 
     let title = $("<div />")
@@ -94,8 +94,8 @@ function addBranchingData(blockDiv) {
     return blockDiv;
 }
 
-function createBlockType(blockJson) {
-    var basicBlock = createBlockLayout();
+function createBlockType(blockJson, dodeBlockIdNum) {
+    var basicBlock = createBlockLayout(dodeBlockIdNum);
     var blockType = addBlockType(basicBlock, blockJson);
 
     if (blockJson.type == "BranchingElement") {
@@ -108,12 +108,13 @@ function createBlockType(blockJson) {
 }
 
 function appendBlockAndChildren(blockJson, whereToAppend) {
-    var blockDiv = createBlockType(blockJson);
+    var blockDiv = createBlockType(blockJson, codeBlockIdNum);
     whereToAppend.append(blockDiv);
+    codeBlockIdNum += 1;
 
-    console.log("IN FUNC");
-    console.log(blockJson.type)
-    console.log(blockJson)
+    //console.log("IN FUNC");
+    //console.log(blockJson.type)
+    //console.log(blockJson)
 
     if (blockJson.type == "BranchingElement") {
         appendBlockAndChildren(blockJson.cond, blockDiv.find(".branchingIf"));
@@ -126,21 +127,52 @@ function appendBlockAndChildren(blockJson, whereToAppend) {
     }
 }
 
+var codeBlockIdNum = 0;
+
 function updateCodeBlocks(data) {
     CodeBlocks = data;
     console.log(data);
 
+    codeBlockIdNum = 0;
+
     for (var i = 0; i < data.elements.length; i++) {
-        console.log("block:");
-        console.log(data.elements[i]);
+        //console.log("block:");
+        //console.log(data.elements[i]);
         appendBlockAndChildren(data.elements[i], $("#codeBlocks"));
     }
+
+    // test
+    let x = generateCodeBlocksJson($("#codeBlocks"));
+    console.log(x);
+    console.log(x.toString());
+}
+
+function generateCodeBlocksJson(container) {
+    if (!container)
+        return;
+
+    let containerChildren = $(container).children();
+    let arr = containerChildren.map(function(index) {
+        let type = $(containerChildren[index]).find(".titleLabel")[0].innerHTML;
+
+        var jsonData = {
+            "type": type,
+        }
+
+        if (type === "BranchingElement") {
+            jsonData.cond = generateCodeBlocksJson($(containerChildren[index]).find(".branchingIf")[0]);
+            jsonData.then = generateCodeBlocksJson($(containerChildren[index]).find(".branchingThen")[0]);
+            jsonData.else = generateCodeBlocksJson($(containerChildren[index]).find(".branchingElse")[0]);
+        }
+
+        return jsonData;
+    })
+    return arr.toArray();
 }
 
 // server pushes data to client
 connection.on("StateUpdate", onStateUpdate);
 connection.on("UpdateCodeBlocks", updateCodeBlocks);
-
 
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = 30; // TODO server should tell client its tickrate

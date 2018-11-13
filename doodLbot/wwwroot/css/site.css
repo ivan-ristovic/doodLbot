@@ -76,21 +76,27 @@ html, body {
         padding: 20px 0;
     }
 
-/*https://www.w3schools.com/colors/colors_crayola.asp Silver Colors*/
+/*https://www.color-hex.com/color-palette/19053*/
 .ShootElement,
-.ShootElement [type="checkbox"]:checked + label:after,
-.ShootElement [type="checkbox"]:not(:checked) + label:after {
-    background: #C39953 !important;
+.ShootElement > .title > [type="checkbox"]:checked + label:after,
+.ShootElement > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #fffddb !important;
 }
 
 .BranchingElement,
-.BranchingElement [type="checkbox"]:checked + label:after,
-.BranchingElement [type="checkbox"]:not(:checked) + label:after {
-    background: #6EAEA1 !important;
+.BranchingElement > .title > [type="checkbox"]:checked + label:after,
+.BranchingElement > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #ffd3fd !important;
 }
 
 .IdleElement,
-.IdleElement [type="checkbox"]:checked + label:after,
-.IdleElement [type="checkbox"]:not(:checked) + label:after {
-    background: #A6A6A6 !important;
+.IdleElement > .title > [type="checkbox"]:checked + label:after,
+.IdleElement > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #f1f1f1 !important;
+}
+
+.IsEnemyNearCondition,
+.IsEnemyNearCondition > .title > [type="checkbox"]:checked + label:after,
+.IsEnemyNearCondition > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #d0fffe !important;
 }
