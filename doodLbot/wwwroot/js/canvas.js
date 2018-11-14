@@ -4,10 +4,8 @@
 function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
-    //console.log(timesRecieved);
     GAMESTATE = new GameState(gameState);
-    //counter.countTimesPerSecond(true);
-    //console.log(gameState);
+    serverCounter.countTimesPerSecond(true);
 }
 
 var FramesSinceLastUpdate = 0;
@@ -28,7 +26,7 @@ let EnemySprites = [];
 let ProjectileSprites = [];
 let EnemyHps = [];
 
-let Counter = function(){
+let Counter = function(id){
     var oldCountTime = performance.now();
     var frame = 0;
     var timeSum = 0;
@@ -40,9 +38,10 @@ let Counter = function(){
         timeSum += diff;
         if (timeSum > 1000) {
             if (shouldPrint) {
-                let txt = "fps = " + (frame * 1000) / timeSum;
-                //console.log(txt);
-                document.querySelector("#fps").innerHTML = txt;
+                let isFps = id.includes("fps");
+                let txt = isFps ? "fps" : "server ups";
+                txt += "=" + (frame * 1000) / timeSum;
+                document.querySelector(id).innerHTML = txt;
             }
             timeSum -= 1000;
             frame = 0;
@@ -51,7 +50,8 @@ let Counter = function(){
     }
 }
 
-let counter = new Counter();
+let fpsCounter = new Counter("#fps");
+let serverCounter = new Counter("#serverUps");
 
 // parent class for hero and enemies
 class Entity {
@@ -311,7 +311,7 @@ function play(delta) {
         cat.rotation = hero.rotation;
         Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
     }
-    counter.countTimesPerSecond(true);
+    fpsCounter.countTimesPerSecond(true);
 
     updateEnemies();
     updateProjectiles();

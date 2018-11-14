@@ -48,7 +48,6 @@ namespace doodLbot.Logic
 
             foreach (Projectile projectile in game.hero.Projectiles) {
                 projectile.Move();
-                // TODO: remove projectiles 
             }
 
             game.CheckForCollisionsAndUpdateGame();
