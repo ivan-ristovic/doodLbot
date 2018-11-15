@@ -128,6 +128,18 @@ class GameState {
         sendUpdateToServer(data);
     }
 }
+
+function calcTint(x1, x2, y1, y2) {
+    let a = x1 - x2;
+    let b = y1 - y2;
+
+    let c = Math.sqrt(a * a + b * b);
+    let amount = 1 / (1 + c / 300);
+    let red =  amount * 255;
+    let green = 1 - amount * 255;
+    return (red << 16) + (green << 8) ;
+}
+
 const halfPI = Math.PI / 2;
 function updateProjectiles() {
     // TODO - maybe it can be nicely merged with updateEnemies(),
@@ -181,6 +193,7 @@ function updateEnemies() {
         let newy = enemies[i].y + speedMul * enemies[i].vy;
         EnemySprites[i].position.set(newx, newy);
         EnemySprites[i].visible = true;
+        EnemySprites[i].tint = calcTint(newx, cat.position.x, newy, cat.position.y);
         EnemyHps[i].visible = true;
         Entity.updateHealthBar(newx, newy, enemies[i].hp, EnemyHps[i]);
     }
