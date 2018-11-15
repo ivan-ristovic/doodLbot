@@ -128,7 +128,7 @@ class GameState {
         sendUpdateToServer(data);
     }
 }
-
+const halfPI = Math.PI / 2;
 function updateProjectiles() {
     // TODO - maybe it can be nicely merged with updateEnemies(),
     // the only prob are health bars.
@@ -148,6 +148,8 @@ function updateProjectiles() {
         let newy = projectiles[i].y + speedMul * projectiles[i].vy;
         ProjectileSprites[i].position.set(newx, newy);
         ProjectileSprites[i].visible = true;
+        let ang = Math.atan2(projectiles[i].vy, projectiles[i].vx);
+        ProjectileSprites[i].rotation = ang
     }
 
     for (let i = projectiles.length; i < ProjectileSprites.length; i++) {
@@ -280,7 +282,7 @@ function setup() {
     cat.scale.set(0.5, 0.5);
     // percentage of texture dimensions 0 to 1
     cat.anchor.set(0.5, 0.5);
-    cat.rotation = Math.sqrt(3) / 2; // radians
+    cat.rotation = 0; // radians
 
     heroHealthBar = Entity.createHealthBar(100, 10, cat);
 
