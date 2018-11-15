@@ -17,13 +17,21 @@ namespace doodLbot.Entities.CodeElements
         /// Gets or sets the active flag for this code element.
         /// </summary>
         [JsonProperty("isActive")]
-        public bool IsActive { get; set; }
+        public virtual bool IsActive { get; set; }
 
 
         /// <summary>
         /// Executes this code element.
         /// </summary>
         /// <param name="state"></param>
-        abstract public void Execute(GameState state);
+        public void Execute(GameState state)
+        {
+            if (IsActive)
+            {
+                OnExecute(state);
+            }
+        }
+
+        abstract protected void OnExecute(GameState state);
     }
 }

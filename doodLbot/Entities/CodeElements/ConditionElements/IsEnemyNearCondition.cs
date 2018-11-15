@@ -12,11 +12,10 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         /// <summary>
         /// Constructs a new IsEnemyNearCondition element.
         /// </summary>
-        public IsEnemyNearCondition()
+        protected override void OnExecute(GameState state)
         {
 
         }
-
 
         public override bool Evaluate(GameState state)
         {

@@ -12,8 +12,7 @@ namespace doodLbot.Entities.CodeElements
 
         }
 
-
-        public override void Execute(GameState state)
+        protected override void OnExecute(GameState state)
         {
 
         }

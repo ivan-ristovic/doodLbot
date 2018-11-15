@@ -1,4 +1,5 @@
-﻿using doodLbot.Entities.CodeElements;
+﻿using doodLbot.Common;
+using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
 
 using Newtonsoft.Json.Linq;
@@ -34,7 +35,7 @@ namespace doodLbot.Logic
                 BaseCodeElement ret;
                 switch ((string)element["type"]) {
                     case "ShootElement":
-                        ret =  new ShootElement();
+                        ret =  new ShootElement(new RateLimiter(Design.ShootElementCooldown));
                         break;
                     case "IdleElement":
                         ret = new IdleElement();
@@ -57,6 +58,9 @@ namespace doodLbot.Logic
                             new CodeBlockElement(thenBlock),
                             new CodeBlockElement(elseBlock)
                         );
+                        break;
+                    case "TargetElement":
+                        ret = new TargetElement();
                         break;
                     default:
                         ret = null;

@@ -128,5 +128,17 @@ namespace doodLbot.Entities
         {
             return this.Xpos < 0 || this.Xpos > bounds.X || this.Ypos < 0 || this.Ypos > bounds.Y;
         }
+
+        /// <summary>
+        /// calculates squared distance between entities
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns>squared distance</returns>
+        public double squaredDist(Entity e)
+        {
+            var x = e.Xpos - this.Xpos;
+            var y = e.Xpos - this.Ypos;
+            return x * x + y * y;
+        }
     }
 }

@@ -17,6 +17,11 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("elements")]
         public IReadOnlyCollection<BaseCodeElement> CodeElements { get; }
 
+        /// <summary>
+        /// this is a collection of elements, so it's always active
+        /// </summary>
+        public override bool IsActive { get => true; }
+
 
         /// <summary>
         /// Constructs a new CodeElementBlock from a collection of code elements.
@@ -27,11 +32,12 @@ namespace doodLbot.Entities.CodeElements
             this.CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
         }
 
-
-        public override void Execute(GameState state)
+        protected override void OnExecute(GameState state)
         {
             foreach (BaseCodeElement element in this.CodeElements)
+            {
                 element.Execute(state);
+            }
         }
     }
 }

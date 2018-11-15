@@ -74,7 +74,6 @@ namespace doodLbot.Logic
         private readonly RateLimiter shootRateLimiter;
         private readonly RateLimiter enemySpawnLimiter;
 
-
         /// <summary>
         /// Constructs a new Game which uses a HubContext interface to send data to clients.
         /// </summary>
@@ -92,9 +91,9 @@ namespace doodLbot.Logic
 
             // begin test
             var shootElementList = new List<BaseCodeElement> {
-                new ShootElement(),
-                new ShootElement(),
-                new ShootElement()
+                new TargetElement(),
+                new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
+                new ShootElement(new RateLimiter(Design.ShootElementCooldown))
             };
 
             var idleElementList = new List<BaseCodeElement> {
@@ -111,7 +110,8 @@ namespace doodLbot.Logic
 
             this.hero.Algorithm.Insert(branchingElement);
             this.hero.Algorithm.Insert(new IdleElement());
-            this.hero.Algorithm.Insert(new ShootElement());
+            this.hero.Algorithm.Insert(new ShootElement(
+                new RateLimiter(Design.ShootElementCooldown)));
             // end test
         }
 
@@ -172,7 +172,6 @@ namespace doodLbot.Logic
             this.CheckForCollisionsEnemiesProjectiles();
             this.CheckForCollisionsEnemiesHero();
         }
-
 
         #region Helper functions
 

@@ -1,4 +1,5 @@
-﻿using doodLbot.Logic;
+﻿using doodLbot.Common;
+using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -7,17 +8,18 @@ namespace doodLbot.Entities.CodeElements
     /// </summary>
     public class ShootElement : BaseCodeElement
     {
-        public ShootElement()
+        private RateLimiter shootLimit;
+        public ShootElement(RateLimiter limiter)
         {
-            
+            shootLimit = limiter;
         }
 
-
-        public override void Execute(GameState state)
+        protected override void OnExecute(GameState state)
         {
-            if (!this.IsActive)
-                return;
-            state.Hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
+            if (!shootLimit?.IsCooldownActive() ?? false)
+            {
+                state.Hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
+            }
         }
     }
 }

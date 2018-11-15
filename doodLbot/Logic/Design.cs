@@ -12,6 +12,7 @@
         public static double HeroRadiusSize { get; private set; }
         public static double ProjectileRadiusSize { get; private set; }
         public static double FireCooldown { get; private set; }
+        public static double ShootElementCooldown { get; private set; }
         public static double ProjectileDamage { get; private set; }
 
         public static double HeroStartX { get; private set; }
@@ -28,7 +29,6 @@
 
         public static (double X, double Y) MapSize => (MapWidth, MapHeight);
 
-
         static Design()
         {
             TickRate = 30;
@@ -41,6 +41,7 @@
             BackwardsSpeed = 2 * adjust;
             EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
+            ShootElementCooldown = 0.4;
             RotateAmount = 0.065 * adjust;
 
             HeroStartX = 300;
