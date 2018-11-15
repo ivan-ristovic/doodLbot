@@ -52,10 +52,6 @@ html, body {
         padding: 0 0 0 15px;
     }
 
-#codeBlocks {
-    padding-top: 25px;
-}
-
 .codeBlock {
     padding-top: 4px;
     margin: 10px;
@@ -67,13 +63,32 @@ html, body {
         font-weight: 500;
     }
 
-    .codeBlock > hr {
-        margin-top: 0;
-        margin: 0 4px;
-    }
+        .codeBlock > .title > .dragMe {
+            width: 20px;
+            height: 20px;
+            background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
+            /* TODO MOVE TO LOCAL*/
+            background-size: contain;
+            opacity: .5;
+            float: left;
+            margin: 5px;
+            position: relative;
+            cursor: grab;
+        }
 
-    .codeBlock .dropPart {
-        padding: 20px 0;
+#codeBlocks .dropPart {
+    margin: 0 10px;
+    border-radius: 20px;
+    border: 0 dashed #fff;
+    height:0;
+    background: rgba(255,255,255,0.4);
+    -webkit-transition: all .1s ease; /* Safari */
+    transition: all .1s ease;
+}
+
+    #codeBlocks .dropPart.active {
+        height: 40px !important;
+        border: 2px dashed #ccc !important;
     }
 
 /*https://www.color-hex.com/color-palette/19053*/
@@ -99,4 +114,22 @@ html, body {
 .IsEnemyNearCondition > .title > [type="checkbox"]:checked + label:after,
 .IsEnemyNearCondition > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #d0fffe !important;
+}
+
+/* DRAG DROP*/
+.hovered {
+    background: #f4f4f4;
+    border-style: dashed;
+}
+
+#compile {
+    background: #77DD77;
+    color: #fff;
+    height: 40px;
+    border-radius: 20px;
+    width: 60%;
+    text-align: center;
+    line-height: 40px;
+    margin: 15px 20%;
+    font-weight: 600;
 }
