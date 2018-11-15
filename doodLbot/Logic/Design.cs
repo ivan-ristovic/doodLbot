@@ -41,7 +41,7 @@
             BackwardsSpeed = 2 * adjust;
             EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
-            RotateAmount = 0.05 * adjust;
+            RotateAmount = 0.065 * adjust;
 
             HeroStartX = 300;
             HeroStartY = 300;

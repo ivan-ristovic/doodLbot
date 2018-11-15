@@ -31,31 +31,39 @@ namespace doodLbot.Logic
 
             BaseCodeElement DeserializeCodeElementInternal(dynamic element)
             {
+                BaseCodeElement ret;
                 switch ((string)element["type"]) {
                     case "ShootElement":
-                        return new ShootElement();
+                        ret =  new ShootElement();
+                        break;
                     case "IdleElement":
-                        return new IdleElement();
+                        ret = new IdleElement();
+                        break;
                     case "CodeBlockElement":
                         var children = new List<BaseCodeElement>();
                         foreach (dynamic child in element.elements)
                             children.Add(DeserializeCodeElementInternal(child));
-                        return new CodeBlockElement(children);
+                        ret = new CodeBlockElement(children);
+                        break;
                     case "BranchingElement":
                         var thenBlock = new List<BaseCodeElement>();
                         var elseBlock = new List<BaseCodeElement>();
-                        foreach (dynamic child in element.@then)
+                        foreach (dynamic child in element.@then.elements)
                             thenBlock.Add(DeserializeCodeElementInternal(child));
-                        foreach (dynamic child in element.@else)
+                        foreach (dynamic child in element.@else.elements)
                             elseBlock.Add(DeserializeCodeElementInternal(child));
-                        return new BranchingElement(
+                        ret = new BranchingElement(
                             DeserializeConditionElementInternal(element["cond"]),
                             new CodeBlockElement(thenBlock),
                             new CodeBlockElement(elseBlock)
                         );
+                        break;
                     default:
-                        return null;
+                        ret = null;
+                        break;
                 }
+                ret.IsActive = element["isActive"];
+                return ret;
             }
 
             BaseConditionElement DeserializeConditionElementInternal(dynamic element)

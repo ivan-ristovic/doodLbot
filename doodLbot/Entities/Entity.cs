@@ -14,31 +14,37 @@ namespace doodLbot.Entities
         /// </summary>
         [JsonProperty("x")]
         public double Xpos { get; protected set; }
+
         /// <summary>
         /// Get the Y position of this entity.
         /// </summary>
         [JsonProperty("y")]
         public double Ypos { get; protected set; }
+
         /// <summary>
         /// Get the rotation angle of this entity.
         /// </summary>
         [JsonProperty("rotation")]
         public double Rotation { get; set; }
+
         /// <summary>
         /// Get the velocity X component of this entity.
         /// </summary>
         [JsonProperty("vx")]
         public double Xvel { get; set; }
+
         /// <summary>
         /// Get the velocity Y component of this entity.
         /// </summary>
         [JsonProperty("vy")]
         public double Yvel { get; set; }
+
         /// <summary>
         /// Get this entity's health.
         /// </summary>
         [JsonProperty("hp")]
         public double Hp { get; protected set; }
+
         /// <summary>
         /// Get this entity's damage.
         /// </summary>

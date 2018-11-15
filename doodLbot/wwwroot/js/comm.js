@@ -14,31 +14,31 @@ function sendUpdateToServer(update) {
 }
 
 function sendCodeUpdateToServer(code) {
-    connection.invoke("algorithmUpdated", code).catch(function (err) {
+    let toSend = code.elements;
+    console.log(JSON.stringify(toSend, null, 2));
+    connection.invoke("algorithmUpdated", JSON.stringify(toSend)).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
+// initialize variables. This is the first server response.
 function initClient(data) {
     let alg = data.algorithm;
     console.log("Initial handshake recieved.")
     updateCodeBlocks(alg);
-    // TODO, set all other data here,
-    // example: map with/height
+    //console.log(JSON.stringify(alg, null, 2));
+    ServerTickrate = data.tickRate;
+    MulSpeedsWith = ServerTickrate / 60;
+    MapWidth = data.mapWidth;
+    MapHeight = data.mapHeight;
 }
 
+// starts up connection from clients side
 function startConnection() {
     // callbacks for server pushing data to client
     connection.on("StateUpdate", onStateUpdate);
     connection.on("UpdateCodeBlocks", updateCodeBlocks);
     connection.on("InitClient", initClient);
-
-    connection.on("ReceiveMessage", function (user, message) {
-        var li = document.createElement("li");
-        li.innerHTML = user + " says " + message;
-        document.querySelector("#consoleDiv ul").appendChild(li);
-        console.log("Recieved message!", user, message);
-    });
 
     connection.start().then(function () {
         console.log('connection started');
@@ -91,7 +91,7 @@ function keyboard(keyCode) {
 
 let testKeyFunc = () => {
     connection
-        .invoke("SendMessage", "user69", "thisIsTheMessage")
+        .invoke("TestingCallback")
         .catch(function (err) {
             return console.error(err.toString());
         });

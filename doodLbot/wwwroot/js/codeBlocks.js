@@ -3,6 +3,14 @@
 // stores codeBlocks data as an object
 let CodeBlocks = null;
 
+$(document).ready(function () {
+    $("#compile").click(function () {
+        let json = generateCodeBlocksJson($("#codeBlocks"));
+        console.log("sending alg");
+        sendCodeUpdateToServer(json);
+    });
+});
+
 function createBlockLayout(domBlockIdNum) {
     let div = $("<div />")
         .addClass("card")
@@ -39,7 +47,7 @@ function addBlockType(blockDiv, blockJson) {
 
     blockDiv.addClass(type);
 
-    $($(blockDiv).find(".isOnCheckbox")[0]).val(isActive);
+    $($(blockDiv).find(".isOnCheckbox")[0]).prop('checked', isActive);
     $($(blockDiv).find(".titleLabel")[0]).text(type);
 
     return blockDiv;
@@ -110,7 +118,6 @@ function updateCodeBlocks(data) {
     let x = generateCodeBlocksJson($("#codeBlocks"));
 
     $(".dragMe").each(function () {
-        console.log(this);
         this.addEventListener('dragstart', dragStart);
         this.addEventListener('dragend', dragEnd);
     });
@@ -145,7 +152,7 @@ function generateCodeBlocksJson(container) {
         }
 
         if (!$(containerChildren[index]).is("#codeBlocks")) {
-            let isChecked = $(containerChildren[index]).find("input")[0].value == "checked";
+            let isChecked = $(containerChildren[index]).find("input")[0].checked;
             jsonData.isActive = isChecked;
         }
 
@@ -167,7 +174,7 @@ function generateCodeBlocksJson(container) {
     }
 
     if (!$(container).is("#codeBlocks")) {
-        let isChecked = $(container).find("input")[0].value == "checked";
+        let isChecked = $(container).find("input")[0].checked;
         a.isActive = isChecked;
     }
 
@@ -181,11 +188,10 @@ function dragStart() {
     $(".dropPart").each(function () {
         $(this).addClass("active");
     });
-    console.log("dragStarted", this, draggingElement);
+    // console.log("dragStarted", this, draggingElement);
 }
 
 function dragEnd() {
-    console.log("Ended", this);
     $(".dropPart").each(function () {
         $(this).removeClass("active");
     });
@@ -216,12 +222,8 @@ function dragDrop() {
     $(this).after(newDrop);
     $(this).after(draggingElement);
 
-
-
     newDrop.addEventListener('dragover', dragOver);
     newDrop.addEventListener('dragenter', dragEnter);
     newDrop.addEventListener('dragleave', dragLeave);
     newDrop.addEventListener('drop', dragDrop);
-
-    console.log("drop", this);
 }

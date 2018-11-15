@@ -14,7 +14,6 @@ namespace doodLbot.Hubs
     {
         private readonly Game game;
 
-
         /// <summary>
         /// Constructs a new GameHub using a given Game.
         /// </summary>
@@ -24,9 +23,8 @@ namespace doodLbot.Hubs
             this.game = game;
         }
 
-
         /// <summary>
-        /// Updates player's controls. Received from the frontend.
+        /// Updates player's controls. Receieved from the frontend.
         /// </summary>
         /// <param name="update"></param>
         public Task UpdateGameState(GameStateUpdate update)
@@ -35,16 +33,13 @@ namespace doodLbot.Hubs
             return Task.CompletedTask;
         }
 
-        // TODO remove, this is a communication test
         /// <summary>
-        /// DO NOT USE THIS.
+        /// Used for quick client->server testing..
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="message"></param>
-        public Task SendMessage(string user, string message)
+        public Task TestingCallback()
         {
             this.game.SpawnEnemy(Design.SpawnRange);
-            return this.Clients.All.SendAsync("ReceiveMessage", user, message);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -56,7 +51,9 @@ namespace doodLbot.Hubs
             var data = new
             {
                 algorithm = game.GameState.Hero.Algorithm,
-                mapSize = Design.MapSize
+                mapWidth = Design.MapSize.X,
+                mapHeight = Design.MapSize.Y,
+                tickRate = Design.TickRate
             };
 
             // TODO change when multiplayer is done
@@ -75,7 +72,6 @@ namespace doodLbot.Hubs
             this.game.GameState.Hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             return Task.CompletedTask;
         }
-
 
         /// <summary>
         /// Internal game state update action. Forces the clients to update their game state on

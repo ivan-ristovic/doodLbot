@@ -9,9 +9,10 @@ function onStateUpdate(gameState) {
 }
 
 var FramesSinceLastUpdate = 0;
-var ServerTickrate = 30; // TODO server should tell client its tickrate
-var MulSpeedsWith = ServerTickrate / 60;
-
+var ServerTickrate = null; 
+var MulSpeedsWith = null;
+var MapWidth = null;
+var MapHeight = null;
 // sprites
 let cat;
 let heroHealthBar;

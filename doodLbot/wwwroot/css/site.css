@@ -123,6 +123,7 @@ html, body {
 }
 
 #compile {
+    cursor: pointer;
     background: #77DD77;
     color: #fff;
     height: 40px;
