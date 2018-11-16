@@ -9,7 +9,7 @@ namespace doodLbot.Entities.CodeElements
     public class ShootElement : BaseCodeElement
     {
         private RateLimiter shootLimit;
-        public ShootElement(RateLimiter limiter)
+        public ShootElement(RateLimiter limiter = null)
         {
             shootLimit = limiter;
         }

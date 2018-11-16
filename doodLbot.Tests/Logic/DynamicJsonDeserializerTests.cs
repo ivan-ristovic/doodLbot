@@ -19,7 +19,7 @@ namespace doodLbot.Tests.Logic
             string json;
             BehaviourAlgorithm algorithm;
 
-            json = "[{\"type\":\"ShootElement\"}]";
+            json = "[{\"type\":\"ShootElement\", \"isActive\":\"true\"}]";
             algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
@@ -27,7 +27,7 @@ namespace doodLbot.Tests.Logic
             Assert.AreEqual(1, algorithm.CodeElements.Count);
             Assert.IsInstanceOf<ShootElement>(algorithm.CodeElements[0]);
 
-            json = "[{\"type\":\"CodeBlockElement\", \"elements\":[{\"type\":\"ShootElement\"}, {\"type\":\"IdleElement\"}]}]";
+            json = "[{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}]";
             algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
@@ -46,10 +46,14 @@ namespace doodLbot.Tests.Logic
             }
 
             json = "[" +
-                    "{\"type\":\"ShootElement\"}, " +
-                    "{\"type\":\"CodeBlockElement\", \"elements\":[{\"type\":\"ShootElement\"}]}," +
-                    "{\"type\":\"BranchingElement\", \"cond\":{\"type\":\"IsEnemyNearCondition\"}, \"then\":[{\"type\":\"ShootElement\"}], \"else\":[{\"type\":\"ShootElement\"}]}" +
-                    "]";
+                   "{\"type\":\"ShootElement\", \"isActive\":\"true\"}, " +
+                   "{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}]}," +
+                   "{\"type\":\"BranchingElement\", \"isActive\":\"true\", " +
+                       "\"cond\":{\"type\":\"IsEnemyNearCondition\", \"isActive\":\"true\"}, " +
+                       "\"then\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}, " +
+                       "\"else\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}" +
+                   "}" +
+                   "]";
             algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
@@ -77,11 +81,13 @@ namespace doodLbot.Tests.Logic
                 CollectionAssert.IsNotEmpty(branching.ElseBlock.CodeElements);
                 CollectionAssert.AllItemsAreNotNull(branching.ThenBlock.CodeElements);
                 CollectionAssert.AllItemsAreNotNull(branching.ElseBlock.CodeElements);
-                Assert.AreEqual(1, branching.ThenBlock.CodeElements.Count);
-                Assert.AreEqual(1, branching.ElseBlock.CodeElements.Count);
+                Assert.AreEqual(2, branching.ThenBlock.CodeElements.Count);
+                Assert.AreEqual(2, branching.ElseBlock.CodeElements.Count);
                 Assert.IsInstanceOf<IsEnemyNearCondition>(branching.Condition);
-                Assert.IsInstanceOf<ShootElement>(branching.ThenBlock.CodeElements.First());
-                Assert.IsInstanceOf<ShootElement>(branching.ElseBlock.CodeElements.First());
+                Assert.IsInstanceOf<ShootElement>(branching.ThenBlock.CodeElements.ElementAt(0));
+                Assert.IsInstanceOf<IdleElement>(branching.ThenBlock.CodeElements.ElementAt(1));
+                Assert.IsInstanceOf<ShootElement>(branching.ElseBlock.CodeElements.ElementAt(0));
+                Assert.IsInstanceOf<IdleElement>(branching.ElseBlock.CodeElements.ElementAt(1));
             }
 
         }
