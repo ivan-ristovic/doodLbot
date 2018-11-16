@@ -28,12 +28,20 @@ namespace doodLbot.Logic
         // TODO track if gear has changed
         private static bool gearChanged = true;
 
+        static private System.Diagnostics.Stopwatch Watch = 
+            System.Diagnostics.Stopwatch.StartNew();
+
         /// <summary>
         /// Callback executed on each game tick.
         /// </summary>
         /// <param name="_"></param>
         private static void UpdateCallback(object _)
         {
+            var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
+            Watch.Stop();
+            var mss = Watch.ElapsedMilliseconds;
+            Watch = System.Diagnostics.Stopwatch.StartNew();
+
             var game = _ as Game;
 
             if (!game.enemySpawnLimiter.IsCooldownActive()) {
@@ -72,6 +80,12 @@ namespace doodLbot.Logic
             if (codeBlocksChanged) {
                 codeBlocksChanged = false;
                 _async.Execute(game.hubContext.Clients.All.SendAsync("UpdateCodeBlocks", game.GameState.Hero.Algorithm));
+            }
+            ExecWatch.Stop();
+            var ms = ExecWatch.ElapsedMilliseconds;
+            if (false)
+            {
+                Log.Debug($"exec ms = {ms}, between calls = {mss}");
             }
             // end test
         }

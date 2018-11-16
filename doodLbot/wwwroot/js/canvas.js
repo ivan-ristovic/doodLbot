@@ -222,6 +222,19 @@ function updateHud() {
     $("#pts")[0].innerHTML = "points: " + GAMESTATE.hero.pts;
 }
 
+function updateHero(delta) {
+    if (GAMESTATE.hero !== undefined) {
+        let hero = GAMESTATE.hero;
+        let speedMul = FramesSinceLastUpdate * MulSpeedsWith * delta;
+        let newx = hero.x + speedMul * hero.vx;
+        let newy = hero.y + speedMul * hero.vy;
+
+        heroGroup.position.set(newx, newy);
+        heroGroup.rotation = hero.rotation;
+        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
+    }
+}
+
 let GAMESTATE = new GameState();
 
 // holds information that backend needs for updating game-state
@@ -340,16 +353,7 @@ function gameLoop(delta) {
 
 function play(delta) {
     fpsCounter.countTimesPerSecond(true);
-    if (GAMESTATE.hero !== undefined) {
-        let hero = GAMESTATE.hero;
-        let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
-        let newx = hero.x + speedMul * hero.vx;
-        let newy = hero.y + speedMul * hero.vy;
-
-        heroGroup.position.set(newx, newy);
-        heroGroup.rotation = hero.rotation;
-        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
-    }
+    updateHero(delta);
     updateHud();
 
     updateEnemies();
