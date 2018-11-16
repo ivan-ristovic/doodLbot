@@ -11,8 +11,6 @@ namespace doodLbot.Tests.Logic
     [TestFixture]
     public class DynamicJsonDeserializerTests
     {
-        // TODO fix tests.
-        // 'then' and 'else' are not arrays, but objects that have 'elements' array.
         [Test]
         public void DynamicDeserializationTest()
         {

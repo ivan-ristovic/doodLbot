@@ -1,5 +1,7 @@
 ﻿using doodLbot.Common;
 using doodLbot.Entities.CodeElements;
+using doodLbot.Equipment;
+using doodLbot.Logic;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +14,39 @@ namespace doodLbot.Entities
         [JsonProperty("projectiles")]
         public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
 
+        [JsonProperty("pts")]
+        public int Points;
+
+        public IReadOnlyCollection<Gear> Gear => this.gear;
+
         public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
 
-        private readonly List<object> gear = new List<object>();
+        private readonly List<Gear> gear = new List<Gear>();
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
-
-        public Hero() : base()
-        {
-
-        }
 
         public Hero(double x, double y) : base(x, y)
         {
+            Points = 0;
+            this.Speed = Design.HeroSpeed;
+        }
 
+        public void AddGear(Gear g)
+        {
+            gear.Add(g);
+            if (g is Armor)
+            {
+                var armor = g as Armor;
+                this.Speed += armor.Speed;
+            }
+            else
+            {
+
+            }
+        }
+
+        public bool RemoveGear(Gear g)
+        {
+            return gear.Remove(g);
         }
 
         protected override void OnMove()

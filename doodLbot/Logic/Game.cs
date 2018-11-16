@@ -25,6 +25,9 @@ namespace doodLbot.Logic
         // TODO track if code blocks have changed
         private static bool codeBlocksChanged = false;
 
+        // TODO track if gear has changed
+        private static bool gearChanged = true;
+
         /// <summary>
         /// Callback executed on each game tick.
         /// </summary>
@@ -42,7 +45,7 @@ namespace doodLbot.Logic
             game.hero.Algorithm.Execute(game.GameState);
 
             foreach (Enemy enemy in game.enemies) {
-                enemy.VelocityTowards(game.hero, Design.EnemySpeed);
+                enemy.VelocityTowards(game.hero);
                 enemy.Move();
             }
 
@@ -57,6 +60,15 @@ namespace doodLbot.Logic
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
 
             // begin test
+            if (game.hero.Points >= 40)
+            {
+                if (gearChanged)
+                {
+                    gearChanged = false;
+                    game.hero.AddGear(new Equipment.Armor("hoverboard", 40, 5));
+                    game.hero.Points -= 40;
+                }
+            }
             if (codeBlocksChanged) {
                 codeBlocksChanged = false;
                 _async.Execute(game.hubContext.Clients.All.SendAsync("UpdateCodeBlocks", game.GameState.Hero.Algorithm));
@@ -146,7 +158,7 @@ namespace doodLbot.Logic
                 }
             }
             if (this.controls.IsForward) {
-                double velocity = Design.HeroSpeed;
+                double velocity = this.hero.Speed;
                 this.hero.Xvel = Math.Cos(this.hero.Rotation) * velocity;
                 this.hero.Yvel = Math.Sin(this.hero.Rotation) * velocity;
             }
@@ -169,13 +181,13 @@ namespace doodLbot.Logic
 
         private void CheckForCollisionsAndUpdateGame()
         {
-            this.CheckForCollisionsEnemiesProjectiles();
-            this.CheckForCollisionsEnemiesHero();
+            this.CheckCollisionEnemyHero();
+            this.CheckCollisionEnemyProjectile();
         }
 
         #region Helper functions
 
-        private void CheckForCollisionsEnemiesHero()
+        private void CheckCollisionEnemyProjectile()
         {
             IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
 
@@ -186,15 +198,17 @@ namespace doodLbot.Logic
                 enemy.DecreaseHealthPoints(projectile.Damage);
 
                 // Removing projectile and enemy (if it's dead)
-                if (enemy.Hp <= 0) {
+                if (enemy.Hp <= 0)
+                { 
                     this.enemies.TryRemove((Enemy)enemy);
+                    this.hero.Points += (int)Math.Ceiling(enemy.Damage);
                 }
 
                 this.hero.TryRemoveProjectile((Projectile)projectile);
             }
         }
 
-        private void CheckForCollisionsEnemiesProjectiles()
+        private void CheckCollisionEnemyHero()
         {
             var heros = new List<Entity> {
                 this.hero
@@ -207,7 +221,6 @@ namespace doodLbot.Logic
                 kamikaze.DecreaseHealthPoints(hero.Damage);
 
                 // Remove kamikaze from the game
-                // TODO: add animation for the death of kamikaze
                 this.enemies.TryRemove((Enemy)kamikaze);
 
                 this.hero.DecreaseHealthPoints(kamikaze.Damage);

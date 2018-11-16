@@ -24,7 +24,7 @@ namespace doodLbot.Entities.CodeElements
                 return;
             }
 
-            var closest = state.Enemies.OrderBy(e => e.squaredDist(hero)).First();
+            var closest = state.Enemies.OrderBy(e => e.SquaredDist(hero)).First();
             hero.Rotation = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
         }
     }
