@@ -51,6 +51,7 @@ namespace doodLbot.Entities
         [JsonProperty("damage")]
         public double Damage { get; protected set; }
 
+        public double Speed { get; protected set; }
 
         /// <summary>
         /// Constructs a new Entity with default health and damage points.
@@ -98,14 +99,20 @@ namespace doodLbot.Entities
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="withSpeed"></param>
-        public void VelocityTowards(Entity goal, double withSpeed)
+        public void VelocityTowards(Entity goal, double? withSpeed = null)
         {
             double xvel = goal.Xpos - this.Xpos;
             double yvel = goal.Ypos - this.Ypos;
             double norm = Math.Sqrt( xvel * xvel + yvel * yvel );
-            // TODO: Handle case when norm is 0
-            this.Xvel = xvel / norm * withSpeed;
-            this.Yvel = yvel / norm * withSpeed;
+            if (Math.Abs(norm) < 0.001)
+            {
+                this.Xvel = 0;
+                this.Yvel = 0;
+                return;
+            }
+            double speed = withSpeed ?? this.Speed;
+            this.Xvel = xvel / norm * speed;
+            this.Yvel = yvel / norm * speed;
         }
 
         /// <summary>
@@ -134,7 +141,7 @@ namespace doodLbot.Entities
         /// </summary>
         /// <param name="e"></param>
         /// <returns>squared distance</returns>
-        public double squaredDist(Entity e)
+        public double SquaredDist(Entity e)
         {
             var x = e.Xpos - this.Xpos;
             var y = e.Xpos - this.Ypos;
