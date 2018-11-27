@@ -7,7 +7,7 @@
     {
         public static double ProjectileSpeed { get; private set; }
         public static double HeroSpeed { get; private set; }
-        public static double BackwardsSpeed { get; private set; }
+        public static double BackwardsSpeedRatio { get; private set; }
         public static double RotateAmount { get; private set; }
         public static double HeroRadiusSize { get; private set; }
         public static double ProjectileRadiusSize { get; private set; }
@@ -38,7 +38,7 @@
 
             ProjectileSpeed = 6 * adjust;
             HeroSpeed = 5 * adjust;
-            BackwardsSpeed = 2 * adjust;
+            BackwardsSpeedRatio = 1.0/3.0;
             EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
             ShootElementCooldown = 0.4;

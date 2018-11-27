@@ -79,10 +79,12 @@ namespace doodLbot.Entities
         /// <summary>
         /// Move this entity along the velocity vector.
         /// </summary>
-        public void Move()
+        /// <param name="delta">elpased time, 1 if it's exact as tick rate,
+        /// less if faster, more if slower</param>
+        public void Move(double delta)
         {
-            this.Xpos += this.Xvel;
-            this.Ypos += this.Yvel;
+            this.Xpos += this.Xvel * delta;
+            this.Ypos += this.Yvel * delta;
             this.OnMove();
         }
 

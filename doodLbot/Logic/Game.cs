@@ -41,28 +41,27 @@ namespace doodLbot.Logic
             Watch.Stop();
             var mss = Watch.ElapsedMilliseconds;
             Watch = System.Diagnostics.Stopwatch.StartNew();
-
+            double delta = mss / RefreshTimeSpan.TotalMilliseconds;
             var game = _ as Game;
 
             if (!game.enemySpawnLimiter.IsCooldownActive()) {
                 game.SpawnEnemy(Design.SpawnRange);
             }
-            game.UpdateStateWithControls();
+            game.UpdateStateWithControls(delta);
 
-            game.hero.Move();
+            game.hero.Move(delta);
             game.hero.Algorithm.Execute(game.GameState);
 
             foreach (Enemy enemy in game.enemies) {
                 enemy.VelocityTowards(game.hero);
-                enemy.Move();
+                enemy.Move(delta);
             }
 
             foreach (Projectile projectile in game.hero.Projectiles) {
-                projectile.Move();
+                projectile.Move(delta);
             }
 
             game.CheckForCollisionsAndUpdateGame();
-
             game.RemoveProjectilesOutsideOfMap();
 
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
@@ -83,9 +82,9 @@ namespace doodLbot.Logic
             }
             ExecWatch.Stop();
             var ms = ExecWatch.ElapsedMilliseconds;
-            if (false)
+            if (true)
             {
-                Log.Debug($"exec ms = {ms}, between calls = {mss}");
+                Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
             }
             // end test
         }
@@ -162,22 +161,23 @@ namespace doodLbot.Logic
         /// <summary>
         /// Updates the hero movement based on the controls pressed/released.
         /// </summary>
-        public void UpdateStateWithControls()
+        /// <param name="delta">relative delta time</param>
+        public void UpdateStateWithControls(double delta)
         {
-            double rotationAmount = Design.RotateAmount;
+            double rotationAmount = Design.RotateAmount * delta;
 
             if (this.controls.IsFire) {
                 if (!this.shootRateLimiter.IsCooldownActive()) {
                     this.hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
                 }
             }
+            double velocity = this.hero.Speed * delta;
             if (this.controls.IsForward) {
-                double velocity = this.hero.Speed;
                 this.hero.Xvel = Math.Cos(this.hero.Rotation) * velocity;
                 this.hero.Yvel = Math.Sin(this.hero.Rotation) * velocity;
             }
             if (this.controls.IsBackward) {
-                double velocity = Design.BackwardsSpeed;
+                velocity *= Design.BackwardsSpeedRatio;
                 this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velocity;
                 this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velocity;
             }
