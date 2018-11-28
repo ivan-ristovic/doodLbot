@@ -22,11 +22,19 @@ namespace doodLbot.Entities
         public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
 
         private readonly List<Gear> gear = new List<Gear>();
+        
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
-        public Hero(double x, double y) : base(x, y)
+        public CodeStorage CodeInventory { get; set; }
+
+        public EquipmentStorage EquipmentInventory { get; set; }
+
+        public Hero(double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
+        : base(x, y)
         {
-            Points = 0;
+            this.CodeInventory = codeInventory;
+            this.EquipmentInventory = equipmentInventory;
+            this.Points = 0;
             this.Speed = Design.HeroSpeed;
         }
 

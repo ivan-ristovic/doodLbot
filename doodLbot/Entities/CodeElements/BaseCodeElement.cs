@@ -20,6 +20,8 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("isActive")]
         public virtual bool IsActive { get; set; }
 
+        public double Price { get; set; }
+
         /// <summary>
         /// Executes this code element.
         /// </summary>

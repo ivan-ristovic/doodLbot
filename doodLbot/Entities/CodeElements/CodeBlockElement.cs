@@ -27,8 +27,12 @@ namespace doodLbot.Entities.CodeElements
         /// Constructs a new CodeElementBlock from a collection of code elements.
         /// </summary>
         /// <param name="elements"></param>
-        public CodeBlockElement(ICollection<BaseCodeElement> elements)
+        public CodeBlockElement(ICollection<BaseCodeElement> elements = null)
         {
+            if (elements == null)
+            {
+                elements = new List<BaseCodeElement>();
+            }
             this.CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
         }
 

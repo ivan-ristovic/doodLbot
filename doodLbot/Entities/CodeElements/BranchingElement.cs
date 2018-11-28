@@ -34,11 +34,12 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="condition"></param>
         /// <param name="thenBlock"></param>
         /// <param name="elseBlock"></param>
-        public BranchingElement(BaseConditionElement condition, CodeBlockElement thenBlock, CodeBlockElement elseBlock)
+        public BranchingElement(BaseConditionElement condition = null, CodeBlockElement thenBlock = null, CodeBlockElement elseBlock = null)
         {
+            
             this.Condition = condition;
-            this.ThenBlock = thenBlock;
-            this.ElseBlock = elseBlock;
+            this.ThenBlock = thenBlock ?? new CodeBlockElement();
+            this.ElseBlock = elseBlock ?? new CodeBlockElement();
         }
 
         protected override void OnExecute(GameState state)

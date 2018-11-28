@@ -18,6 +18,7 @@ namespace doodLbot.Logic
     public sealed class Game
     {
         public static readonly double TickRate = Design.TickRate;
+
         public static TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
         private static readonly AsyncExecutor _async = new AsyncExecutor();
@@ -72,7 +73,7 @@ namespace doodLbot.Logic
                 if (gearChanged)
                 {
                     gearChanged = false;
-                    game.hero.AddGear(new Equipment.Armor("hoverboard", 40, 5));
+                    game.hero.AddGear(Design.GearDict["hoverboard"]);
                     game.hero.Points -= 40;
                 }
             }
@@ -105,7 +106,8 @@ namespace doodLbot.Logic
         /// <param name="hctx"></param>
         public Game(IHubContext<GameHub> hctx)
         {
-            this.hero = new Hero(Design.HeroStartX, Design.HeroStartY);
+            this.hero = new Hero(Design.HeroStartX, Design.HeroStartY, new CodeStorage(), 
+                                new Equipment.EquipmentStorage());
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy(Design.SpawnRange);
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);

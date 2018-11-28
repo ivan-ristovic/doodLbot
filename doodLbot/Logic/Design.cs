@@ -1,4 +1,7 @@
-﻿namespace doodLbot.Logic
+﻿using doodLbot.Equipment;
+using System.Collections.Generic;
+
+namespace doodLbot.Logic
 {
     /// <summary>
     /// Represents game design parameters.
@@ -29,6 +32,8 @@
 
         public static (double X, double Y) MapSize => (MapWidth, MapHeight);
 
+        public static IDictionary<string, Gear> GearDict { get; private set; }
+
         static Design()
         {
             TickRate = 30;
@@ -58,6 +63,16 @@
             EnemyRadiusSize = 20;
             HeroRadiusSize = 30;
             ProjectileRadiusSize = 10;
+
+            PopulateGearList();
+        }
+
+        private static void PopulateGearList()
+        {
+            GearDict = new Dictionary<string, Gear>();
+            GearDict.Add("hoverboard", new Armor("hoverboard", 40, 5));
+            GearDict.Add("hoverboard2", new Armor("hoverboard", 1, 2));
+            GearDict.Add("hoverboard3", new Armor("hoverboard", 4, 5));
         }
     }
 }

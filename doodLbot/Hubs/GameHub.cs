@@ -53,7 +53,9 @@ namespace doodLbot.Hubs
                 algorithm = game.GameState.Hero.Algorithm,
                 mapWidth = Design.MapSize.X,
                 mapHeight = Design.MapSize.Y,
-                tickRate = Design.TickRate
+                tickRate = Design.TickRate,
+                codeInventory = game.GameState.Hero.CodeInventory,
+                equipmentInventory = game.GameState.Hero.EquipmentInventory
             };
 
             // TODO change when multiplayer is done

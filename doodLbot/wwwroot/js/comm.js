@@ -31,6 +31,8 @@ function initClient(data) {
     MulSpeedsWith = ServerTickrate / 60;
     MapWidth = data.mapWidth;
     MapHeight = data.mapHeight;
+    console.log(data.codeInventory);
+    console.log(data.equipmentInventory);
 }
 
 // starts up connection from clients side
