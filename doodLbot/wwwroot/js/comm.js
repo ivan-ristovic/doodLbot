@@ -31,8 +31,17 @@ function initClient(data) {
     MulSpeedsWith = ServerTickrate / 60;
     MapWidth = data.mapWidth;
     MapHeight = data.mapHeight;
+    drawBorder(MapWidth, MapHeight, 5);
     console.log(data.codeInventory);
     console.log(data.equipmentInventory);
+}
+
+function drawBorder(width, height, thickness) {
+    console.log("drawing border");
+    var rect = new PIXI.Graphics();
+    rect.lineStyle(2, 0x000000, 1);
+    rect.drawRect(0, 0, width, height);
+    app.stage.addChild(rect);
 }
 
 // starts up connection from clients side
