@@ -7,12 +7,14 @@ let consoleKeyFunc = () => {
     event.preventDefault();
 }
 
+// CONTROLS => SERVER
 function sendUpdateToServer(update) {
     connection.invoke("updateGameState", update).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
+// CODE => SERVER
 function sendCodeUpdateToServer(code) {
     let toSend = code.elements;
     console.log(JSON.stringify(toSend, null, 2));
@@ -21,6 +23,7 @@ function sendCodeUpdateToServer(code) {
     });
 }
 
+// INIT SERVER => CLIENT
 // initialize variables. This is the first server response.
 function initClient(data) {
     let alg = data.algorithm;
@@ -31,18 +34,11 @@ function initClient(data) {
     MulSpeedsWith = ServerTickrate / 60;
     MapWidth = data.mapWidth;
     MapHeight = data.mapHeight;
-    drawBorder(MapWidth, MapHeight, 5);
-    console.log(data.codeInventory);
-    console.log(data.equipmentInventory);
+    setMapSize(MapWidth, MapHeight);
+    console.log("code inventory = ", data.codeInventory);
+    console.log("equpimnet inventpry = ", data.equipmentInventory);
 }
 
-function drawBorder(width, height, thickness) {
-    console.log("drawing border");
-    var rect = new PIXI.Graphics();
-    rect.lineStyle(2, 0x000000, 1);
-    rect.drawRect(0, 0, width, height);
-    app.stage.addChild(rect);
-}
 
 // starts up connection from clients side
 function startConnection() {

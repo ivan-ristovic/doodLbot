@@ -28,7 +28,7 @@ let hoverboard;
 let WhatToRender;
 
 let enemyTexture;
-
+let tilingBackground = null;
 let EnemySprites = [];
 let ProjectileSprites = [];
 let EnemyHps = [];
@@ -305,6 +305,34 @@ function resize() {
     app.renderer.resize(parent.clientWidth, parent.clientHeight);
 }
 
+// draws edges of the map
+function drawBorder(width, height, thickness) {
+    console.log("drawing border");
+    var rect = new PIXI.Graphics();
+    rect.lineStyle(thickness, 0x000000, 1);
+    rect.drawRect(0, 0, width, height);
+    app.stage.addChild(rect);
+}
+
+// sets borders and background tiling
+function setMapSize() {
+    drawBorder(MapWidth, MapHeight, 10);
+    if (tilingBackground != null) {
+        app.stage.removeChild(tilingBackground);
+    }
+    let canvasw = app.renderer.width;
+    let canvash = app.renderer.height;
+
+    let w = app.renderer.width + MapWidth;
+    let h = app.renderer.height + MapHeight;
+    tilingBackground = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, w, h);
+    tilingBackground.position.set(-canvasw / 2, -canvash / 2);
+    tilingBackground.tileScale.x = 2;
+    tilingBackground.tileScale.y = 3 / 2;
+
+    app.stage.addChildAt(tilingBackground, 0);
+}
+
 // The stage object is the root container for all the visible things in your scene.
 // Whatever you put inside the stage will be rendered on the canvas.
 // app.stage
@@ -344,11 +372,8 @@ function setup() {
     heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
 
     //let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
-    var tilingSprite = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, app.renderer.width, app.renderer.height);
-    app.stage.addChild(tilingSprite);
-    console.log(tilingSprite);
-    //paper.scale.set(4, 3);
-    //app.stage.addChild(paper);
+    //var tilingSprite = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, app.renderer.width, app.renderer.height);
+    //app.stage.addChild(tilingSprite);
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
 
