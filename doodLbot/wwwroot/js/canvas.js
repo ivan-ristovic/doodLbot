@@ -235,6 +235,15 @@ function updateHero(delta) {
     }
 }
 
+// centers world on the player
+function moveMap() {
+    app.stage.position.x = app.renderer.width / 2;
+    app.stage.position.y = app.renderer.height / 2;
+
+    app.stage.pivot.x = heroGroup.position.x;
+    app.stage.pivot.y = heroGroup.position.y;
+}
+
 let GAMESTATE = new GameState();
 
 // holds information that backend needs for updating game-state
@@ -334,9 +343,12 @@ function setup() {
     heroGroup.addChild(hero);
     heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
 
-    let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
-    paper.scale.set(4, 3);
-    app.stage.addChild(paper);
+    //let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
+    var tilingSprite = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, app.renderer.width, app.renderer.height);
+    app.stage.addChild(tilingSprite);
+    console.log(tilingSprite);
+    //paper.scale.set(4, 3);
+    //app.stage.addChild(paper);
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
 
@@ -355,9 +367,9 @@ function play(delta) {
     fpsCounter.countTimesPerSecond(true);
     updateHero(delta);
     updateHud();
-
     updateEnemies();
     updateProjectiles();
+    moveMap();
     FramesSinceLastUpdate++;
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
