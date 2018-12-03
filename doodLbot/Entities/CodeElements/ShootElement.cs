@@ -18,7 +18,7 @@ namespace doodLbot.Entities.CodeElements
         {
             if (!shootLimit?.IsCooldownActive() ?? false)
             {
-                state.Hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
+                state.Hero.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
             }
         }
     }

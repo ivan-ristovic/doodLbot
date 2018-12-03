@@ -96,8 +96,6 @@ namespace doodLbot.Logic
         private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
-        private readonly Controls controls;
-        private readonly RateLimiter shootRateLimiter;
         private readonly RateLimiter enemySpawnLimiter;
 
         /// <summary>
@@ -112,8 +110,6 @@ namespace doodLbot.Logic
             this.SpawnEnemy(Design.SpawnRange);
             this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
-            this.controls = new Controls();
-            this.shootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
 
             // begin test
@@ -157,7 +153,7 @@ namespace doodLbot.Logic
         public void UpdateControls(GameStateUpdate update)
         {
             foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
-                this.controls.OnKey(key, isDown);
+                this.hero.UpdateControls(key, isDown);
         }
 
         /// <summary>
@@ -166,33 +162,7 @@ namespace doodLbot.Logic
         /// <param name="delta">relative delta time</param>
         public void UpdateStateWithControls(double delta)
         {
-            double rotationAmount = Design.RotateAmount * delta;
-
-            if (this.controls.IsFire) {
-                if (!this.shootRateLimiter.IsCooldownActive()) {
-                    this.hero.Fire(Design.ProjectileSpeed, Design.ProjectileDamage);
-                }
-            }
-            double velocity = this.hero.Speed * delta;
-            if (this.controls.IsForward) {
-                this.hero.Xvel = Math.Cos(this.hero.Rotation) * velocity;
-                this.hero.Yvel = Math.Sin(this.hero.Rotation) * velocity;
-            }
-            if (this.controls.IsBackward) {
-                velocity *= Design.BackwardsSpeedRatio;
-                this.hero.Xvel = -Math.Cos(this.hero.Rotation) * velocity;
-                this.hero.Yvel = -Math.Sin(this.hero.Rotation) * velocity;
-            }
-            if (!this.controls.IsForward && !this.controls.IsBackward) {
-                this.hero.Xvel = 0;
-                this.hero.Yvel = 0;
-            }
-            if (this.controls.IsLeft) {
-                this.hero.Rotation -= rotationAmount;
-            }
-            if (this.controls.IsRight) {
-                this.hero.Rotation += rotationAmount;
-            }
+            this.hero.UpdateStateWithControls(delta);            
         }
 
         private void CheckForCollisionsAndUpdateGame()

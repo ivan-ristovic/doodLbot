@@ -29,6 +29,10 @@ namespace doodLbot.Entities
 
         public EquipmentStorage EquipmentInventory { get; set; }
 
+        private RateLimiter ShootRateLimiter;
+
+        private readonly Controls controls;
+
         public Hero(double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
         : base(x, y)
         {
@@ -36,6 +40,8 @@ namespace doodLbot.Entities
             this.EquipmentInventory = equipmentInventory;
             this.Points = 0;
             this.Speed = Design.HeroSpeed;
+            this.ShootRateLimiter = new RateLimiter(Design.FireCooldown);
+            this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
         }
 
         public void AddGear(Gear g)
@@ -69,7 +75,16 @@ namespace doodLbot.Entities
             }
         }
 
-        public void Fire(double speed, double damage)
+        public bool TryFire(double speed, double damage)
+        {
+            if (!this.ShootRateLimiter.IsCooldownActive()) {
+                this.Fire(speed, damage);
+                return true;
+            }
+            return false;
+        }
+
+        private void Fire(double speed, double damage)
             => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation, speed, damage));
         
         public bool TryRemoveProjectile(Projectile p)
@@ -86,6 +101,46 @@ namespace doodLbot.Entities
                 // TODO when hero's hp == 0 - GAME OVER
                 // For now, we reset hp.
                 this.Hp = 100;
+            }
+        }
+
+        internal void UpdateControls(ConsoleKey key, bool isDown)
+        {
+            this.controls.OnKey(key, isDown);
+        }
+
+        internal void UpdateStateWithControls(double delta)
+        {
+            double rotationAmount = Design.RotateAmount * delta;
+
+            if (this.controls.IsFire)
+            {
+                this.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
+            }
+            double velocity = this.Speed * delta;
+            if (this.controls.IsForward)
+            {
+                this.Xvel = Math.Cos(this.Rotation) * velocity;
+                this.Yvel = Math.Sin(this.Rotation) * velocity;
+            }
+            if (this.controls.IsBackward)
+            {
+                velocity *= Design.BackwardsSpeedRatio;
+                this.Xvel = -Math.Cos(this.Rotation) * velocity;
+                this.Yvel = -Math.Sin(this.Rotation) * velocity;
+            }
+            if (!this.controls.IsForward && !this.controls.IsBackward)
+            {
+                this.Xvel = 0;
+                this.Yvel = 0;
+            }
+            if (this.controls.IsLeft)
+            {
+                this.Rotation -= rotationAmount;
+            }
+            if (this.controls.IsRight)
+            {
+                this.Rotation += rotationAmount;
             }
         }
     }
