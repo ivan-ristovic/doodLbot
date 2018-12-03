@@ -1,4 +1,5 @@
-﻿using doodLbot.Entities;
+﻿using doodLbot.Common;
+using doodLbot.Entities;
 
 using Newtonsoft.Json;
 
@@ -28,13 +29,15 @@ namespace doodLbot.Logic
         /// <summary>
         /// Constructs a new GameState object containing the hero and spawned enemies.
         /// </summary>
-        /// <param name="hero"></param>
+        /// <param name="heroes"></param>
         /// <param name="enemies"></param>
-        public GameState(Hero hero, IEnumerable<Enemy> enemies)
+        public GameState(ConcurrentHashSet<Hero> heroes, IEnumerable<Enemy> enemies)
         {
-            this.Hero = hero;
+            Hero playerOne = heroes.Single(hero => hero.id == 1);
+            // TODO: milana: Add playerTwo
+            this.Hero = playerOne;
             this.enemies = enemies.ToList();
-            this.projectiles.AddRange(hero.Projectiles);
+            this.projectiles.AddRange(playerOne.Projectiles);
         }
     }
 }

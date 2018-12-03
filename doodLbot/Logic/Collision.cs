@@ -58,11 +58,10 @@ namespace doodLbot.Logic
             bool IsColliding(Entity collider1, Entity collider2, double r1, double r2)
             {
                 return DistanceSquared(collider2.Xpos, collider2.Ypos, collider1.Xpos, collider1.Ypos) < (r1 + r2) * (r1 + r2);
-
-
-                double DistanceSquared(double x1, double y1, double x2, double y2)
-                    => (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
             }
         }
+
+        public static double DistanceSquared(double x1, double y1, double x2, double y2)
+            => (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
     }
 }

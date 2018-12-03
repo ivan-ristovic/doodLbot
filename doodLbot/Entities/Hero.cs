@@ -17,6 +17,9 @@ namespace doodLbot.Entities
         [JsonProperty("pts")]
         public int Points;
 
+        //[JsonProperty("id")]
+        public int id;
+
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
         public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
@@ -33,9 +36,10 @@ namespace doodLbot.Entities
 
         private readonly Controls controls;
 
-        public Hero(double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
+        public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
         : base(x, y)
         {
+            this.id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;
             this.Points = 0;

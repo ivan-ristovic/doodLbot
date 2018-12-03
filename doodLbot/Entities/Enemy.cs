@@ -1,6 +1,8 @@
-﻿using Serilog;
+﻿using doodLbot.Logic;
+using Serilog;
 
 using System;
+using System.Collections.Generic;
 
 namespace doodLbot.Entities
 {
@@ -32,6 +34,27 @@ namespace doodLbot.Entities
                 Xpos = xpos,
                 Ypos = ypos
             };
+        }
+
+        /// <summary>
+        /// Direct this entity to move towards another entity using given speed.
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <param name="withSpeed"></param>
+        public void VelocityTowardsClosestEntity(IEnumerable<Entity> entities, double? withSpeed = null)
+        {
+            Entity goal = null;
+            double minDistanceSquared = double.MaxValue;
+            foreach (Entity e in entities)
+            {
+                double currentDistanceSquared = CollisionCheck.DistanceSquared(e.Xpos, e.Ypos, this.Xpos, this.Ypos);
+                if (currentDistanceSquared < minDistanceSquared)
+                {
+                    goal = e;
+                    minDistanceSquared = currentDistanceSquared;
+                }
+            }
+            this.VelocityTowards(goal, withSpeed);
         }
     }
 }

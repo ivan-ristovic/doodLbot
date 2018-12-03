@@ -49,17 +49,24 @@ namespace doodLbot.Logic
                 game.SpawnEnemy(Design.SpawnRange);
             }
             game.UpdateStateWithControls(delta);
-
-            game.hero.Move(delta);
-            game.hero.Algorithm.Execute(game.GameState);
+            
+            foreach (Hero h in game.heroes)
+            {
+                h.Move(delta);
+                h.Algorithm.Execute(game.GameState);
+            }
 
             foreach (Enemy enemy in game.enemies) {
-                enemy.VelocityTowards(game.hero);
+                enemy.VelocityTowardsClosestEntity(game.heroes);
                 enemy.Move(delta);
             }
 
-            foreach (Projectile projectile in game.hero.Projectiles) {
-                projectile.Move(delta);
+            foreach (Hero h in game.heroes)
+            {
+                foreach (Projectile projectile in h.Projectiles)
+                {
+                    projectile.Move(delta);
+                }
             }
 
             game.CheckForCollisionsAndUpdateGame();
@@ -68,13 +75,17 @@ namespace doodLbot.Logic
             _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
 
             // begin test
-            if (game.hero.Points >= 40)
+
+            foreach (Hero h in game.heroes)
             {
-                if (gearChanged)
+                if (h.Points >= 40)
                 {
-                    gearChanged = false;
-                    game.hero.AddGear(Design.GearDict["hoverboard"]);
-                    game.hero.Points -= 40;
+                    if (gearChanged)
+                    {
+                        gearChanged = false;
+                        h.AddGear(Design.GearDict["hoverboard"]);
+                        h.Points -= 40;
+                    }
                 }
             }
             if (codeBlocksChanged) {
@@ -90,9 +101,9 @@ namespace doodLbot.Logic
             // end test
         }
 
-        public GameState GameState => new GameState(this.hero, this.enemies);
-
-        private readonly Hero hero;     // Change this to ConcurrentHashSet for the multiplayer
+        public GameState GameState => new GameState(this.heroes, this.enemies);
+        
+        private readonly ConcurrentHashSet<Hero> heroes;
         private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
@@ -104,13 +115,9 @@ namespace doodLbot.Logic
         /// <param name="hctx"></param>
         public Game(IHubContext<GameHub> hctx)
         {
-            this.hero = new Hero(Design.HeroStartX, Design.HeroStartY, new CodeStorage(), 
+            this.heroes = new ConcurrentHashSet<Hero>();
+            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, new CodeStorage(),
                                 new Equipment.EquipmentStorage());
-            this.enemies = new ConcurrentHashSet<Enemy>();
-            this.SpawnEnemy(Design.SpawnRange);
-            this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
-            this.hubContext = hctx;
-            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
 
             // begin test
             var shootElementList = new List<BaseCodeElement> {
@@ -131,11 +138,19 @@ namespace doodLbot.Logic
                 new CodeBlockElement(idleElementList)
             );
 
-            this.hero.Algorithm.Insert(branchingElement);
-            this.hero.Algorithm.Insert(new IdleElement());
-            this.hero.Algorithm.Insert(new ShootElement(
+            playerOne.Algorithm.Insert(branchingElement);
+            playerOne.Algorithm.Insert(new IdleElement());
+            playerOne.Algorithm.Insert(new ShootElement(
                 new RateLimiter(Design.ShootElementCooldown)));
             // end test
+            this.heroes.Add(playerOne);
+
+            this.enemies = new ConcurrentHashSet<Enemy>();
+            this.SpawnEnemy(Design.SpawnRange);
+            this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
+            this.hubContext = hctx;
+            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
+
         }
 
 
@@ -143,8 +158,14 @@ namespace doodLbot.Logic
         /// Spawns an enemy in the given square radius around the hero.
         /// </summary>
         /// <param name="inRange"></param>
-        public void SpawnEnemy(double inRange) 
-            => this.enemies.Add(Enemy.Spawn<Kamikaze>(this.hero.Xpos, this.hero.Ypos, inRange));
+        public void SpawnEnemy(double inRange)
+        {
+            // TODO make this to work nicely whith multiplayer - create only one enemy
+            foreach (Hero h in this.heroes)
+            {
+                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange));
+            }
+        }
 
         /// <summary>
         /// Updates the current hero controls based on the update received from the frontend.
@@ -152,8 +173,11 @@ namespace doodLbot.Logic
         /// <param name="update"></param>
         public void UpdateControls(GameStateUpdate update)
         {
-            foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
-                this.hero.UpdateControls(key, isDown);
+            foreach (Hero h in this.heroes)
+            {
+                foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
+                    h.UpdateControls(key, isDown);
+            }
         }
 
         /// <summary>
@@ -162,7 +186,10 @@ namespace doodLbot.Logic
         /// <param name="delta">relative delta time</param>
         public void UpdateStateWithControls(double delta)
         {
-            this.hero.UpdateStateWithControls(delta);            
+            foreach (Hero h in this.heroes)
+            {
+                h.UpdateStateWithControls(delta);
+            }           
         }
 
         private void CheckForCollisionsAndUpdateGame()
@@ -175,55 +202,67 @@ namespace doodLbot.Logic
 
         private void CheckCollisionEnemyProjectile()
         {
-            IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, this.hero.Projectiles);
+            foreach (Hero h in this.heroes)
+            {
+                IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, h.Projectiles);
 
-            foreach (Collision c in collisions) {
-                Entity enemy = c.Collider1;
-                Entity projectile = c.Collider2;
+                foreach (Collision c in collisions)
+                {
+                    Entity enemy = c.Collider1;
+                    Entity projectile = c.Collider2;
 
-                enemy.DecreaseHealthPoints(projectile.Damage);
+                    enemy.DecreaseHealthPoints(projectile.Damage);
 
-                // Removing projectile and enemy (if it's dead)
-                if (enemy.Hp <= 0)
-                { 
-                    this.enemies.TryRemove((Enemy)enemy);
-                    this.hero.Points += (int)Math.Ceiling(enemy.Damage);
+                    // Removing projectile and enemy (if it's dead)
+                    if (enemy.Hp <= 0)
+                    {
+                        this.enemies.TryRemove((Enemy)enemy);
+                        h.Points += (int)Math.Ceiling(enemy.Damage);
+                    }
+
+                    h.TryRemoveProjectile((Projectile)projectile);
                 }
-
-                this.hero.TryRemoveProjectile((Projectile)projectile);
             }
         }
 
         private void CheckCollisionEnemyHero()
         {
-            var heros = new List<Entity> {
-                this.hero
-            };
-            IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heros, this.enemies);
+            foreach (Hero h in this.heroes)
+            {
+                var heroList = new List<Entity> { h };
+                IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heroList, this.enemies);
 
-            foreach (Collision c in collisionsWithHero) {
-                Entity hero = c.Collider1;
-                Entity kamikaze = c.Collider2;
-                kamikaze.DecreaseHealthPoints(hero.Damage);
+                foreach (Collision c in collisionsWithHero) {
+                    Entity hero = c.Collider1;
+                    Entity kamikaze = c.Collider2;
+                    kamikaze.DecreaseHealthPoints(hero.Damage);
 
-                // Remove kamikaze from the game
-                this.enemies.TryRemove((Enemy)kamikaze);
+                    // Remove kamikaze from the game
+                    this.enemies.TryRemove((Enemy)kamikaze);
 
-                this.hero.DecreaseHealthPoints(kamikaze.Damage);
-            }
+                    h.DecreaseHealthPoints(kamikaze.Damage);
+                } }
         }
 
         private void RemoveProjectilesOutsideOfMap()
         {
-            IReadOnlyCollection<Projectile> projectiles = this.hero.Projectiles;
-            foreach (Projectile p in projectiles) {
-                if (p.IsOutsideBounds(Design.MapSize)) {
-                    if (this.hero.TryRemoveProjectile(p)) {
-                        //Log.Debug($"Removed projectile on location: " +
-                        //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
-                    } else {
-                        Log.Debug($"Failed to remove projectile on location:" +
-                            $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+            foreach (Hero h in this.heroes)
+            {
+                IReadOnlyCollection<Projectile> projectiles = h.Projectiles;
+                foreach (Projectile p in projectiles)
+                {
+                    if (p.IsOutsideBounds(Design.MapSize))
+                    {
+                        if (h.TryRemoveProjectile(p))
+                        {
+                            //Log.Debug($"Removed projectile on location: " +
+                            //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
+                        }
+                        else
+                        {
+                            Log.Debug($"Failed to remove projectile on location:" +
+                                $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                        }
                     }
                 }
             }
