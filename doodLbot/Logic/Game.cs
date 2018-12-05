@@ -2,6 +2,7 @@
 using doodLbot.Entities;
 using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
+using doodLbot.Extensions;
 using doodLbot.Hubs;
 
 using Microsoft.AspNetCore.SignalR;
@@ -21,7 +22,6 @@ namespace doodLbot.Logic
 
         public static TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
-        private static readonly AsyncExecutor _async = new AsyncExecutor();
 
         // TODO track if code blocks have changed
         private static bool codeBlocksChanged = false;
@@ -35,7 +35,7 @@ namespace doodLbot.Logic
         /// <summary>
         /// Callback executed on each game tick.
         /// </summary>
-        /// <param name="_"></param>
+        /// <param name="_">game object that is passed by the timer</param>
         private static void UpdateCallback(object _)
         {
             var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -72,8 +72,7 @@ namespace doodLbot.Logic
             game.CheckForCollisionsAndUpdateGame();
             game.RemoveProjectilesOutsideOfMap();
 
-            _async.Execute(game.hubContext.Clients.All.SendAsync("StateUpdate", game.GameState));
-
+            HubContextExtensions.SendUpdatesToClients(game.hubContext, game.GameState);
             // begin test
 
             foreach (Hero h in game.heroes)
@@ -90,14 +89,11 @@ namespace doodLbot.Logic
             }
             if (codeBlocksChanged) {
                 codeBlocksChanged = false;
-                _async.Execute(game.hubContext.Clients.All.SendAsync("UpdateCodeBlocks", game.GameState.Hero.Algorithm));
+                HubContextExtensions.SendCodeUpdate(game.hubContext, game.GameState.Hero.Algorithm);
             }
             ExecWatch.Stop();
             var ms = ExecWatch.ElapsedMilliseconds;
-            if (true)
-            {
-                Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
-            }
+            // Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
             // end test
         }
 
@@ -116,8 +112,9 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.heroes = new ConcurrentHashSet<Hero>();
-            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, new CodeStorage(),
-                                new Equipment.EquipmentStorage());
+            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, 
+                new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
+            );
 
             // begin test
             var shootElementList = new List<BaseCodeElement> {

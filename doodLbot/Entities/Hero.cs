@@ -28,9 +28,9 @@ namespace doodLbot.Entities
         
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
-        public CodeStorage CodeInventory { get; set; }
+        public CodeStorage CodeInventory { get; private set; }
 
-        public EquipmentStorage EquipmentInventory { get; set; }
+        public EquipmentStorage EquipmentInventory { get; private set; }
 
         private RateLimiter ShootRateLimiter;
 
@@ -51,20 +51,45 @@ namespace doodLbot.Entities
         public void AddGear(Gear g)
         {
             gear.Add(g);
-            if (g is Armor)
+            switch(g)
             {
-                var armor = g as Armor;
-                this.Speed += armor.Speed;
-            }
-            else
-            {
-
+                case Armor armor:
+                    this.Speed += armor.Speed;
+                    break;
+                case Weapon weapon:
+                    break;
             }
         }
 
         public bool RemoveGear(Gear g)
         {
             return gear.Remove(g);
+        }
+
+        public void BuyGear(string name)
+        {
+            var item = EquipmentInventory.BuyItem(name);
+            if (item == null)
+                return;
+            AddGear(item);
+        }
+
+        public void SellGear(string name)
+        {
+            var item = EquipmentInventory.SellItem(name);
+            if (item == null)
+                return;
+            RemoveGear(item);
+        }
+
+        public void BuyCode(string name)
+        {
+            CodeInventory.BuyItem(name);
+        }
+
+        public void SellCode(string name)
+        {
+            CodeInventory.SellItem(name);
         }
 
         protected override void OnMove()

@@ -1,12 +1,13 @@
 ﻿using doodLbot.Logic;
 using Newtonsoft.Json;
+using doodLbot.Equipment;
 
 namespace doodLbot.Entities.CodeElements
 {
     /// <summary>
     /// Represents an abstract code element.
     /// </summary>
-    abstract public class BaseCodeElement
+    abstract public class BaseCodeElement : IStorageItem
     {
         /// <summary>
         /// Gets the type of this code element.
@@ -21,6 +22,8 @@ namespace doodLbot.Entities.CodeElements
         public virtual bool IsActive { get; set; }
 
         public double Price { get; set; }
+
+        public string Name => Type;
 
         /// <summary>
         /// Executes this code element.

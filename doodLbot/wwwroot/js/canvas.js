@@ -1,6 +1,7 @@
 "use strict";
 // https://github.com/kittykatattack/learningPixi
 
+// SERVER => CLIENT
 function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
@@ -226,8 +227,15 @@ function updateHero(delta) {
     if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
         let speedMul = FramesSinceLastUpdate * MulSpeedsWith * delta;
-        let newx = hero.x + speedMul * hero.vx;
-        let newy = hero.y + speedMul * hero.vy;
+        let xplus = speedMul * hero.vx;
+        let yplus = speedMul * hero.vy;
+        let newx = hero.x;
+        let newy = hero.y;
+        if (hero.x + xplus < MapWidth && hero.x + xplus > 0)
+            newx += xplus;
+
+        if (hero.y + yplus < MapHeight && hero.y + yplus > 0)
+            newy += yplus;
 
         heroGroup.position.set(newx, newy);
         heroGroup.rotation = hero.rotation;

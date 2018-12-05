@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace doodLbot.Equipment
 {
-    public abstract class Gear
+    public abstract class Gear : IStorageItem
     {
         [JsonProperty("cost")]
         public int Cost { get; protected set; }
