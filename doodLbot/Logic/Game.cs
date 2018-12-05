@@ -10,6 +10,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace doodLbot.Logic
 {
@@ -28,84 +29,8 @@ namespace doodLbot.Logic
         // TODO track if gear has changed
         private static bool gearChanged = true;
 
-        static private System.Diagnostics.Stopwatch Watch = 
-            System.Diagnostics.Stopwatch.StartNew();
+        private static System.Diagnostics.Stopwatch Watch = System.Diagnostics.Stopwatch.StartNew();
 
-        /// <summary>
-        /// Callback executed on each game tick.
-        /// </summary>
-        /// <param name="_">game object that is passed by the timer</param>
-        private void GameTick(double delta)
-        {
-            var game = this;
-
-            if (!game.enemySpawnLimiter.IsCooldownActive()) {
-                game.SpawnEnemy(Design.SpawnRange);
-            }
-            game.UpdateStateWithControls(delta);
-            
-            foreach (Hero h in game.heroes)
-            {
-                h.Move(delta);
-                h.Algorithm.Execute(game.GameState);
-            }
-
-            foreach (Enemy enemy in game.enemies) {
-                enemy.VelocityTowardsClosestEntity(game.heroes);
-                enemy.Move(delta);
-                if (enemy is Shooter shooter)
-                    game.TryAddEnemyProjectile(shooter);
-            }
-
-            foreach (Hero h in game.heroes)
-            {
-                foreach (Projectile projectile in h.Projectiles)
-                {
-                    projectile.Move(delta);
-                }
-            }
-
-            game.CheckForCollisionsAndUpdateGame();
-            game.RemoveProjectilesOutsideOfMap();
-
-            HubContextExtensions.SendUpdatesToClients(game.hubContext, game.GameState);
-            foreach (Hero h in game.heroes)
-            {
-                if (h.Points >= 40)
-                {
-                    if (gearChanged)
-                    {
-                        gearChanged = false;
-                        h.AddGear(Design.GearDict["hoverboard"]);
-                        h.Points -= 40;
-                    }
-                }
-            }
-            if (codeBlocksChanged) {
-                codeBlocksChanged = false;
-                HubContextExtensions.SendCodeUpdate(game.hubContext, game.GameState.Hero.Algorithm);
-            }
-        }
-
-        private static void GameLoop(object g)
-        {
-            var game = g as Game;
-
-            while (true)
-            {
-                var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
-                Watch.Stop();
-                var mss = Watch.ElapsedMilliseconds;
-                Watch = System.Diagnostics.Stopwatch.StartNew();
-                double delta = mss / RefreshTimeSpan.TotalMilliseconds;
-
-                game.GameTick(delta);
-                ExecWatch.Stop();
-                var ms = ExecWatch.ElapsedMilliseconds;
-                Thread.Sleep(RefreshTimeSpan);
-                Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
-            }
-        }
 
         public GameState GameState => new GameState(this.heroes, this.enemies, /* TODO */ null);
 
@@ -114,9 +39,11 @@ namespace doodLbot.Logic
         private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
         private readonly ConcurrentHashSet<Enemy> enemies;  // TODO doesnt have to be concurrent
-        private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
         private readonly RateLimiter enemySpawnLimiter;
+        private readonly Task gameLoopTask;
+        private readonly CancellationTokenSource gameLoopCTS;
+
 
         /// <summary>
         /// Constructs a new Game which uses a HubContext interface to send data to clients.
@@ -125,6 +52,13 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.heroes = new ConcurrentHashSet<Hero>();
+            this.enemies = new ConcurrentHashSet<Enemy>();
+            this.hubContext = hctx;
+            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
+            this.gameLoopCTS = new CancellationTokenSource();
+
+
+            // begin hardcoded test
             Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, 
                 new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
             );
@@ -154,11 +88,84 @@ namespace doodLbot.Logic
 
             this.heroes.Add(playerOne);
 
-            this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy(Design.SpawnRange);
-            this.hubContext = hctx;
-            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
-            this.ticker = new Timer(GameLoop, this, 0, Timeout.Infinite);
+            // end hardcoded test
+
+
+            this.gameLoopTask = Task.Run(async () => {
+                while (true) {
+                    var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
+                    Watch.Stop();
+                    var mss = Watch.ElapsedMilliseconds;
+                    Watch = System.Diagnostics.Stopwatch.StartNew();
+                    double delta = mss / RefreshTimeSpan.TotalMilliseconds;
+
+                    await this.GameTick(delta);
+                    ExecWatch.Stop();
+                    var ms = ExecWatch.ElapsedMilliseconds;
+
+                    await Task.Delay(RefreshTimeSpan);
+                    Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
+                }
+            }, gameLoopCTS.Token);
+        }
+
+        ~Game()
+        {
+            this.gameLoopCTS.Cancel();
+            this.gameLoopCTS.Dispose();
+            this.gameLoopTask.Dispose();
+        }
+
+
+        /// <summary>
+        /// Callback executed on each game tick.
+        /// </summary>
+        /// <param name="_">game object that is passed by the timer</param>
+        private async Task GameTick(double delta)
+        {
+            var game = this;
+
+            if (!game.enemySpawnLimiter.IsCooldownActive()) {
+                game.SpawnEnemy(Design.SpawnRange);
+            }
+            game.UpdateStateWithControls(delta);
+
+            foreach (Hero h in game.heroes) {
+                h.Move(delta);
+                h.Algorithm.Execute(game.GameState);
+            }
+
+            foreach (Enemy enemy in game.enemies) {
+                enemy.VelocityTowardsClosestEntity(game.heroes);
+                enemy.Move(delta);
+                if (enemy is Shooter shooter)
+                    game.TryAddEnemyProjectile(shooter);
+            }
+
+            foreach (Hero h in game.heroes) {
+                foreach (Projectile projectile in h.Projectiles) {
+                    projectile.Move(delta);
+                }
+            }
+
+            game.CheckForCollisionsAndUpdateGame();
+            game.RemoveProjectilesOutsideOfMap();
+
+            HubContextExtensions.SendUpdatesToClients(game.hubContext, game.GameState);
+            foreach (Hero h in game.heroes) {
+                if (h.Points >= 40) {
+                    if (gearChanged) {
+                        gearChanged = false;
+                        h.AddGear(Design.GearDict["hoverboard"]);
+                        h.Points -= 40;
+                    }
+                }
+            }
+            if (codeBlocksChanged) {
+                codeBlocksChanged = false;
+                await HubContextExtensions.SendCodeUpdate(game.hubContext, game.GameState.Hero.Algorithm);
+            }
         }
 
         /// <summary>

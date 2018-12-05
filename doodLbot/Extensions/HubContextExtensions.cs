@@ -13,8 +13,6 @@ namespace doodLbot.Extensions
     /// </summary>
     public static class HubContextExtensions
     {
-        private static readonly AsyncExecutor async = new AsyncExecutor();
-
         /// <summary>
         /// Internal game state update action. Forces the clients to update their game state on
         /// each tick.
@@ -28,11 +26,11 @@ namespace doodLbot.Extensions
         }
 
         // Sends 
-        public static void SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
+        public static Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
         {
             // TODO this should be changed when multiplayer happens, because each hero
             // will have a different algorithm
-            async.Execute(hub.Clients.All.SendAsync("UpdateCodeBlocks", alg));
+            return hub.Clients.All.SendAsync("UpdateCodeBlocks", alg);
         }
     }
 }
