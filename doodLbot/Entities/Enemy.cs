@@ -17,7 +17,6 @@ namespace doodLbot.Entities
 
         }
 
-
         /// <summary>
         /// Spawn enemies in a rectangle around the hero.
         /// </summary>
@@ -35,6 +34,10 @@ namespace doodLbot.Entities
             xpos = heroX + (rand.NextDouble() - centerRandomVar) * r;
             ypos = heroY + (rand.NextDouble() - centerRandomVar) * r;
 
+            xpos = Math.Min(xpos, Design.MapWidth);
+            xpos = Math.Max(xpos, 0);
+            ypos = Math.Min(ypos, Design.MapHeight);
+            ypos = Math.Max(ypos, 0);
             // Log.Debug($"Spawning: {typeof(T)} at ({xpos}, {ypos}) ; player position ({heroX}, {heroY})");
 
             return new T() {

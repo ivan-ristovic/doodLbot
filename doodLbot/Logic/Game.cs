@@ -22,7 +22,6 @@ namespace doodLbot.Logic
 
         public static TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
-
         // TODO track if code blocks have changed
         private static bool codeBlocksChanged = false;
 
@@ -36,14 +35,9 @@ namespace doodLbot.Logic
         /// Callback executed on each game tick.
         /// </summary>
         /// <param name="_">game object that is passed by the timer</param>
-        private static void UpdateCallback(object _)
+        private void GameTick(double delta)
         {
-            var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
-            Watch.Stop();
-            var mss = Watch.ElapsedMilliseconds;
-            Watch = System.Diagnostics.Stopwatch.StartNew();
-            double delta = mss / RefreshTimeSpan.TotalMilliseconds;
-            var game = _ as Game;
+            var game = this;
 
             if (!game.enemySpawnLimiter.IsCooldownActive()) {
                 game.SpawnEnemy(Design.SpawnRange);
@@ -75,8 +69,6 @@ namespace doodLbot.Logic
             game.RemoveProjectilesOutsideOfMap();
 
             HubContextExtensions.SendUpdatesToClients(game.hubContext, game.GameState);
-            // begin test
-
             foreach (Hero h in game.heroes)
             {
                 if (h.Points >= 40)
@@ -93,10 +85,26 @@ namespace doodLbot.Logic
                 codeBlocksChanged = false;
                 HubContextExtensions.SendCodeUpdate(game.hubContext, game.GameState.Hero.Algorithm);
             }
-            ExecWatch.Stop();
-            var ms = ExecWatch.ElapsedMilliseconds;
-            // Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
-            // end test
+        }
+
+        private static void GameLoop(object g)
+        {
+            var game = g as Game;
+
+            while (true)
+            {
+                var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
+                Watch.Stop();
+                var mss = Watch.ElapsedMilliseconds;
+                Watch = System.Diagnostics.Stopwatch.StartNew();
+                double delta = mss / RefreshTimeSpan.TotalMilliseconds;
+
+                game.GameTick(delta);
+                ExecWatch.Stop();
+                var ms = ExecWatch.ElapsedMilliseconds;
+                Thread.Sleep(RefreshTimeSpan);
+                Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
+            }
         }
 
         public GameState GameState => new GameState(this.heroes, this.enemies, /* TODO */ null);
@@ -121,7 +129,6 @@ namespace doodLbot.Logic
                 new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
             );
 
-            // begin test
             var shootElementList = new List<BaseCodeElement> {
                 new TargetElement(),
                 new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
@@ -144,17 +151,15 @@ namespace doodLbot.Logic
             playerOne.Algorithm.Insert(new IdleElement());
             playerOne.Algorithm.Insert(new ShootElement(
                 new RateLimiter(Design.ShootElementCooldown)));
-            // end test
+
             this.heroes.Add(playerOne);
 
             this.enemies = new ConcurrentHashSet<Enemy>();
             this.SpawnEnemy(Design.SpawnRange);
-            this.ticker = new Timer(UpdateCallback, this, RefreshTimeSpan, RefreshTimeSpan);
             this.hubContext = hctx;
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
-
+            this.ticker = new Timer(GameLoop, this, 0, Timeout.Infinite);
         }
-
 
         /// <summary>
         /// Spawns an enemy in the given square radius around the hero.
