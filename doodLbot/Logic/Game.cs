@@ -59,6 +59,8 @@ namespace doodLbot.Logic
             foreach (Enemy enemy in game.enemies) {
                 enemy.VelocityTowardsClosestEntity(game.heroes);
                 enemy.Move(delta);
+                if (enemy is Shooter shooter)
+                    game.TryAddEnemyProjectile(shooter);
             }
 
             foreach (Hero h in game.heroes)
@@ -99,9 +101,9 @@ namespace doodLbot.Logic
 
         public GameState GameState => new GameState(this.heroes, this.enemies, /* TODO */ null);
 
-        public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
+        public IReadOnlyCollection<Projectile> EnemyProjectiles => this.enemyProjectiles;
 
-        private readonly ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
+        private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
         private readonly ConcurrentHashSet<Enemy> enemies;  // TODO doesnt have to be concurrent
         private readonly Timer ticker;
@@ -266,7 +268,28 @@ namespace doodLbot.Logic
                     }
                 }
             }
+
+            foreach (Projectile p in this.EnemyProjectiles) {
+                if (p.IsOutsideBounds(Design.MapSize)) {
+                    if (this.TryRemoveEnemyProjectile(p)) {
+                        //Log.Debug($"Removed projectile on location: " +
+                        //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
+                    } else {
+                        Log.Debug($"Failed to remove projectile on location:" +
+                            $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                    }
+                }
+            }
         }
+
+        public bool TryAddEnemyProjectile(Shooter shooter)
+        {
+            Projectile p = shooter.TryFire();
+            return p != null && this.enemyProjectiles.Add(p);
+        }
+
+        public bool TryRemoveEnemyProjectile(Projectile p)
+            =>  this.enemyProjectiles.TryRemove(p);
 
         #endregion
     }
