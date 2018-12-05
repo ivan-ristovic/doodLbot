@@ -9,18 +9,14 @@ let consoleKeyFunc = () => {
 
 // CONTROLS => SERVER
 function sendUpdateToServer(update) {
-    connection.invoke("updateGameState", update).catch(function (err) {
-        return console.error(err.toString());
-    });
+    sendToServer("updateGameState", update);
 }
 
 // CODE => SERVER
 function sendCodeUpdateToServer(code) {
     let toSend = code.elements;
     console.log(JSON.stringify(toSend, null, 2));
-    connection.invoke("algorithmUpdated", JSON.stringify(toSend)).catch(function (err) {
-        return console.error(err.toString());
-    });
+    sendToServer("algorithmUpdated", JSON.stringify(toSend));
 }
 
 // INIT SERVER => CLIENT
@@ -39,7 +35,6 @@ function initClient(data) {
     console.log("equpimnet inventpry = ", data.equipmentInventory);
 }
 
-
 // starts up connection from clients side
 function startConnection() {
     // callbacks for server pushing data to client
@@ -49,12 +44,16 @@ function startConnection() {
 
     connection.start().then(function () {
         console.log('connection started');
-        connection.invoke("ClientIsReady").catch(function (err) {
-            return console.error(err.toString());
-        });
+        sendToServer("ClientIsReady");
     }).catch(function (err) {
         return console.error(err.toString());
     });
+}
+
+// GEARSHOP => SERVER
+function buyGearServer(name) {
+    console.log("sent request to buy gear", name);
+    sendToServer("buyGear", name);
 }
 
 // listens for the given keyCode
@@ -96,13 +95,18 @@ function keyboard(keyCode) {
     return key;
 }
 
+// CLIENT => SERVER
 let testKeyFunc = () => {
-    connection
-        .invoke("TestingCallback")
-        .catch(function (err) {
-            return console.error(err.toString());
-        });
+    sendToServer("TestingCallback");
 };
+
+// generic function for sending. DRY
+function sendToServer(...args)
+{
+    connection.invoke(...args).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
 
 var timesRecieved = 0;
 let left = keyboard(65),

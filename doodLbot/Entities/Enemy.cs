@@ -28,7 +28,7 @@ namespace doodLbot.Entities
             xpos = heroX + (rand.NextDouble() - centerRandomVar) * r;
             ypos = heroY + (rand.NextDouble() - centerRandomVar) * r;
 
-            Log.Debug($"Spawning: {typeof(T)} at ({xpos}, {ypos}) ; player position ({heroX}, {heroY})");
+            // Log.Debug($"Spawning: {typeof(T)} at ({xpos}, {ypos}) ; player position ({heroX}, {heroY})");
 
             return new T() {
                 Xpos = xpos,

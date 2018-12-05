@@ -1,6 +1,7 @@
 "use strict";
 // https://github.com/kittykatattack/learningPixi
 
+// SERVER => CLIENT
 function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;

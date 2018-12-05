@@ -8,8 +8,9 @@ using System.Linq;
 
 namespace doodLbot.Equipment
 {
-    
-
+    ///<summary> 
+    ///Generic class for shop and storage of items 
+    ///</summary>
     public abstract class Storage<T> where T : class, IStorageItem 
     {
         public class ShopEntry
@@ -27,10 +28,10 @@ namespace doodLbot.Equipment
         {
             var item = FindItemFromName(name);
             item.Count++;
-            return item?.Element;
+            return item.Element;
         }
 
-        public void SellItem(string name)
+        public T SellItem(string name)
         {
             var item = FindItemFromName(name);
             if (item.Count <= 0)
@@ -38,6 +39,7 @@ namespace doodLbot.Equipment
                 throw new System.Exception("Cannot sell when item.count is 0");
             }
             item.Count--;
+            return item.Element;
         }
 
         private ShopEntry FindItemFromName(string name)

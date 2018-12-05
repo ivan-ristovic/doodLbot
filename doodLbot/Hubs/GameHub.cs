@@ -58,15 +58,32 @@ namespace doodLbot.Hubs
                 equipmentInventory = game.GameState.Hero.EquipmentInventory
             };
 
-            // TODO change when multiplayer is done
-            return this.Clients.All.SendAsync("InitClient", data);
+            return this.Clients.Caller.SendAsync("InitClient", data);
         }
 
-        public Task SendCodeUpdate(BehaviourAlgorithm alg)
+
+        public Task BuyGear(string name)
         {
-            // TODO this should be changed when multiplayer happens, because each hero
-            // will have a different algorithm
-            return this.Clients.All.SendAsync("UpdateCodeBlocks", alg);
+            this.game.GameState.Hero.BuyGear(name);
+            return Task.CompletedTask;
+        }
+
+        public Task SellGear(string name)
+        {
+            this.game.GameState.Hero.SellGear(name);
+            return Task.CompletedTask;
+        }
+
+        public Task BuyCode(string name)
+        {
+            this.game.GameState.Hero.BuyCode(name);
+            return Task.CompletedTask;
+        }
+
+        public Task SellCode(string name)
+        {
+            this.game.GameState.Hero.SellCode(name);
+            return Task.CompletedTask;
         }
 
         public Task AlgorithmUpdated(string json)
@@ -74,13 +91,5 @@ namespace doodLbot.Hubs
             this.game.GameState.Hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             return Task.CompletedTask;
         }
-
-        /// <summary>
-        /// Internal game state update action. Forces the clients to update their game state on
-        /// each tick.
-        /// </summary>
-        /// <param name="update"></param>
-        internal Task SendUpdatesToClient(GameState update)
-            => this.Clients.All.SendAsync("GameStateUpdateRecieved", update);
     }
 }
