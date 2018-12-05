@@ -37,7 +37,7 @@ namespace doodLbot.Entities
         private readonly Controls controls;
 
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
-        : base(x, y)
+            : base(x: x, y: y)
         {
             this.id = id;
             this.CodeInventory = codeInventory;

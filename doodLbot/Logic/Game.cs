@@ -98,7 +98,10 @@ namespace doodLbot.Logic
         }
 
         public GameState GameState => new GameState(this.heroes, this.enemies);
-        
+
+        public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
+
+        private readonly ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
         private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly Timer ticker;

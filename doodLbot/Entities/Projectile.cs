@@ -15,9 +15,8 @@ namespace doodLbot.Entities
         /// <param name="angle">Projectile angle (in radians).</param>
         /// <param name="speed">Projectile speed.</param>
         /// <param name="damage">Projectile damage</param>
-        public Projectile(double x, double y, double angle, double speed, double damage) : base(x, y)
+        public Projectile(double x, double y, double angle, double speed, double damage) : base(x: x, y: y, speed: speed, damage: damage, rotation: angle)
         {
-            this.Damage = damage;
             this.Xvel = Math.Cos(angle) * speed;
             this.Yvel = Math.Sin(angle) * speed;
         }

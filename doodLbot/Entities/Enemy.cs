@@ -11,6 +11,13 @@ namespace doodLbot.Entities
     /// </summary>
     public abstract class Enemy : Entity
     {
+
+        protected Enemy(double hp = 100, double damage = 1, double speed = 0, double rotation = 0) : base(hp, damage, speed, rotation)
+        {
+
+        }
+
+
         /// <summary>
         /// Spawn enemies in a rectangle around the hero.
         /// </summary>

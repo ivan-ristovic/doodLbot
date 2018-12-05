@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using doodLbot.Logic;
+using Newtonsoft.Json;
 
 using System;
 
@@ -7,7 +8,7 @@ namespace doodLbot.Entities
     /// <summary>
     /// Represents an entity present in the game.
     /// </summary>
-    public class Entity
+    public abstract class Entity
     {
         /// <summary>
         /// Get the X position of this entity.
@@ -51,15 +52,21 @@ namespace doodLbot.Entities
         [JsonProperty("damage")]
         public double Damage { get; protected set; }
 
+        /// <summary>
+        /// Get this entity's speed.
+        /// </summary>
+        [JsonProperty("speed")]
         public double Speed { get; protected set; }
 
         /// <summary>
         /// Constructs a new Entity with default health and damage points.
         /// </summary>
-        public Entity()
+        public Entity(double hp = 100, double damage = 1, double speed = 0, double rotation = 0)
         {
-            this.Hp = 100;
-            this.Damage = 1;
+            this.Speed = speed;
+            this.Hp = hp;
+            this.Damage = damage;
+            this.Rotation = rotation;
         }
 
         /// <summary>
@@ -68,11 +75,10 @@ namespace doodLbot.Entities
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="rotation">Entity's rotation amount (in radians)</param>
-        public Entity(double x, double y, double rotation = 0) : this()
+        public Entity(double x, double y, double speed = 0, double hp = 100, double damage = 1, double rotation = 0) : this(hp, damage, speed, rotation)
         {
             this.Xpos = x;
             this.Ypos = y;
-            this.Rotation = rotation;
         }
 
 
@@ -118,7 +124,7 @@ namespace doodLbot.Entities
         }
 
         /// <summary>
-        /// 
+        ///                 TODO
         /// </summary>
         /// <param name="value"></param>
         public virtual void DecreaseHealthPoints(double value)
