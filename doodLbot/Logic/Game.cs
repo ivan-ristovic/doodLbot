@@ -94,10 +94,7 @@ namespace doodLbot.Logic
             }
             ExecWatch.Stop();
             var ms = ExecWatch.ElapsedMilliseconds;
-            if (true)
-            {
-                Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
-            }
+            // Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
             // end test
         }
 
@@ -116,8 +113,9 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.heroes = new ConcurrentHashSet<Hero>();
-            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, new CodeStorage(),
-                                new Equipment.EquipmentStorage());
+            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, 
+                new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
+            );
 
             // begin test
             var shootElementList = new List<BaseCodeElement> {

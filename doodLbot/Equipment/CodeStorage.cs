@@ -1,34 +1,14 @@
 using doodLbot.Entities.CodeElements.ConditionElements;
 using doodLbot.Logic;
-
+using doodLbot.Entities.CodeElements;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-
-
-namespace doodLbot.Entities.CodeElements
+namespace doodLbot.Equipment
 {
-    public class ShopEntry
+
+    public class CodeStorage : Storage<BaseCodeElement>
     {
-        public BaseCodeElement Element;
-        public int Count;
-    }
-
-    public class CodeStorage
-    {
-        [JsonProperty("items")]
-        public List<ShopEntry> Items;
-
-        public void BuyItem(BaseCodeElement e)
-        {
-
-        }
-
-        public void SellItem(BaseCodeElement e)
-        {
-
-        }
-
         public CodeStorage()
         {
             Items = new List<ShopEntry>();
