@@ -15,29 +15,32 @@ namespace doodLbot.Logic
     {
         [JsonProperty("hero")]
         public Hero Hero { get; }
+        public ConcurrentHashSet<Hero> Heroes { get; }
 
         [JsonProperty("enemies")]
-        public IReadOnlyList<Enemy> Enemies => this.enemies.AsReadOnly();
+        public IReadOnlyCollection<Enemy> Enemies { get; private set; }
 
         [JsonProperty("projectiles")]
-        public IReadOnlyList<Projectile> Projectiles => this.projectiles.AsReadOnly();
+        public IReadOnlyCollection<Projectile> Projectiles => this.Hero.Projectiles;
+//       [JsonProperty("heroProjectiles")]
+//       public IReadOnlyCollection<Projectile> HeroProjectiles => this.Heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
 
-        private readonly List<Enemy> enemies;
-        private readonly List<Projectile> projectiles = new List<Projectile>();
-
+        [JsonProperty("enemyProjectiles")]
+        public IReadOnlyCollection<Projectile> EnemyProjectiles { get; private set; }
 
         /// <summary>
         /// Constructs a new GameState object containing the hero and spawned enemies.
         /// </summary>
         /// <param name="heroes"></param>
         /// <param name="enemies"></param>
-        public GameState(ConcurrentHashSet<Hero> heroes, IEnumerable<Enemy> enemies)
+        public GameState(IReadOnlyCollection<Hero> heroes, IReadOnlyCollection<Enemy> enemies, IReadOnlyCollection<Projectile> enemyProjectiles)
         {
+            // TODO: milana: Change to ConcurrentHashSet
             Hero playerOne = heroes.Single(hero => hero.id == 1);
-            // TODO: milana: Add playerTwo
             this.Hero = playerOne;
-            this.enemies = enemies.ToList();
-            this.projectiles.AddRange(playerOne.Projectiles);
+
+            this.Enemies = enemies;
+            this.EnemyProjectiles = enemyProjectiles;
         }
     }
 }

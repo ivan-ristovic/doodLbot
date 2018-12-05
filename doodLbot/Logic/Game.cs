@@ -97,13 +97,13 @@ namespace doodLbot.Logic
             // end test
         }
 
-        public GameState GameState => new GameState(this.heroes, this.enemies);
+        public GameState GameState => new GameState(this.heroes, this.enemies, /* TODO */ null);
 
         public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
 
         private readonly ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
-        private readonly ConcurrentHashSet<Enemy> enemies;
+        private readonly ConcurrentHashSet<Enemy> enemies;  // TODO doesnt have to be concurrent
         private readonly Timer ticker;
         private readonly IHubContext<GameHub> hubContext;
         private readonly RateLimiter enemySpawnLimiter;

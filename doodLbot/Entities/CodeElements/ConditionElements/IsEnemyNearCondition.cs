@@ -19,7 +19,7 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
 
         public override bool Evaluate(GameState state)
         {
-            IReadOnlyList<Enemy> enemies = state.Enemies;
+            IReadOnlyCollection<Enemy> enemies = state.Enemies;
 
             if (!enemies?.Any() ?? false)
                 return false;
