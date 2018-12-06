@@ -17,7 +17,7 @@ namespace doodLbot.Logic
     /// <summary>
     /// Represents a doodLbot game.
     /// </summary>
-    public sealed class Game
+    public sealed class Game : IDisposable
     {
         public static readonly double TickRate = Design.TickRate;
 
@@ -93,7 +93,7 @@ namespace doodLbot.Logic
 
 
             this.gameLoopTask = Task.Run(async () => {
-                while (true) {
+                while (!this.gameLoopCTS.IsCancellationRequested) {
                     var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
                     Watch.Stop();
                     var mss = Watch.ElapsedMilliseconds;
@@ -112,11 +112,16 @@ namespace doodLbot.Logic
 
         ~Game()
         {
+            this.Dispose();
+        }
+
+
+        public void Dispose()
+        {
             this.gameLoopCTS.Cancel();
             this.gameLoopCTS.Dispose();
             this.gameLoopTask.Dispose();
         }
-
 
         /// <summary>
         /// Callback executed on each game tick.
