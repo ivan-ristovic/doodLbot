@@ -17,20 +17,18 @@ namespace doodLbot.Extensions
         /// Internal game state update action. Forces the clients to update their game state on
         /// each tick.
         /// </summary>
-        /// <param name="update"></param>
-        public static void SendUpdatesToClients(this IHubContext<GameHub> hub, GameState update)
-        {
-            //async.Execute(hub.Clients.All.SendAsync("StateUpdate", update));
-            hub.Clients.All.SendAsync("StateUpdate", update);
+        public static async Task SendUpdatesToClients(this IHubContext<GameHub> hub, GameState update)
+            => await hub.Clients.All.SendAsync("StateUpdate", update);
 
-        }
-
-        // Sends 
-        public static Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
-        {
-            // TODO this should be changed when multiplayer happens, because each hero
-            // will have a different algorithm
-            return hub.Clients.All.SendAsync("UpdateCodeBlocks", alg);
-        }
+        /// <summary>
+        ///                                 TODO
+        /// </summary>
+        /// <param name="hub"></param>
+        /// <param name="alg"></param>
+        /// <returns></returns>
+        // TODO this should be changed when multiplayer happens, because each hero
+        // will have a different algorithm
+        public static async Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
+            => await hub.Clients.All.SendAsync("UpdateCodeBlocks", alg);
     }
 }

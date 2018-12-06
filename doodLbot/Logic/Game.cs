@@ -124,36 +124,34 @@ namespace doodLbot.Logic
         /// <param name="_">game object that is passed by the timer</param>
         private async Task GameTick(double delta)
         {
-            var game = this;
-
-            if (!game.enemySpawnLimiter.IsCooldownActive()) {
-                game.SpawnEnemy(Design.SpawnRange);
+            if (!this.enemySpawnLimiter.IsCooldownActive()) {
+                this.SpawnEnemy(Design.SpawnRange);
             }
-            game.UpdateStateWithControls(delta);
+            this.UpdateStateWithControls(delta);
 
-            foreach (Hero h in game.heroes) {
+            foreach (Hero h in this.heroes) {
                 h.Move(delta);
-                h.Algorithm.Execute(game.GameState);
+                h.Algorithm.Execute(this.GameState);
             }
 
-            foreach (Enemy enemy in game.enemies) {
-                enemy.VelocityTowardsClosestEntity(game.heroes);
+            foreach (Enemy enemy in this.enemies) {
+                enemy.VelocityTowardsClosestEntity(this.heroes);
                 enemy.Move(delta);
                 if (enemy is Shooter shooter)
-                    game.TryAddEnemyProjectile(shooter);
+                    this.TryAddEnemyProjectile(shooter);
             }
 
-            foreach (Hero h in game.heroes) {
+            foreach (Hero h in this.heroes) {
                 foreach (Projectile projectile in h.Projectiles) {
                     projectile.Move(delta);
                 }
             }
 
-            game.CheckForCollisionsAndUpdateGame();
-            game.RemoveProjectilesOutsideOfMap();
+            this.CheckForCollisionsAndUpdateGame();
+            this.RemoveProjectilesOutsideOfMap();
 
-            HubContextExtensions.SendUpdatesToClients(game.hubContext, game.GameState);
-            foreach (Hero h in game.heroes) {
+            await this.hubContext.SendUpdatesToClients(this.GameState);
+            foreach (Hero h in this.heroes) {
                 if (h.Points >= 40) {
                     if (gearChanged) {
                         gearChanged = false;
@@ -164,7 +162,7 @@ namespace doodLbot.Logic
             }
             if (codeBlocksChanged) {
                 codeBlocksChanged = false;
-                await HubContextExtensions.SendCodeUpdate(game.hubContext, game.GameState.Hero.Algorithm);
+                await this.hubContext.SendCodeUpdate(this.GameState.Hero.Algorithm);
             }
         }
 
