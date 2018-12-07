@@ -7,7 +7,7 @@ namespace doodLbot.Entities
     /// </summary>
     public class Kamikaze : Enemy
     {
-        public Kamikaze() : base(hp: 150, damage: 20, speed: Design.EnemySpeed)
+        public Kamikaze() : base(hp: 100, damage: 20, speed: Design.EnemySpeed)
         {
 
         }

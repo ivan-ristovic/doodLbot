@@ -23,16 +23,20 @@ namespace doodLbot.Entities
         /// <typeparam name="T"></typeparam>
         /// <param name="heroX">Hero origin X coordinate.</param>
         /// <param name="heroY">Hero origin Y coordinate.</param>
-        /// <param name="radius">Half-side of a square around player in which the enemy will spawn.</param>
+        /// <param name="maxRadius">Half-side of a square around player in which the enemy will spawn.</param>
         /// <returns>A newly spawned Enemy.</returns>
-        static public T Spawn<T>(double heroX, double heroY, double radius) where T : Enemy, new()
+        static public T Spawn<T>(double heroX, double heroY, double maxRadius, double minRadius) where T : Enemy, new()
         {
             var rand = new Random();
             double xpos, ypos;
-            const double centerRandomVar = 0.5;
-            double r = radius * 2;
-            xpos = heroX + (rand.NextDouble() - centerRandomVar) * r;
-            ypos = heroY + (rand.NextDouble() - centerRandomVar) * r;
+            double r = maxRadius * 2;
+            double deg = rand.NextDouble() * 2 * Math.PI;
+            double dist = minRadius + (maxRadius - minRadius) * rand.NextDouble();
+            double dx = Math.Cos(deg) * dist;
+            double dy = Math.Sin(deg) * dist;
+
+            xpos = heroX + dx;
+            ypos = heroY + dy;
 
             xpos = Math.Min(xpos, Design.MapWidth);
             xpos = Math.Max(xpos, 0);

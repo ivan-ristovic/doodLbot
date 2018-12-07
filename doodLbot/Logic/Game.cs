@@ -23,11 +23,6 @@ namespace doodLbot.Logic
 
         public static TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
-        // TODO track if code blocks have changed
-        private static bool codeBlocksChanged = false;
-
-        // TODO track if gear has changed
-        private static bool gearChanged = true;
 
         private static System.Diagnostics.Stopwatch Watch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -91,7 +86,6 @@ namespace doodLbot.Logic
             this.SpawnEnemy(Design.SpawnRange);
             // end hardcoded test
 
-
             this.gameLoopTask = Task.Run(async () => {
                 while (!this.gameLoopCTS.IsCancellationRequested) {
                     var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -103,7 +97,7 @@ namespace doodLbot.Logic
                     await this.GameTick(delta);
                     ExecWatch.Stop();
                     var ms = ExecWatch.ElapsedMilliseconds;
-
+                    //Thread.Sleep(RefreshTimeSpan);
                     await Task.Delay(RefreshTimeSpan);
                     Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
                 }
@@ -158,17 +152,19 @@ namespace doodLbot.Logic
             await this.hubContext.SendUpdatesToClients(this.GameState);
             foreach (Hero h in this.heroes) {
                 if (h.Points >= 40) {
-                    if (gearChanged) {
-                        gearChanged = false;
+                    if (h.HasGearChanged) {
+                        h.HasGearChanged = false;
                         h.AddGear(Design.GearDict["hoverboard"]);
                         h.Points -= 40;
                     }
                 }
+                if (h.HasCodeChanged)
+                {
+                    h.HasCodeChanged = false;
+                    await this.hubContext.SendCodeUpdate(this.GameState.Hero.Algorithm);
+                }
             }
-            if (codeBlocksChanged) {
-                codeBlocksChanged = false;
-                await this.hubContext.SendCodeUpdate(this.GameState.Hero.Algorithm);
-            }
+            
         }
 
         /// <summary>
@@ -180,7 +176,7 @@ namespace doodLbot.Logic
             // TODO make this to work nicely whith multiplayer - create only one enemy
             foreach (Hero h in this.heroes)
             {
-                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange));
+                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange/2));
             }
         }
 

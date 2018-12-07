@@ -21,13 +21,12 @@ namespace doodLbot.Extensions
             => await hub.Clients.All.SendAsync("StateUpdate", update);
 
         /// <summary>
-        ///                                 TODO
+        /// TODO this should be changed when multiplayer happens, because each hero
+        /// will have a different algorithm. Only send to one Id (client)
         /// </summary>
         /// <param name="hub"></param>
         /// <param name="alg"></param>
         /// <returns></returns>
-        // TODO this should be changed when multiplayer happens, because each hero
-        // will have a different algorithm
         public static async Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
             => await hub.Clients.All.SendAsync("UpdateCodeBlocks", alg);
     }

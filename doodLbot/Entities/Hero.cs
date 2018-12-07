@@ -17,8 +17,14 @@ namespace doodLbot.Entities
         [JsonProperty("pts")]
         public int Points;
 
-        //[JsonProperty("id")]
+        [JsonProperty("id")]
         public int id;
+
+        [JsonIgnore]
+        public bool HasCodeChanged { get; set; }
+
+        [JsonIgnore]
+        public bool HasGearChanged { get; set; }
 
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
@@ -39,6 +45,8 @@ namespace doodLbot.Entities
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
             : base(x: x, y: y)
         {
+            HasCodeChanged = true; // TODO tmp, should be false when shop works
+            HasGearChanged = true;
             this.id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;
@@ -48,8 +56,14 @@ namespace doodLbot.Entities
             this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
         }
 
+        /// <summary>
+        /// TODO: this shouldn't be public when 
+        /// we build a store
+        /// </summary>
+        /// <param name="g"></param>
         public void AddGear(Gear g)
         {
+            HasGearChanged = true;
             gear.Add(g);
             switch(g)
             {
@@ -61,8 +75,15 @@ namespace doodLbot.Entities
             }
         }
 
+        /// <summary>
+        /// TODO: this shouldn't be public when finished,
+        /// now it's public because we don't have a shop
+        /// </summary>
+        /// <param name="g"></param>
+        /// <returns>true if gear was succesfully removed</returns>
         public bool RemoveGear(Gear g)
         {
+            HasGearChanged = true;
             return gear.Remove(g);
         }
 
@@ -84,11 +105,13 @@ namespace doodLbot.Entities
 
         public void BuyCode(string name)
         {
+            HasCodeChanged = true;
             CodeInventory.BuyItem(name);
         }
 
         public void SellCode(string name)
         {
+            HasCodeChanged = true;
             CodeInventory.SellItem(name);
         }
 

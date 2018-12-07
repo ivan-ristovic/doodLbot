@@ -63,7 +63,9 @@ let serverCounter = new Counter("#serverUps");
 
 // parent class for hero and enemies
 class Entity {
-    static createHealthBar(w = 100, h = 10, sprite) {
+    // FIXME. bar widths are incorrect at first
+    // because we are always sending w=100
+    static createHealthBar(w, h, sprite) {
         //Create the health bar
         let healthBar;
         healthBar = new PIXI.Container();
@@ -99,8 +101,9 @@ class Entity {
             x - healthBar.width / 2,
             y - healthBar.sprite.height / 2 - 15
         );
-
+        let before = healthBar.outer.width;
         healthBar.outer.width = (hp / 100) * healthBar.w;
+        //console.log("hp=", hp, before, healthBar.outer.width);
     }
 }
 
@@ -227,6 +230,8 @@ function updateHero(delta) {
     if (GAMESTATE.hero !== undefined) {
         let hero = GAMESTATE.hero;
         let speedMul = FramesSinceLastUpdate * MulSpeedsWith * delta;
+        let shouldInterpolate = up.isDown || down.isDown;
+        speedMul = shouldInterpolate ? speedMul : 0;
         let xplus = speedMul * hero.vx;
         let yplus = speedMul * hero.vy;
         let newx = hero.x;
@@ -379,9 +384,6 @@ function setup() {
     heroGroup.addChild(hero);
     heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
 
-    //let paper = new Sprite(loader.resources["images/paper.jpg"].texture);
-    //var tilingSprite = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, app.renderer.width, app.renderer.height);
-    //app.stage.addChild(tilingSprite);
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
 

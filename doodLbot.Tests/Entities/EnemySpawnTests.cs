@@ -19,7 +19,7 @@ namespace doodLbotTests.Entities
                 double radius = rnd.NextDouble() * maxValue + 1d;
                 (double Xpos, double Ypos) hero = (rnd.NextDouble() * maxValue, rnd.NextDouble() * maxValue);
 
-                var enemy = Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, radius);
+                var enemy = Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, radius, 0);
                 Assert.IsNotNull(enemy);
                 
                 Assert.LessOrEqual(Math.Abs(enemy.Xpos - hero.Xpos), radius);
