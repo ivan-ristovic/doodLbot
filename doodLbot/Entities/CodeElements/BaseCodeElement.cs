@@ -21,8 +21,6 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("isActive")]
         public virtual bool IsActive { get; set; }
 
-        public double Price { get; set; }
-
         public string Name => Type;
 
         public int Cost { get; protected set; }

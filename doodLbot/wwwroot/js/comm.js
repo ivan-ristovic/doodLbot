@@ -32,6 +32,8 @@ function initClient(data) {
     MapHeight = data.mapHeight;
     console.log("code inventory = ", data.codeInventory);
     console.log("equpimnet inventpry = ", data.equipmentInventory);
+    codeInventory = data.codeInventory;
+    equipmentInventory = data.equipmentInventory;
     isReadyToPlay = true;
 }
 
@@ -119,8 +121,7 @@ let testKeyFunc = () => {
 };
 
 // generic function for sending. DRY
-function sendToServer(...args)
-{
+function sendToServer(...args) {
     connection.invoke(...args).catch(function (err) {
         return console.error(err.toString());
     });
@@ -133,8 +134,8 @@ let left = keyboard(65),
     down = keyboard(83),
     space = keyboard(32);
 
-let testKey = keyboard(84/*t*/);
+let testKey = keyboard(84 /*t*/ );
 testKey.press = testKeyFunc;
 
-let consoleKey = keyboard(192/*~*/);
+let consoleKey = keyboard(192 /*~*/ );
 consoleKey.press = consoleKeyFunc;

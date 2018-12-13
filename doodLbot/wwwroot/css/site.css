@@ -1,10 +1,12 @@
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: auto;
 }
 
-#game, #game > .row {
+#game,
+#game>.row {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -16,8 +18,10 @@ html, body {
     padding: 0;
 }
 
+/* CONSOLE */
+
 #consoleDiv {
-    background: rgba(20,20,20,0.8);
+    background: rgba(20, 20, 20, 0.8);
     color: #45D40C;
     position: absolute;
     z-index: 10;
@@ -25,32 +29,33 @@ html, body {
     width: 100%;
     height: 200px;
     overflow-y: scroll;
-    -webkit-transition: all .5s ease; /* Safari */
+    -webkit-transition: all .5s ease;
+    /* Safari */
     transition: all .5s ease;
 }
 
-    #consoleDiv.hiddenConsole {
-        top: -200px;
-    }
+#consoleDiv.hiddenConsole {
+    top: -200px;
+}
 
-    #consoleDiv > ul {
-        margin: 0;
-        list-style: none;
-        padding: 10px;
-    }
+#consoleDiv>ul {
+    margin: 0;
+    list-style: none;
+    padding: 10px;
+}
 
-    #consoleDiv li:before {
-        content: '>';
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
+#consoleDiv li:before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 
-    #consoleDiv li {
-        word-wrap: break-word;
-        position: relative;
-        padding: 0 0 0 15px;
-    }
+#consoleDiv li {
+    word-wrap: break-word;
+    position: relative;
+    padding: 0 0 0 15px;
+}
 
 .codeBlocksContainer {
     height: 100%;
@@ -58,67 +63,70 @@ html, body {
     padding: 20px 0;
 }
 
+/* CODE BLOCKS */
+
 .codeBlock {
     padding-top: 4px;
     margin: 10px;
 }
 
-    .codeBlock > .title {
-        text-align: center;
-        position: relative;
-        font-weight: 500;
-    }
+.codeBlock>.title {
+    text-align: center;
+    position: relative;
+    font-weight: 500;
+}
 
-        .codeBlock > .title > .dragMe {
-            width: 20px;
-            height: 20px;
-            background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
-            /* TODO MOVE TO LOCAL*/
-            background-size: contain;
-            opacity: .5;
-            float: left;
-            margin: 5px;
-            position: relative;
-            cursor: grab;
-        }
+.codeBlock>.title>.dragMe {
+    width: 20px;
+    height: 20px;
+    background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
+    /* TODO MOVE TO LOCAL*/
+    background-size: contain;
+    opacity: .5;
+    float: left;
+    margin: 5px;
+    position: relative;
+    cursor: grab;
+}
 
 #codeBlocks .dropPart {
     margin: 0 10px;
     border-radius: 20px;
     border: 0 dashed #fff;
     height: 0;
-    background: rgba(255,255,255,0.4);
-    -webkit-transition: all .1s ease; /* Safari */
+    background: rgba(255, 255, 255, 0.4);
+    -webkit-transition: all .1s ease;
+    /* Safari */
     transition: all .1s ease;
 }
 
-    #codeBlocks .dropPart.active {
-        height: 40px !important;
-        border: 2px dashed #ccc !important;
-    }
+#codeBlocks .dropPart.active {
+    height: 40px !important;
+    border: 2px dashed #ccc !important;
+}
 
 /*https://www.color-hex.com/color-palette/19053*/
 .ShootElement,
-.ShootElement > .title > [type="checkbox"]:checked + label:after,
-.ShootElement > .title > [type="checkbox"]:not(:checked) + label:after {
+.ShootElement>.title>[type="checkbox"]:checked+label:after,
+.ShootElement>.title>[type="checkbox"]:not(:checked)+label:after {
     background: #fffddb !important;
 }
 
 .BranchingElement,
-.BranchingElement > .title > [type="checkbox"]:checked + label:after,
-.BranchingElement > .title > [type="checkbox"]:not(:checked) + label:after {
+.BranchingElement>.title>[type="checkbox"]:checked+label:after,
+.BranchingElement>.title>[type="checkbox"]:not(:checked)+label:after {
     background: #ffd3fd !important;
 }
 
 .IdleElement,
-.IdleElement > .title > [type="checkbox"]:checked + label:after,
-.IdleElement > .title > [type="checkbox"]:not(:checked) + label:after {
+.IdleElement>.title>[type="checkbox"]:checked+label:after,
+.IdleElement>.title>[type="checkbox"]:not(:checked)+label:after {
     background: #f1f1f1 !important;
 }
 
 .IsEnemyNearCondition,
-.IsEnemyNearCondition > .title > [type="checkbox"]:checked + label:after,
-.IsEnemyNearCondition > .title > [type="checkbox"]:not(:checked) + label:after {
+.IsEnemyNearCondition>.title>[type="checkbox"]:checked+label:after,
+.IsEnemyNearCondition>.title>[type="checkbox"]:not(:checked)+label:after {
     background: #d0fffe !important;
 }
 
@@ -139,4 +147,83 @@ html, body {
     line-height: 40px;
     margin: 15px 20%;
     font-weight: 600;
+}
+
+/* SHOP */
+
+#shop {
+    background: rgba(20, 20, 20, 0.6);
+    color: #45D40C;
+    position: absolute;
+    z-index: 10;
+    bottom: 0px;
+    width: 100%;
+    left: 0;
+    height: 200px;
+    overflow-y: scroll;
+    -webkit-transition: all .5s ease;
+    /* Safari */
+    transition: all .5s ease;
+
+    z-index: 1;
+    padding: 10px;
+}
+
+#shop.hiddenShop {
+    left: -100%;
+}
+
+#shop .row {
+    margin: 0 !important;
+}
+
+
+#shop #codeBlocksShop,
+#shop #gearShop {
+    min-height: 180px;
+}
+
+#shop #gearShop {
+    border-left: 1px solid #999
+}
+
+#shop::-webkit-scrollbar {
+    width: 10px;
+    background: transparent;
+}
+
+#shop::-webkit-scrollbar-thumb {
+    background: red;
+}
+
+.shopItem {
+    background: #999;
+    color: #333;
+    border-radius: 20px;
+    border: 1px solid #333;
+    float: left;
+    margin: 4px;
+    padding: 10px;
+}
+
+#shopIcon {
+    width: 50px;
+    height: 50px;
+    background: url('../images/shop.png');
+    background-size: contain;
+    cursor: pointer;
+    position: absolute;
+    -webkit-transition: all .5s ease;
+    /* Safari */
+    transition: all .5s ease;
+    bottom: 210px;
+    left: 10px;
+    z-index: 2;
+    padding: 0;
+    margin: 0;
+}
+
+#shopIcon.closed {
+    bottom: 10px;
+    left: 10px;
 }

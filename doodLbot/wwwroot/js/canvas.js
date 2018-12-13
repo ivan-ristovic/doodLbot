@@ -3,7 +3,7 @@
 
 // SERVER => CLIENT
 function onStateUpdate(gameState) {
-    if (WhatToRender != play){
+    if (WhatToRender != play) {
         // ignore this if handshake was not recieved
         return;
     }
@@ -19,7 +19,7 @@ function onStateUpdate(gameState) {
 }
 var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
-var ServerTickrate = null; 
+var ServerTickrate = null;
 var MulSpeedsWith = null;
 var MapWidth = null;
 var MapHeight = null;
@@ -39,7 +39,7 @@ let EnemySprites = [];
 let ProjectileSprites = [];
 let EnemyHps = [];
 
-let Counter = function(id){
+let Counter = function (id) {
     var oldCountTime = performance.now();
     var frame = 0;
     var timeSum = 0;
@@ -112,9 +112,9 @@ class Entity {
     }
 }
 
-class Hero extends Entity { }
+class Hero extends Entity {}
 
-class Enemy extends Entity { }
+class Enemy extends Entity {}
 
 // holds all needed game-state, which will be updated by backend
 class GameState {
@@ -150,12 +150,13 @@ function calcTint(x1, x2, y1, y2) {
 
     let c = Math.sqrt(a * a + b * b);
     let amount = 1 / (1 + c / 300);
-    let red =  amount * 255;
+    let red = amount * 255;
     let green = 1 - amount * 255;
-    return (red << 16) + (green << 8) ;
+    return (red << 16) + (green << 8);
 }
 
 const halfPI = Math.PI / 2;
+
 function updateProjectiles() {
     // TODO - maybe it can be nicely merged with updateEnemies(),
     // the only prob are health bars.
@@ -252,11 +253,11 @@ function updateHero(delta) {
         Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
     }
 }
-
+const centerWith = navigator.platform == "MacIntel" ? 4 : 2;
 // centers world on the player
 function moveMap() {
-    app.stage.position.x = app.renderer.width / 2;
-    app.stage.position.y = app.renderer.height / 2;
+    app.stage.position.x = app.renderer.width / centerWith;
+    app.stage.position.y = app.renderer.height / centerWith;
 
     app.stage.pivot.x = heroGroup.position.x;
     app.stage.pivot.y = heroGroup.position.y;
@@ -389,13 +390,19 @@ function setup() {
     heroGroup.addChild(hero);
     heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
 
-    let text = new PIXI.Text('Establishing connection to server...', {fontFamily : 'Arial', 
-        fontSize: 24, fill : 0x9999f0, align : 'center'});
+    let text = new PIXI.Text('Establishing connection to server...', {
+        fontFamily: 'Arial',
+        fontSize: 24,
+        fill: 0x9999f0,
+        align: 'center'
+    });
     loadingDraw = text;
     loadingDraw.position.set(100, 100);
-    app.stage.addChild(loadingDraw); 
-    app.stage.addChild(heroGroup); heroGroup.visible = false;
-    app.stage.addChild(heroHealthBar); heroHealthBar.visible = false;
+    app.stage.addChild(loadingDraw);
+    app.stage.addChild(heroGroup);
+    heroGroup.visible = false;
+    app.stage.addChild(heroHealthBar);
+    heroHealthBar.visible = false;
     WhatToRender = WaitingForHandshake;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
@@ -409,7 +416,7 @@ function gameLoop(delta) {
 
 function WaitingForHandshake() {
     // could write some text like 'connecting'
-    if (!isReadyToPlay){
+    if (!isReadyToPlay) {
         return;
     }
     heroGroup.visible = true;
@@ -417,6 +424,7 @@ function WaitingForHandshake() {
     loadingDraw.visible = false;
     setMapSize(MapWidth, MapHeight);
     WhatToRender = play;
+    updateShop();
 }
 
 function play(delta) {
