@@ -25,6 +25,8 @@ namespace doodLbot.Entities.CodeElements
 
         public string Name => Type;
 
+        public int Cost { get; protected set; }
+
         /// <summary>
         /// Executes this code element.
         /// </summary>

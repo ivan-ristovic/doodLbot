@@ -42,6 +42,10 @@ namespace doodLbot.Entities
 
         private readonly Controls controls;
 
+        private double baseHp;
+        private double baseSpeed;
+        private double baseDamage;
+
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
             : base(x: x, y: y)
         {
@@ -51,9 +55,31 @@ namespace doodLbot.Entities
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;
             this.Points = 0;
-            this.Speed = Design.HeroSpeed;
+            this.baseSpeed = Design.HeroSpeed;
+            this.baseDamage = this.Damage;
+            this.baseHp = this.Hp;
             this.ShootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
+            CalculateStatsFromGear();
+        }
+
+        public void CalculateStatsFromGear()
+        {
+            this.Speed = this.baseSpeed;
+            this.Damage = this.baseDamage;
+            this.Hp = this.baseHp;
+            foreach(var g in gear){
+                switch(g)
+                {
+                    case Armor armor:
+                        this.Speed += armor.Speed;
+                        this.baseHp += armor.Hp;
+                        break;
+                    case Weapon weapon:
+                        this.Damage += weapon.Damage;
+                        break;
+                }    
+            }
         }
 
         /// <summary>
@@ -61,18 +87,11 @@ namespace doodLbot.Entities
         /// we build a store
         /// </summary>
         /// <param name="g"></param>
-        public void AddGear(Gear g)
+        private void AddGear(Gear g)
         {
             HasGearChanged = true;
             gear.Add(g);
-            switch(g)
-            {
-                case Armor armor:
-                    this.Speed += armor.Speed;
-                    break;
-                case Weapon weapon:
-                    break;
-            }
+            CalculateStatsFromGear();
         }
 
         /// <summary>
@@ -80,39 +99,46 @@ namespace doodLbot.Entities
         /// now it's public because we don't have a shop
         /// </summary>
         /// <param name="g"></param>
-        /// <returns>true if gear was succesfully removed</returns>
-        public bool RemoveGear(Gear g)
+        private void RemoveGear(Gear g)
         {
             HasGearChanged = true;
-            return gear.Remove(g);
+            gear.Remove(g);
+            CalculateStatsFromGear();
         }
 
         public void BuyGear(string name)
         {
-            var item = EquipmentInventory.BuyItem(name);
-            if (item == null)
-                return;
-            AddGear(item);
+            if (EquipmentInventory.ItemExists(name, out int cost)){
+                var item = EquipmentInventory.BuyItem(name);
+                AddGear(item);
+            }
         }
 
         public void SellGear(string name)
         {
-            var item = EquipmentInventory.SellItem(name);
-            if (item == null)
-                return;
-            RemoveGear(item);
+            if (EquipmentInventory.ItemExists(name, out int cost)){
+                this.Points += cost;
+                var item = EquipmentInventory.SellItem(name);
+                RemoveGear(item);
+            }
         }
 
         public void BuyCode(string name)
         {
             HasCodeChanged = true;
-            CodeInventory.BuyItem(name);
+            if (CodeInventory.ItemExists(name, out int cost)){
+                this.Points -= cost;
+                var item = CodeInventory.BuyItem(name);
+            }
         }
 
         public void SellCode(string name)
         {
             HasCodeChanged = true;
-            CodeInventory.SellItem(name);
+            if (CodeInventory.ItemExists(name, out int cost)){
+                this.Points += cost;
+                CodeInventory.SellItem(name);
+            }
         }
 
         protected override void OnMove()

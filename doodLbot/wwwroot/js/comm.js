@@ -30,9 +30,9 @@ function initClient(data) {
     MulSpeedsWith = ServerTickrate / 60;
     MapWidth = data.mapWidth;
     MapHeight = data.mapHeight;
-    setMapSize(MapWidth, MapHeight);
     console.log("code inventory = ", data.codeInventory);
     console.log("equpimnet inventpry = ", data.equipmentInventory);
+    isReadyToPlay = true;
 }
 
 // starts up connection from clients side
@@ -53,7 +53,25 @@ function startConnection() {
 // GEARSHOP => SERVER
 function buyGearServer(name) {
     console.log("sent request to buy gear", name);
-    sendToServer("buyGear", name);
+    sendToServer("BuyGear", name);
+}
+
+// GEARSHOP => SERVER
+function sellGearServer(name) {
+    console.log("sent request to sell gear", name);
+    sendToServer("SellGear", name);
+}
+
+// CODESHOP => SERVER
+function buyCodeServer(name) {
+    console.log("sent request to buy code", name);
+    sendToServer("BuyCode", name);
+}
+
+// CODESHOP => SERVER
+function sellCodeServer(name) {
+    console.log("sent request to sell code", name);
+    sendToServer("SellCode", name);
 }
 
 // listens for the given keyCode

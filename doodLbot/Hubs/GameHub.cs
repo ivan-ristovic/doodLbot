@@ -1,6 +1,7 @@
 ﻿using doodLbot.Entities.CodeElements;
 using doodLbot.Logic;
 
+using Serilog;
 using Microsoft.AspNetCore.SignalR;
 
 using System.Threading.Tasks;
@@ -61,27 +62,30 @@ namespace doodLbot.Hubs
             return this.Clients.Caller.SendAsync("InitClient", data);
         }
 
-
         public Task BuyGear(string name)
         {
+            Log.Debug("server: buy gear");
             this.game.GameState.Hero.BuyGear(name);
             return Task.CompletedTask;
         }
 
         public Task SellGear(string name)
         {
+            Log.Debug("server: sell gear");
             this.game.GameState.Hero.SellGear(name);
             return Task.CompletedTask;
         }
 
         public Task BuyCode(string name)
         {
+            Log.Debug("server: buy code");
             this.game.GameState.Hero.BuyCode(name);
             return Task.CompletedTask;
         }
 
         public Task SellCode(string name)
         {
+            Log.Debug("server: sell code");
             this.game.GameState.Hero.SellCode(name);
             return Task.CompletedTask;
         }

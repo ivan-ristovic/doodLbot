@@ -6,5 +6,7 @@ namespace doodLbot.Equipment
     {
         [JsonProperty("name")]
         string Name {get;}
+
+        int Cost {get;} 
     }
 }

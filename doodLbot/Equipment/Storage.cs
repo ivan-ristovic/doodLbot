@@ -42,6 +42,19 @@ namespace doodLbot.Equipment
             return item.Element;
         }
 
+        public bool ItemExists(string name, out int cost)
+        {
+            try{
+                var item = FindItemFromName(name);
+                cost = item.Element.Cost;
+                return true;
+            } 
+            catch{
+                cost = 0;
+                return false;
+            }
+        }
+
         private ShopEntry FindItemFromName(string name)
         {
             var candidate = Items.Where(e => e.Element.Name == name);

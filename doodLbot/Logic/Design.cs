@@ -71,8 +71,8 @@ namespace doodLbot.Logic
         {
             GearDict = new Dictionary<string, Gear>();
             GearDict.Add("hoverboard", new Armor("hoverboard", 40, 5));
-            GearDict.Add("hoverboard2", new Armor("hoverboard", 1, 2));
-            GearDict.Add("hoverboard3", new Armor("hoverboard", 4, 5));
+            GearDict.Add("hoverboard2", new Armor("hoverboard2", 1, 2));
+            GearDict.Add("hoverboard3", new Armor("hoverboard3", 4, 5));
         }
     }
 }

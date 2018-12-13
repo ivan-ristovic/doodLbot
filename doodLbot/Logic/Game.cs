@@ -99,7 +99,7 @@ namespace doodLbot.Logic
                     var ms = ExecWatch.ElapsedMilliseconds;
                     //Thread.Sleep(RefreshTimeSpan);
                     await Task.Delay(RefreshTimeSpan);
-                    Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
+                    //Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
                 }
             }, gameLoopCTS.Token);
         }
@@ -153,9 +153,8 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes) {
                 if (h.Points >= 40) {
                     if (h.HasGearChanged) {
+                        h.BuyGear("hoverboard");
                         h.HasGearChanged = false;
-                        h.AddGear(Design.GearDict["hoverboard"]);
-                        h.Points -= 40;
                     }
                 }
                 if (h.HasCodeChanged)

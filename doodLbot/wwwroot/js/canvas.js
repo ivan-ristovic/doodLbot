@@ -3,6 +3,10 @@
 
 // SERVER => CLIENT
 function onStateUpdate(gameState) {
+    if (WhatToRender != play){
+        // ignore this if handshake was not recieved
+        return;
+    }
     timesRecieved++;
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
@@ -13,7 +17,7 @@ function onStateUpdate(gameState) {
     }
     serverCounter.countTimesPerSecond(true);
 }
-
+var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = null; 
 var MulSpeedsWith = null;
@@ -387,7 +391,7 @@ function setup() {
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
 
-    WhatToRender = play;
+    WhatToRender = WaitingForHandshake;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
 }
@@ -396,6 +400,15 @@ function setup() {
 // creates frame-independent transformation
 function gameLoop(delta) {
     WhatToRender(delta);
+}
+
+function WaitingForHandshake() {
+    // could write some text like 'connecting'
+    if (!isReadyToPlay){
+        return;
+    }
+    setMapSize(MapWidth, MapHeight);
+    WhatToRender = play;
 }
 
 function play(delta) {
