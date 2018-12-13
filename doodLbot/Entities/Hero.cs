@@ -89,7 +89,7 @@ namespace doodLbot.Entities
         /// <param name="g"></param>
         private void AddGear(Gear g)
         {
-            HasGearChanged = true;
+            // HasGearChanged = true;
             gear.Add(g);
             CalculateStatsFromGear();
         }
@@ -101,7 +101,7 @@ namespace doodLbot.Entities
         /// <param name="g"></param>
         private void RemoveGear(Gear g)
         {
-            HasGearChanged = true;
+            // HasGearChanged = true;
             gear.Remove(g);
             CalculateStatsFromGear();
         }

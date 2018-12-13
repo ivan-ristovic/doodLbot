@@ -32,6 +32,7 @@ let hoverboard;
 // but can be assigned to something else if needed, eg. menu.
 let WhatToRender;
 
+let loadingDraw;
 let enemyTexture;
 let tilingBackground = null;
 let EnemySprites = [];
@@ -305,7 +306,7 @@ let app = new Application({
     transparent: false,
     resolution: devicePixelRatio
 });
-app.renderer.backgroundColor = 0x061639;
+app.renderer.backgroundColor = 0x110021;
 
 // make canvas fill the whole div
 app.renderer.view.style.display = "block";
@@ -388,9 +389,13 @@ function setup() {
     heroGroup.addChild(hero);
     heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
 
-    app.stage.addChild(heroGroup);
-    app.stage.addChild(heroHealthBar);
-
+    let text = new PIXI.Text('Establishing connection to server...', {fontFamily : 'Arial', 
+        fontSize: 24, fill : 0x9999f0, align : 'center'});
+    loadingDraw = text;
+    loadingDraw.position.set(100, 100);
+    app.stage.addChild(loadingDraw); 
+    app.stage.addChild(heroGroup); heroGroup.visible = false;
+    app.stage.addChild(heroHealthBar); heroHealthBar.visible = false;
     WhatToRender = WaitingForHandshake;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
@@ -407,6 +412,9 @@ function WaitingForHandshake() {
     if (!isReadyToPlay){
         return;
     }
+    heroGroup.visible = true;
+    heroHealthBar.visible = true;
+    loadingDraw.visible = false;
     setMapSize(MapWidth, MapHeight);
     WhatToRender = play;
 }
