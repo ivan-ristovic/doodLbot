@@ -27,13 +27,13 @@ namespace doodLbot.Logic
         private static System.Diagnostics.Stopwatch Watch = System.Diagnostics.Stopwatch.StartNew();
 
 
-        public GameState GameState => new GameState(this.heroes, this.enemies, /* TODO */ null);
+        public GameState GameState => new GameState(this.heroes, this.enemies, this.EnemyProjectiles);
 
         public IReadOnlyCollection<Projectile> EnemyProjectiles => this.enemyProjectiles;
 
         private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
-        private readonly ConcurrentHashSet<Enemy> enemies;  // TODO doesnt have to be concurrent
+        private readonly HashSet<Enemy> enemies;
         private readonly IHubContext<GameHub> hubContext;
         private readonly RateLimiter enemySpawnLimiter;
         private readonly Task gameLoopTask;
@@ -47,7 +47,7 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             this.heroes = new ConcurrentHashSet<Hero>();
-            this.enemies = new ConcurrentHashSet<Enemy>();
+            this.enemies = new HashSet<Enemy>();
             this.hubContext = hctx;
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
             this.gameLoopCTS = new CancellationTokenSource();
@@ -216,23 +216,23 @@ namespace doodLbot.Logic
         {
             foreach (Hero h in this.heroes)
             {
-                IReadOnlyList<Collision> collisions = CollisionCheck.GetCollisions(this.enemies, h.Projectiles);
+                IReadOnlyList<(Entity Collider1, Entity Collider2)> collisions = CollisionCheck.GetCollisions(this.enemies, h.Projectiles);
 
-                foreach (Collision c in collisions)
+                foreach ((Entity Collider1, Entity Collider2) in collisions)
                 {
-                    Entity enemy = c.Collider1;
-                    Entity projectile = c.Collider2;
+                    var enemy = Collider1 as Enemy;
+                    var projectile = Collider2 as Projectile;
 
                     enemy.DecreaseHealthPoints(projectile.Damage);
 
                     // Removing projectile and enemy (if it's dead)
                     if (enemy.Hp <= 0)
                     {
-                        this.enemies.TryRemove((Enemy)enemy);
+                        this.enemies.Remove(enemy);
                         h.Points += (int)Math.Ceiling(enemy.Damage);
                     }
 
-                    h.TryRemoveProjectile((Projectile)projectile);
+                    h.TryRemoveProjectile(projectile);
                 }
             }
         }
@@ -242,18 +242,19 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes)
             {
                 var heroList = new List<Entity> { h };
-                IReadOnlyList<Collision> collisionsWithHero = CollisionCheck.GetCollisions(heroList, this.enemies);
+                IReadOnlyList<(Entity, Entity)> collisionsWithHero = CollisionCheck.GetCollisions(heroList, this.enemies);
 
-                foreach (Collision c in collisionsWithHero) {
-                    Entity hero = c.Collider1;
-                    Entity kamikaze = c.Collider2;
-                    kamikaze.DecreaseHealthPoints(hero.Damage);
+                foreach ((Entity Collider1, Entity Collider2) in collisionsWithHero) {
+                    var hero = Collider1 as Hero;
+                    var enemy = Collider2 as Enemy;
+                    enemy.DecreaseHealthPoints(hero.Damage);
 
                     // Remove kamikaze from the game
-                    this.enemies.TryRemove((Enemy)kamikaze);
+                    this.enemies.Remove(enemy);
 
-                    h.DecreaseHealthPoints(kamikaze.Damage);
-                } }
+                    h.DecreaseHealthPoints(enemy.Damage);
+                }
+            }
         }
 
         private void RemoveProjectilesOutsideOfMap()

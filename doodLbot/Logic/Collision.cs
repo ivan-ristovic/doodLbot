@@ -7,22 +7,6 @@ using System.Collections.Generic;
 namespace doodLbot.Logic
 {
     /// <summary>
-    /// Represents a collision between the two entities.
-    /// </summary>
-    public class Collision
-    {
-        public Entity Collider1 { get; }
-        public Entity Collider2 { get; }
-
-
-        public Collision(Entity collider1, Entity collider2)
-        {
-            this.Collider1 = collider1;
-            this.Collider2 = collider2;
-        }
-    }
-
-    /// <summary>
     /// Contains methods which help with collision checking.
     /// </summary>
     public static class CollisionCheck
@@ -33,9 +17,9 @@ namespace doodLbot.Logic
         /// <param name="colliders1"></param>
         /// <param name="colliders2"></param>
         /// <returns>A collection of collision objects.</returns>
-        public static IReadOnlyList<Collision> GetCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
+        public static IReadOnlyList<(Entity, Entity)> GetCollisions(IEnumerable<Entity> colliders1, IEnumerable<Entity> colliders2)
         {
-            var collides = new List<Collision>();
+            var collides = new List<(Entity Collider1, Entity Collider2)>();
             // TODO these radiuses are sometimes hero, figure out how to assign them correctly
             // (example: see if entity is hero, then hero radius, etc..)
             double radius1 = Design.EnemyRadiusSize;
@@ -44,7 +28,7 @@ namespace doodLbot.Logic
             foreach (Entity collider1 in colliders1) {
                 foreach (Entity collider2 in colliders2) {
                     if (IsColliding(collider2, collider1, radius1, radius2)) {
-                        collides.Add(new Collision(collider1, collider2));
+                        collides.Add((collider1, collider2));
                     }
                 }
             }
