@@ -18,7 +18,7 @@ namespace doodLbot.Entities
         public int Points;
 
         [JsonProperty("id")]
-        public int id;
+        public int Id;
 
         [JsonIgnore]
         public bool HasCodeChanged { get; set; }
@@ -51,7 +51,7 @@ namespace doodLbot.Entities
         {
             HasCodeChanged = true; // TODO tmp, should be false when shop works
             HasGearChanged = true;
-            this.id = id;
+            this.Id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;
             this.Points = 0;

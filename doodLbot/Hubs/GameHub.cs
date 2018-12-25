@@ -5,6 +5,7 @@ using Serilog;
 using Microsoft.AspNetCore.SignalR;
 
 using System.Threading.Tasks;
+using doodLbot.Entities;
 
 namespace doodLbot.Hubs
 {
@@ -49,14 +50,16 @@ namespace doodLbot.Hubs
         /// <returns></returns>
         public Task ClientIsReady()
         {
+            Hero h = game.AddNewHero();
+
             var data = new
             {
-                algorithm = game.GameState.Hero.Algorithm,
+                algorithm = h.Algorithm,
                 mapWidth = Design.MapSize.X,
                 mapHeight = Design.MapSize.Y,
                 tickRate = Design.TickRate,
-                codeInventory = game.GameState.Hero.CodeInventory,
-                equipmentInventory = game.GameState.Hero.EquipmentInventory
+                codeInventory = h.CodeInventory,
+                equipmentInventory = h.EquipmentInventory
             };
 
             return this.Clients.Caller.SendAsync("InitClient", data);

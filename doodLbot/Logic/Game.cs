@@ -51,41 +51,7 @@ namespace doodLbot.Logic
             this.hubContext = hctx;
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
             this.gameLoopCTS = new CancellationTokenSource();
-
-
-            // begin hardcoded test
-            Hero playerOne = new Hero(1, Design.HeroStartX, Design.HeroStartY, 
-                new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
-            );
-
-            var shootElementList = new List<BaseCodeElement> {
-                new TargetElement(),
-                new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
-                new ShootElement(new RateLimiter(Design.ShootElementCooldown))
-            };
-
-            var idleElementList = new List<BaseCodeElement> {
-                new IdleElement(),
-                new IdleElement(),
-                new IdleElement(),
-            };
-
-            var branchingElement = new BranchingElement(
-                new IsEnemyNearCondition(),
-                new CodeBlockElement(shootElementList),
-                new CodeBlockElement(idleElementList)
-            );
-
-            playerOne.Algorithm.Insert(branchingElement);
-            playerOne.Algorithm.Insert(new IdleElement());
-            playerOne.Algorithm.Insert(new ShootElement(
-                new RateLimiter(Design.ShootElementCooldown)));
-
-            this.heroes.Add(playerOne);
-
-            this.SpawnEnemy(Design.SpawnRange);
-            // end hardcoded test
-
+            
             this.gameLoopTask = Task.Run(async () => {
                 while (!this.gameLoopCTS.IsCancellationRequested) {
                     var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -109,6 +75,44 @@ namespace doodLbot.Logic
             this.Dispose();
         }
 
+        public Hero AddNewHero()
+        {
+            // begin hardcoded test
+            // todo remove this
+            Hero hero = new Hero(1, Design.HeroStartX, Design.HeroStartY,
+                new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
+            );
+
+            var shootElementList = new List<BaseCodeElement> {
+                new TargetElement(),
+                new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
+                new ShootElement(new RateLimiter(Design.ShootElementCooldown))
+            };
+
+            var idleElementList = new List<BaseCodeElement> {
+                new IdleElement(),
+                new IdleElement(),
+                new IdleElement(),
+            };
+
+            var branchingElement = new BranchingElement(
+                new IsEnemyNearCondition(),
+                new CodeBlockElement(shootElementList),
+                new CodeBlockElement(idleElementList)
+            );
+
+            hero.Algorithm.Insert(branchingElement);
+            hero.Algorithm.Insert(new IdleElement());
+            hero.Algorithm.Insert(new ShootElement(
+                new RateLimiter(Design.ShootElementCooldown)));
+
+            this.heroes.Add(hero);
+
+            //this.SpawnEnemy(Design.SpawnRange);
+            // end hardcoded test
+
+            return hero;
+        }
 
         public void Dispose()
         {
@@ -160,7 +164,7 @@ namespace doodLbot.Logic
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;
-                    await this.hubContext.SendCodeUpdate(this.GameState.Hero.Algorithm);
+                    await this.hubContext.SendCodeUpdate(h.Algorithm);
                 }
             }
             

@@ -13,15 +13,17 @@ namespace doodLbot.Logic
     /// </summary>
     public sealed class GameState
     {
+        [JsonProperty("heroes")]
+        public IReadOnlyCollection<Hero> Heroes { get; }
+
         [JsonProperty("hero")]
         public Hero Hero { get; }
-        public ConcurrentHashSet<Hero> Heroes { get; }
 
         [JsonProperty("enemies")]
         public IReadOnlyCollection<Enemy> Enemies { get; private set; }
 
         [JsonProperty("projectiles")]
-        public IReadOnlyCollection<Projectile> Projectiles => this.Hero.Projectiles;
+        public IReadOnlyCollection<Projectile> Projectiles => this.Heroes.SelectMany(s => s.Projectiles).ToList().AsReadOnly();
 //       [JsonProperty("heroProjectiles")]
 //       public IReadOnlyCollection<Projectile> HeroProjectiles => this.Heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
 
@@ -36,9 +38,8 @@ namespace doodLbot.Logic
         public GameState(IReadOnlyCollection<Hero> heroes, IReadOnlyCollection<Enemy> enemies, IReadOnlyCollection<Projectile> enemyProjectiles)
         {
             // TODO: milana: Change to ConcurrentHashSet
-            Hero playerOne = heroes.Single(hero => hero.id == 1);
-            this.Hero = playerOne;
-
+            //this.Heroes = heroes;
+            this.Hero = Heroes.First();
             this.Enemies = enemies;
             this.EnemyProjectiles = enemyProjectiles;
         }
