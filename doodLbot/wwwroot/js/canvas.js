@@ -17,6 +17,7 @@ function onStateUpdate(gameState) {
     }
     serverCounter.countTimesPerSecond(true);
 }
+var id = -1;
 var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = null;
@@ -132,6 +133,10 @@ class GameState {
 
     getHero() {
         return this.hero;
+    }
+
+    getHeroes() {
+        return this.heroes;
     }
 
     // calls backend to update itself
@@ -271,6 +276,7 @@ class UpdatesForBackend {
         this.timeSinceLastSend = 0;
         this.keyPresses = [];
         this.actions = [];
+        this.id = id;
     }
 
     addKeyPress(key) {

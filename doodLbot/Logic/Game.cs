@@ -195,11 +195,23 @@ namespace doodLbot.Logic
         /// <param name="update"></param>
         public void UpdateControls(GameStateUpdate update)
         {
+            Hero h = GetHeroById(update.Id);
+            foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
+                h.UpdateControls(key, isDown);
+        }
+
+        /// <summary>
+        /// Finds hero with the given id.
+        /// </summary>
+        /// <param name="id">Id of the Hero</param>
+        private Hero GetHeroById(int id)
+        {
             foreach (Hero h in this.heroes)
             {
-                foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
-                    h.UpdateControls(key, isDown);
+                if (h.Id == id)
+                    return h;
             }
+            return null;
         }
 
         /// <summary>

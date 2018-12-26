@@ -22,6 +22,7 @@ function sendCodeUpdateToServer(code) {
 // INIT SERVER => CLIENT
 // initialize variables. This is the first server response.
 function initClient(data) {
+    id = data.id;
     let alg = data.algorithm;
     console.log("Initial handshake recieved.")
     updateCodeBlocks(alg);

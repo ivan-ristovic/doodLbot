@@ -54,6 +54,7 @@ namespace doodLbot.Hubs
 
             var data = new
             {
+                id = h.Id,
                 algorithm = h.Algorithm,
                 mapWidth = Design.MapSize.X,
                 mapHeight = Design.MapSize.Y,
