@@ -31,14 +31,14 @@ namespace doodLbot.Logic
 
         public IReadOnlyCollection<Projectile> EnemyProjectiles => this.enemyProjectiles;
 
+        private Task gameLoopTask;
         private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
         private readonly HashSet<Enemy> enemies;
         private readonly IHubContext<GameHub> hubContext;
         private readonly RateLimiter enemySpawnLimiter;
-        private readonly Task gameLoopTask;
         private readonly CancellationTokenSource gameLoopCTS;
-
+        private int currentHeroId = 1;
 
         /// <summary>
         /// Constructs a new Game which uses a HubContext interface to send data to clients.
@@ -51,23 +51,6 @@ namespace doodLbot.Logic
             this.hubContext = hctx;
             this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
             this.gameLoopCTS = new CancellationTokenSource();
-            
-            this.gameLoopTask = Task.Run(async () => {
-                while (!this.gameLoopCTS.IsCancellationRequested) {
-                    var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
-                    Watch.Stop();
-                    var mss = Watch.ElapsedMilliseconds;
-                    Watch = System.Diagnostics.Stopwatch.StartNew();
-                    double delta = mss / RefreshTimeSpan.TotalMilliseconds;
-
-                    await this.GameTick(delta);
-                    ExecWatch.Stop();
-                    var ms = ExecWatch.ElapsedMilliseconds;
-                    //Thread.Sleep(RefreshTimeSpan);
-                    await Task.Delay(RefreshTimeSpan);
-                    //Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
-                }
-            }, gameLoopCTS.Token);
         }
 
         ~Game()
@@ -79,9 +62,12 @@ namespace doodLbot.Logic
         {
             // begin hardcoded test
             // todo remove this
-            Hero hero = new Hero(1, Design.HeroStartX, Design.HeroStartY,
+            Hero hero = new Hero(currentHeroId, Design.HeroStartX, Design.HeroStartY,
                 new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
             );
+
+            // Update hero Id for the next hero that comes to the game.
+            Interlocked.Increment(ref currentHeroId);
 
             var shootElementList = new List<BaseCodeElement> {
                 new TargetElement(),
@@ -110,6 +96,27 @@ namespace doodLbot.Logic
 
             //this.SpawnEnemy(Design.SpawnRange);
             // end hardcoded test
+
+            if (this.heroes.Count == 1)
+            {
+                this.gameLoopTask = Task.Run(async () => {
+                    while (!this.gameLoopCTS.IsCancellationRequested)
+                    {
+                        var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
+                        Watch.Stop();
+                        var mss = Watch.ElapsedMilliseconds;
+                        Watch = System.Diagnostics.Stopwatch.StartNew();
+                        double delta = mss / RefreshTimeSpan.TotalMilliseconds;
+
+                        await this.GameTick(delta);
+                        ExecWatch.Stop();
+                        var ms = ExecWatch.ElapsedMilliseconds;
+                        //Thread.Sleep(RefreshTimeSpan);
+                        await Task.Delay(RefreshTimeSpan);
+                        //Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
+                    }
+                }, gameLoopCTS.Token);
+            }
 
             return hero;
         }
@@ -166,8 +173,7 @@ namespace doodLbot.Logic
                     h.HasCodeChanged = false;
                     await this.hubContext.SendCodeUpdate(h.Algorithm);
                 }
-            }
-            
+            }            
         }
 
         /// <summary>

@@ -23,9 +23,7 @@ namespace doodLbot.Logic
         public IReadOnlyCollection<Enemy> Enemies { get; private set; }
 
         [JsonProperty("projectiles")]
-        public IReadOnlyCollection<Projectile> Projectiles => this.Heroes.SelectMany(s => s.Projectiles).ToList().AsReadOnly();
-//       [JsonProperty("heroProjectiles")]
-//       public IReadOnlyCollection<Projectile> HeroProjectiles => this.Heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
+        public IReadOnlyCollection<Projectile> Projectiles { get; private set; }
 
         [JsonProperty("enemyProjectiles")]
         public IReadOnlyCollection<Projectile> EnemyProjectiles { get; private set; }
@@ -37,9 +35,9 @@ namespace doodLbot.Logic
         /// <param name="enemies"></param>
         public GameState(IReadOnlyCollection<Hero> heroes, IReadOnlyCollection<Enemy> enemies, IReadOnlyCollection<Projectile> enemyProjectiles)
         {
-            // TODO: milana: Change to ConcurrentHashSet
-            //this.Heroes = heroes;
-            this.Hero = Heroes.First();
+            this.Heroes = heroes;
+            this.Hero = heroes.FirstOrDefault();
+            this.Projectiles = heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
             this.Enemies = enemies;
             this.EnemyProjectiles = enemyProjectiles;
         }
