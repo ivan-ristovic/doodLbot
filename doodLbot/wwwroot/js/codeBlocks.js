@@ -107,7 +107,9 @@ function updateCodeBlocks(data) {
     CodeBlocks = data;
     codeBlockIdNum = 0;
 
-    $("#codeBlocks").innerHTML = "";
+    while ($("#codeBlocks").firstChild) {
+        $("#codeBlocks").removeChild($("#codeBlocks").firstChild);
+    }
 
     $("#codeBlocks").append($("<div/>").addClass("dropPart"));
     for (var i = 0; i < data.elements.length; i++) {

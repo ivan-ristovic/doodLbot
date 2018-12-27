@@ -109,6 +109,7 @@ namespace doodLbot.Entities
         public void BuyGear(string name)
         {
             if (EquipmentInventory.ItemExists(name, out int cost)){
+                this.Points -= cost;
                 var item = EquipmentInventory.BuyItem(name);
                 AddGear(item);
             }

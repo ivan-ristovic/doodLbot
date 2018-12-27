@@ -12,8 +12,10 @@ function onStateUpdate(gameState) {
     GAMESTATE = new GameState(gameState);
     // TODO: make this more robust:
     if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
-        console.log(heroGroup, GAMESTATE.hero.gear);
+        // console.log(heroGroup, GAMESTATE.hero.gear);
         heroGroup.addChildAt(hoverboard, 0);
+    } else if (GAMESTATE.hero.gear.length < heroGroup.children.length - 1) {
+        heroGroup.removeChild(hoverboard);
     }
     serverCounter.countTimesPerSecond(true);
 }
@@ -226,10 +228,10 @@ function updateEnemies() {
 
 function updateHud() {
     if (GAMESTATE.hero === undefined) {
-        $("#pts")[0].innerHTML = "points: 0";
+        $("#pts")[0].innerHTML = "gold: 0";
         return;
     }
-    $("#pts")[0].innerHTML = "points: " + GAMESTATE.hero.pts;
+    $("#pts")[0].innerHTML = "gold: " + GAMESTATE.hero.pts;
 }
 
 function updateHero(delta) {

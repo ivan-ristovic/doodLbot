@@ -36,7 +36,7 @@ namespace doodLbot.Logic
 
         static Design()
         {
-            TickRate = 30;
+            TickRate = 10;
 
             // all speeds are calculated relative to the 50 tickrate
             double adjust = 50 / TickRate;
