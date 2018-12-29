@@ -90,6 +90,13 @@ namespace doodLbot.Hubs
             return Task.CompletedTask;
         }
 
+        public Task EquipItem(string name)
+        {
+            Log.Debug("server: equip code");
+            this.game.GameState.Hero.EquipCode(name);
+            return Task.CompletedTask;
+        }
+
         public Task AlgorithmUpdated(string json)
         {
             this.game.GameState.Hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);

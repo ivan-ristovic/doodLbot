@@ -36,14 +36,14 @@ namespace doodLbot.Logic
 
         static Design()
         {
-            TickRate = 10;
+            TickRate = 30;
 
             // all speeds are calculated relative to the 50 tickrate
             double adjust = 50 / TickRate;
 
             ProjectileSpeed = 6 * adjust;
             HeroSpeed = 5 * adjust;
-            BackwardsSpeedRatio = 1.0/3.0;
+            BackwardsSpeedRatio = 1.0 / 3.0;
             EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
             ShootElementCooldown = 0.4;

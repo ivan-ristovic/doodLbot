@@ -11,7 +11,7 @@ namespace doodLbot.Equipment
     ///<summary> 
     ///Generic class for shop and storage of items 
     ///</summary>
-    public abstract class Storage<T> where T : class, IStorageItem 
+    public abstract class Storage<T> where T : class, IStorageItem
     {
         public class ShopEntry
         {
@@ -19,10 +19,17 @@ namespace doodLbot.Equipment
             public int Count;
         }
 
+        public static Entities.CodeElements.BaseCodeElement getCodeElement(T element)
+        {
+            if (typeof(T).Equals(typeof(Entities.CodeElements.BaseCodeElement)))
+                return (Entities.CodeElements.BaseCodeElement)(object)element;
+            return new Entities.CodeElements.IdleElement(); //TODO throw error
+        }
+
         [JsonProperty("items")]
         public List<ShopEntry> Items;
 
-        
+
         // returns bought element
         public T BuyItem(string name)
         {
@@ -44,14 +51,29 @@ namespace doodLbot.Equipment
 
         public bool ItemExists(string name, out int cost)
         {
-            try{
+            try
+            {
                 var item = FindItemFromName(name);
                 cost = item.Element.Cost;
                 return true;
-            } 
-            catch{
+            }
+            catch
+            {
                 cost = 0;
                 return false;
+            }
+        }
+
+        public void EquipItem(string name, Entities.CodeElements.BehaviourAlgorithm algorithm)
+        {
+            try
+            {
+                var item = FindItemFromName(name).Element;
+                algorithm.Insert(getCodeElement(item));
+            }
+            catch
+            {
+                ;
             }
         }
 
