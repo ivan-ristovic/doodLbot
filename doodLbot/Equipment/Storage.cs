@@ -64,19 +64,6 @@ namespace doodLbot.Equipment
             }
         }
 
-        public void EquipItem(string name, Entities.CodeElements.BehaviourAlgorithm algorithm)
-        {
-            try
-            {
-                var item = FindItemFromName(name).Element;
-                algorithm.Insert(getCodeElement(item));
-            }
-            catch
-            {
-                ;
-            }
-        }
-
         private ShopEntry FindItemFromName(string name)
         {
             var candidate = Items.Where(e => e.Element.Name == name);

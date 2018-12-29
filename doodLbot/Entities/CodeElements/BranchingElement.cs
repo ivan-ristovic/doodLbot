@@ -36,7 +36,7 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="elseBlock"></param>
         public BranchingElement(BaseConditionElement condition = null, CodeBlockElement thenBlock = null, CodeBlockElement elseBlock = null)
         {
-            
+            this.Cost = Design.CostBranching;
             this.Condition = condition;
             this.ThenBlock = thenBlock ?? new CodeBlockElement();
             this.ElseBlock = elseBlock ?? new CodeBlockElement();

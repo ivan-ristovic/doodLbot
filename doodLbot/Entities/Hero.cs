@@ -26,16 +26,23 @@ namespace doodLbot.Entities
         [JsonIgnore]
         public bool HasGearChanged { get; set; }
 
+        [JsonIgnore]
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
+        [JsonProperty("gear")]
+        public IReadOnlyCollection<Gear> VisibleGear => this.gear.Where(x => x.IsVisible).ToList();
+
+        [JsonProperty("algorithm")]
         public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
 
         private readonly List<Gear> gear = new List<Gear>();
 
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
+        [JsonProperty("codeInventory")]
         public CodeStorage CodeInventory { get; private set; }
 
+        [JsonProperty("equipmentInventory")]
         public EquipmentStorage EquipmentInventory { get; private set; }
 
         private RateLimiter ShootRateLimiter;
@@ -111,6 +118,10 @@ namespace doodLbot.Entities
         {
             if (EquipmentInventory.ItemExists(name, out int cost))
             {
+                if (this.Points < cost)
+                {
+                    return;
+                }
                 this.Points -= cost;
                 var item = EquipmentInventory.BuyItem(name);
                 AddGear(item);
@@ -132,6 +143,10 @@ namespace doodLbot.Entities
             HasCodeChanged = true;
             if (CodeInventory.ItemExists(name, out int cost))
             {
+                if (this.Points < cost)
+                {
+                    return;
+                }
                 this.Points -= cost;
                 var item = CodeInventory.BuyItem(name);
             }
@@ -152,7 +167,9 @@ namespace doodLbot.Entities
             HasCodeChanged = true;
             if (CodeInventory.ItemExists(name, out int cost))
             {
-                CodeInventory.EquipItem(name, Algorithm);
+                var item = CodeInventory.BuyItem(name);
+                CodeInventory.SellItem(name);
+                Algorithm.Insert(item);
             }
         }
 

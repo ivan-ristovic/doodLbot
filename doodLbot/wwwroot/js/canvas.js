@@ -10,15 +10,10 @@ function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
-    // TODO: make this more robust:
-    if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
-        // console.log(heroGroup, GAMESTATE.hero.gear);
-        heroGroup.addChildAt(hoverboard, 0);
-    } else if (GAMESTATE.hero.gear.length < heroGroup.children.length - 1) {
-        heroGroup.removeChild(hoverboard);
-    }
+    updateHeroGear();
     serverCounter.countTimesPerSecond(true);
 }
+
 var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = null;
@@ -155,6 +150,16 @@ function calcTint(x1, x2, y1, y2) {
     let red = amount * 255;
     let green = 1 - amount * 255;
     return (red << 16) + (green << 8);
+}
+
+function updateHeroGear() {
+    // TODO: make this more robust:
+    if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
+        // console.log(heroGroup, GAMESTATE.hero.gear);
+        heroGroup.addChildAt(hoverboard, 0);
+    } else if (GAMESTATE.hero.gear.length < heroGroup.children.length - 1) {
+        heroGroup.removeChild(hoverboard);
+    }
 }
 
 const halfPI = Math.PI / 2;

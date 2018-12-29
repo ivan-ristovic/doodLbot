@@ -13,7 +13,7 @@ namespace doodLbot.Entities.CodeElements
     {
         public TargetElement()
         {
-
+            this.Cost = Design.CostTarget;
         }
 
         protected override void OnExecute(GameState state)

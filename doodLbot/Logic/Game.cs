@@ -97,6 +97,7 @@ namespace doodLbot.Logic
                     double delta = mss / RefreshTimeSpan.TotalMilliseconds;
 
                     await this.GameTick(delta);
+
                     ExecWatch.Stop();
                     var ms = ExecWatch.ElapsedMilliseconds;
                     //Thread.Sleep(RefreshTimeSpan);
