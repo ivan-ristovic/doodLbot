@@ -26,16 +26,23 @@ namespace doodLbot.Entities
         [JsonIgnore]
         public bool HasGearChanged { get; set; }
 
+        [JsonIgnore]
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
+        [JsonProperty("gear")]
+        public IReadOnlyCollection<Gear> VisibleGear => this.gear.Where(x => x.IsVisible).ToList();
+
+        [JsonProperty("algorithm")]
         public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
 
         private readonly List<Gear> gear = new List<Gear>();
-        
+
         private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
+        [JsonProperty("codeInventory")]
         public CodeStorage CodeInventory { get; private set; }
 
+        [JsonProperty("equipmentInventory")]
         public EquipmentStorage EquipmentInventory { get; private set; }
 
         private RateLimiter ShootRateLimiter;
@@ -46,7 +53,7 @@ namespace doodLbot.Entities
         private double baseSpeed;
         private double baseDamage;
 
-        public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory) 
+        public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory)
             : base(x: x, y: y)
         {
             HasCodeChanged = true; // TODO tmp, should be false when shop works
@@ -68,8 +75,9 @@ namespace doodLbot.Entities
             this.Speed = this.baseSpeed;
             this.Damage = this.baseDamage;
             this.Hp = this.baseHp;
-            foreach(var g in gear){
-                switch(g)
+            foreach (var g in gear)
+            {
+                switch (g)
                 {
                     case Armor armor:
                         this.Speed += armor.Speed;
@@ -78,7 +86,7 @@ namespace doodLbot.Entities
                     case Weapon weapon:
                         this.Damage += weapon.Damage;
                         break;
-                }    
+                }
             }
         }
 
@@ -108,7 +116,13 @@ namespace doodLbot.Entities
 
         public void BuyGear(string name)
         {
-            if (EquipmentInventory.ItemExists(name, out int cost)){
+            if (EquipmentInventory.ItemExists(name, out int cost))
+            {
+                if (this.Points < cost)
+                {
+                    return;
+                }
+                this.Points -= cost;
                 var item = EquipmentInventory.BuyItem(name);
                 AddGear(item);
             }
@@ -116,7 +130,8 @@ namespace doodLbot.Entities
 
         public void SellGear(string name)
         {
-            if (EquipmentInventory.ItemExists(name, out int cost)){
+            if (EquipmentInventory.ItemExists(name, out int cost))
+            {
                 this.Points += cost;
                 var item = EquipmentInventory.SellItem(name);
                 RemoveGear(item);
@@ -126,7 +141,12 @@ namespace doodLbot.Entities
         public void BuyCode(string name)
         {
             HasCodeChanged = true;
-            if (CodeInventory.ItemExists(name, out int cost)){
+            if (CodeInventory.ItemExists(name, out int cost))
+            {
+                if (this.Points < cost)
+                {
+                    return;
+                }
                 this.Points -= cost;
                 var item = CodeInventory.BuyItem(name);
             }
@@ -135,9 +155,21 @@ namespace doodLbot.Entities
         public void SellCode(string name)
         {
             HasCodeChanged = true;
-            if (CodeInventory.ItemExists(name, out int cost)){
+            if (CodeInventory.ItemExists(name, out int cost))
+            {
                 this.Points += cost;
                 CodeInventory.SellItem(name);
+            }
+        }
+
+        public void EquipCode(string name)
+        {
+            HasCodeChanged = true;
+            if (CodeInventory.ItemExists(name, out int cost))
+            {
+                var item = CodeInventory.BuyItem(name);
+                CodeInventory.SellItem(name);
+                Algorithm.Insert(item);
             }
         }
 
@@ -155,7 +187,8 @@ namespace doodLbot.Entities
 
         public bool TryFire(double speed, double damage)
         {
-            if (!this.ShootRateLimiter.IsCooldownActive()) {
+            if (!this.ShootRateLimiter.IsCooldownActive())
+            {
                 this.Fire(speed, damage);
                 return true;
             }
@@ -163,8 +196,10 @@ namespace doodLbot.Entities
         }
 
         private void Fire(double speed, double damage)
-            => this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation, speed, damage));
-        
+        {
+            this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation, speed, damage));
+        }
+
         public bool TryRemoveProjectile(Projectile p)
         {
             return this.projectiles.TryRemove(p);

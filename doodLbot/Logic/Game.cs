@@ -69,28 +69,28 @@ namespace doodLbot.Logic
             // Update hero Id for the next hero that comes to the game.
             Interlocked.Increment(ref currentHeroId);
 
-            var shootElementList = new List<BaseCodeElement> {
-                new TargetElement(),
-                new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
-                new ShootElement(new RateLimiter(Design.ShootElementCooldown))
-            };
+            //var shootElementList = new List<BaseCodeElement> {
+            //    new TargetElement(),
+            //    new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
+            //    new ShootElement(new RateLimiter(Design.ShootElementCooldown))
+            //};
 
-            var idleElementList = new List<BaseCodeElement> {
-                new IdleElement(),
-                new IdleElement(),
-                new IdleElement(),
-            };
+            //var idleElementList = new List<BaseCodeElement> {
+            //    new IdleElement(),
+            //    new IdleElement(),
+            //    new IdleElement(),
+            //};
 
-            var branchingElement = new BranchingElement(
-                new IsEnemyNearCondition(),
-                new CodeBlockElement(shootElementList),
-                new CodeBlockElement(idleElementList)
-            );
+            //var branchingElement = new BranchingElement(
+            //    new IsEnemyNearCondition(),
+            //    new CodeBlockElement(shootElementList),
+            //    new CodeBlockElement(idleElementList)
+            //);
 
-            hero.Algorithm.Insert(branchingElement);
-            hero.Algorithm.Insert(new IdleElement());
-            hero.Algorithm.Insert(new ShootElement(
-                new RateLimiter(Design.ShootElementCooldown)));
+            //playerOne.Algorithm.Insert(branchingElement);
+            //playerOne.Algorithm.Insert(new IdleElement());
+            //playerOne.Algorithm.Insert(new ShootElement(
+            //    new RateLimiter(Design.ShootElementCooldown)));
 
             this.heroes.Add(hero);
 
@@ -134,25 +134,30 @@ namespace doodLbot.Logic
         /// <param name="_">game object that is passed by the timer</param>
         private async Task GameTick(double delta)
         {
-            if (!this.enemySpawnLimiter.IsCooldownActive()) {
+            if (!this.enemySpawnLimiter.IsCooldownActive())
+            {
                 this.SpawnEnemy(Design.SpawnRange);
             }
             this.UpdateStateWithControls(delta);
 
-            foreach (Hero h in this.heroes) {
+            foreach (Hero h in this.heroes)
+            {
                 h.Move(delta);
                 h.Algorithm.Execute(this.GameState);
             }
 
-            foreach (Enemy enemy in this.enemies) {
+            foreach (Enemy enemy in this.enemies)
+            {
                 enemy.VelocityTowardsClosestEntity(this.heroes);
                 enemy.Move(delta);
                 if (enemy is Shooter shooter)
                     this.TryAddEnemyProjectile(shooter);
             }
 
-            foreach (Hero h in this.heroes) {
-                foreach (Projectile projectile in h.Projectiles) {
+            foreach (Hero h in this.heroes)
+            {
+                foreach (Projectile projectile in h.Projectiles)
+                {
                     projectile.Move(delta);
                 }
             }
@@ -161,9 +166,12 @@ namespace doodLbot.Logic
             this.RemoveProjectilesOutsideOfMap();
 
             await this.hubContext.SendUpdatesToClients(this.GameState);
-            foreach (Hero h in this.heroes) {
-                if (h.Points >= 40) {
-                    if (h.HasGearChanged) {
+            foreach (Hero h in this.heroes)
+            {
+                if (h.Points >= 40)
+                {
+                    if (h.HasGearChanged)
+                    {
                         h.BuyGear("hoverboard");
                         h.HasGearChanged = false;
                     }
@@ -185,7 +193,7 @@ namespace doodLbot.Logic
             // TODO make this to work nicely whith multiplayer - create only one enemy
             foreach (Hero h in this.heroes)
             {
-                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange/2));
+                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
             }
         }
 
@@ -223,7 +231,7 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes)
             {
                 h.UpdateStateWithControls(delta);
-            }           
+            }
         }
 
         private void CheckForCollisionsAndUpdateGame()
@@ -266,7 +274,8 @@ namespace doodLbot.Logic
                 var heroList = new List<Entity> { h };
                 IReadOnlyList<(Entity, Entity)> collisionsWithHero = CollisionCheck.GetCollisions(heroList, this.enemies);
 
-                foreach ((Entity Collider1, Entity Collider2) in collisionsWithHero) {
+                foreach ((Entity Collider1, Entity Collider2) in collisionsWithHero)
+                {
                     var hero = Collider1 as Hero;
                     var enemy = Collider2 as Enemy;
                     enemy.DecreaseHealthPoints(hero.Damage);
@@ -302,12 +311,17 @@ namespace doodLbot.Logic
                 }
             }
 
-            foreach (Projectile p in this.EnemyProjectiles) {
-                if (p.IsOutsideBounds(Design.MapSize)) {
-                    if (this.TryRemoveEnemyProjectile(p)) {
+            foreach (Projectile p in this.EnemyProjectiles)
+            {
+                if (p.IsOutsideBounds(Design.MapSize))
+                {
+                    if (this.TryRemoveEnemyProjectile(p))
+                    {
                         //Log.Debug($"Removed projectile on location: " +
                         //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
-                    } else {
+                    }
+                    else
+                    {
                         Log.Debug($"Failed to remove projectile on location:" +
                             $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
                     }
@@ -322,7 +336,7 @@ namespace doodLbot.Logic
         }
 
         public bool TryRemoveEnemyProjectile(Projectile p)
-            =>  this.enemyProjectiles.TryRemove(p);
+            => this.enemyProjectiles.TryRemove(p);
 
         #endregion
     }

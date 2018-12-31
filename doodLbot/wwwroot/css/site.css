@@ -227,3 +227,24 @@ body {
     bottom: 10px;
     left: 10px;
 }
+
+.buySellEquipContainer>div {
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.7);
+    float: left;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid #333;
+    -webkit-transition: all .2s ease;
+    /* Safari */
+    transition: all .2s ease;
+}
+
+.buySellEquipContainer>div:hover {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+}

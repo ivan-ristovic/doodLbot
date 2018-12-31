@@ -49,7 +49,7 @@ namespace doodLbot.Logic
                     case "BranchingElement":
                         var thenBlock = new List<BaseCodeElement>();
                         var elseBlock = new List<BaseCodeElement>();
-                        foreach (dynamic child in element.@then.elements)
+                        foreach (dynamic child in element.@then.elements) // TODO then doesn't have to hold anything
                             thenBlock.Add(DeserializeCodeElementInternal(child));
                         foreach (dynamic child in element.@else.elements)
                             elseBlock.Add(DeserializeCodeElementInternal(child));

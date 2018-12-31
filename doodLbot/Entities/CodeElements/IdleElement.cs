@@ -9,7 +9,7 @@ namespace doodLbot.Entities.CodeElements
     {
         public IdleElement()
         {
-
+            this.Cost = Design.CostIdle;
         }
 
         protected override void OnExecute(GameState state)

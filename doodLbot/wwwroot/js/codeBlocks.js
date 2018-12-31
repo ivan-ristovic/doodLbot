@@ -20,11 +20,11 @@ function createBlockLayout(domBlockIdNum) {
         type: 'checkbox',
         id: domBlockIdNum
     }).
-    addClass("isOnCheckbox");
+        addClass("isOnCheckbox");
     let label = $("<label />", {
         for: domBlockIdNum
     }).
-    addClass("titleLabel");
+        addClass("titleLabel");
 
     let title = $("<div />")
         .addClass("title")
@@ -42,6 +42,11 @@ function createBlockLayout(domBlockIdNum) {
 }
 
 function addBlockType(blockDiv, blockJson) {
+    console.log(blockJson);
+    if (blockJson == null) {
+        return;
+    }
+
     let type = blockJson.type;
     let isActive = blockJson.isActive;
 
@@ -84,7 +89,8 @@ function appendBlockAndChildren(blockJson, whereToAppend, drop = false) {
     if (blockJson.type == "BranchingElement") {
         let branchingIf = blockDiv.find(".branchingIf")
         branchingIf.append($("<div/>").addClass("dropPart"));
-        appendBlockAndChildren(blockJson.cond, branchingIf, true);
+        if (blockJson.cond != null)
+            appendBlockAndChildren(blockJson.cond, branchingIf, true);
 
         let branchingThen = blockDiv.find(".branchingThen")
         branchingThen.append($("<div/>").addClass("dropPart"));
@@ -107,7 +113,7 @@ function updateCodeBlocks(data) {
     CodeBlocks = data;
     codeBlockIdNum = 0;
 
-    $("#codeBlocks").innerHTML = "";
+    $("#codeBlocks").empty();
 
     $("#codeBlocks").append($("<div/>").addClass("dropPart"));
     for (var i = 0; i < data.elements.length; i++) {
@@ -134,7 +140,7 @@ function updateCodeBlocks(data) {
 }
 
 function generateCodeBlocksJson(container) {
-    if (!container)
+    if (container == null || container == undefined)
         return;
 
     let containerChildren = $(container).children(".codeBlock");
@@ -173,7 +179,12 @@ function generateCodeBlocksJson(container) {
         }
     }
 
+    if (a == null || a == undefined)
+        return;
+
     if (!$(container).is("#codeBlocks")) {
+        if ($(container).find("input")[0] == undefined)
+            return;
         let isChecked = $(container).find("input")[0].checked;
         a.isActive = isChecked;
     }

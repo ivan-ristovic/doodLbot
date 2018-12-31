@@ -34,6 +34,12 @@ namespace doodLbot.Logic
 
         public static IDictionary<string, Gear> GearDict { get; private set; }
 
+        public static int CostShoot;
+        public static int CostBranching;
+        public static int CostIdle;
+        public static int CostTarget;
+        public static int CostIsNear;
+
         static Design()
         {
             TickRate = 30;
@@ -43,7 +49,7 @@ namespace doodLbot.Logic
 
             ProjectileSpeed = 6 * adjust;
             HeroSpeed = 5 * adjust;
-            BackwardsSpeedRatio = 1.0/3.0;
+            BackwardsSpeedRatio = 1.0 / 3.0;
             EnemySpeed = 2 * adjust;
             FireCooldown = 0.2;
             ShootElementCooldown = 0.4;
@@ -64,13 +70,21 @@ namespace doodLbot.Logic
             HeroRadiusSize = 30;
             ProjectileRadiusSize = 10;
 
+            CostShoot = 50;
+            CostBranching = 100;
+            CostIdle = 5;
+            CostTarget = 80;
+            CostIsNear = 70;
+
             PopulateGearList();
         }
 
         private static void PopulateGearList()
         {
             GearDict = new Dictionary<string, Gear>();
-            GearDict.Add("hoverboard", new Armor("hoverboard", 40, 5));
+            var item = new Armor("hoverboard", 40, 5);
+            item.IsVisible = true;
+            GearDict.Add("hoverboard", item);
             GearDict.Add("hoverboard2", new Armor("hoverboard2", 1, 2));
             GearDict.Add("hoverboard3", new Armor("hoverboard3", 4, 5));
         }

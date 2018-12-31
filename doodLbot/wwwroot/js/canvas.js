@@ -10,11 +10,7 @@ function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
-    // TODO: make this more robust:
-    if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
-        console.log(heroGroup, GAMESTATE.hero.gear);
-        heroGroup.addChildAt(hoverboard, 0);
-    }
+    updateHeroGear();
     serverCounter.countTimesPerSecond(true);
 }
 var id = -1;
@@ -160,6 +156,16 @@ function calcTint(x1, x2, y1, y2) {
     return (red << 16) + (green << 8);
 }
 
+function updateHeroGear() {
+    // TODO: make this more robust:
+    if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
+        // console.log(heroGroup, GAMESTATE.hero.gear);
+        heroGroup.addChildAt(hoverboard, 0);
+    } else if (GAMESTATE.hero.gear.length < heroGroup.children.length - 1) {
+        heroGroup.removeChild(hoverboard);
+    }
+}
+
 const halfPI = Math.PI / 2;
 
 function updateProjectiles() {
@@ -231,10 +237,10 @@ function updateEnemies() {
 
 function updateHud() {
     if (GAMESTATE.hero === undefined) {
-        $("#pts")[0].innerHTML = "points: 0";
+        $("#pts")[0].innerHTML = "gold: 0";
         return;
     }
-    $("#pts")[0].innerHTML = "points: " + GAMESTATE.hero.pts;
+    $("#pts")[0].innerHTML = "gold: " + GAMESTATE.hero.pts;
 }
 
 function updateHero(delta) {

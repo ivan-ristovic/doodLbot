@@ -11,6 +11,7 @@ namespace doodLbot.Entities.CodeElements
         private RateLimiter shootLimit;
         public ShootElement(RateLimiter limiter = null)
         {
+            this.Cost = Design.CostShoot;
             shootLimit = limiter;
         }
 

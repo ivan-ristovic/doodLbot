@@ -77,6 +77,12 @@ function sellCodeServer(name) {
     sendToServer("SellCode", name);
 }
 
+// CODESHOP => SERVER
+function equipItemServer(name) {
+    console.log("sent request to equip item", name);
+    sendToServer("EquipItem", name);
+}
+
 // listens for the given keyCode
 function keyboard(keyCode) {
     let key = {};
@@ -135,8 +141,8 @@ let left = keyboard(65),
     down = keyboard(83),
     space = keyboard(32);
 
-let testKey = keyboard(84 /*t*/ );
+let testKey = keyboard(84 /*t*/);
 testKey.press = testKeyFunc;
 
-let consoleKey = keyboard(192 /*~*/ );
+let consoleKey = keyboard(192 /*~*/);
 consoleKey.press = consoleKeyFunc;

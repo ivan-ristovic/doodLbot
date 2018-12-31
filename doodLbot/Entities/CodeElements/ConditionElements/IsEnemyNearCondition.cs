@@ -9,6 +9,11 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
     /// </summary>
     public class IsEnemyNearCondition : BaseConditionElement
     {
+        public IsEnemyNearCondition()
+        {
+            this.Cost = Design.CostIsNear;
+        }
+
         /// <summary>
         /// Constructs a new IsEnemyNearCondition element.
         /// </summary>
