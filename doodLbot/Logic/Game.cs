@@ -87,9 +87,9 @@ namespace doodLbot.Logic
             //    new CodeBlockElement(idleElementList)
             //);
 
-            //playerOne.Algorithm.Insert(branchingElement);
-            //playerOne.Algorithm.Insert(new IdleElement());
-            //playerOne.Algorithm.Insert(new ShootElement(
+            //hero.Algorithm.Insert(branchingElement);
+            //hero.Algorithm.Insert(new IdleElement());
+            //hero.Algorithm.Insert(new ShootElement(
             //    new RateLimiter(Design.ShootElementCooldown)));
 
             this.heroes.Add(hero);

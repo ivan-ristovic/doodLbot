@@ -10,10 +10,13 @@ function onStateUpdate(gameState) {
     timesRecieved++;
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
+    CheckForNewHeroes();
+    // TODO: add logic to delete a hero when it leaves the game.
     updateHeroGear();
     serverCounter.countTimesPerSecond(true);
 }
-var id = -1;
+
+var id = 1;
 var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = null;
@@ -22,8 +25,9 @@ var MapWidth = null;
 var MapHeight = null;
 // sprites
 
-let heroGroup;
-let heroHealthBar;
+let heroGroups = [];
+let heroHealthBars = [];
+
 let hoverboard;
 // currently is only assigned to play inside setup(),
 // but can be assigned to something else if needed, eg. menu.
@@ -157,12 +161,14 @@ function calcTint(x1, x2, y1, y2) {
 }
 
 function updateHeroGear() {
-    // TODO: make this more robust:
-    if (GAMESTATE.hero.gear.length > heroGroup.children.length - 1) {
-        // console.log(heroGroup, GAMESTATE.hero.gear);
-        heroGroup.addChildAt(hoverboard, 0);
-    } else if (GAMESTATE.hero.gear.length < heroGroup.children.length - 1) {
-        heroGroup.removeChild(hoverboard);
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        // TODO: make this more robust:
+        if (GAMESTATE.heroes[i].gear.length > heroGroups[i].children.length - 1) {
+            console.log(heroGroups[i], GAMESTATE.heroes[i].gear);
+            heroGroups[i].addChildAt(hoverboard, 0);
+        } else if (GAMESTATE.heroes[i].gear.length < heroGroups[i].children.length - 1) {
+            heroGroups[i].removeChild(hoverboard);
+        }
     }
 }
 
@@ -213,6 +219,9 @@ function updateEnemies() {
         app.stage.addChild(EnemyHps[EnemyHps.length - 1]);
     }
 
+    //TODO: determine closest hero to attack
+    let playerToAttack = heroGroups[0];
+
     let enemies = GAMESTATE.enemies;
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
     for (let i = 0; i < enemies.length; i++) {
@@ -220,7 +229,7 @@ function updateEnemies() {
         let newy = enemies[i].y + speedMul * enemies[i].vy;
         EnemySprites[i].position.set(newx, newy);
         EnemySprites[i].visible = true;
-        EnemySprites[i].tint = calcTint(newx, heroGroup.position.x, newy, heroGroup.position.y);
+        EnemySprites[i].tint = calcTint(newx, playerToAttack.position.x, newy, playerToAttack.position.y);
         EnemyHps[i].visible = true;
         Entity.updateHealthBar(newx, newy, enemies[i].hp, EnemyHps[i]);
     }
@@ -235,17 +244,66 @@ function updateEnemies() {
     }
 }
 
+function getCurrentHero() {
+    if (GAMESTATE.heroes == undefined) {
+        return heroGroups[0];
+    }
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        if (GAMESTATE.heroes[i].id == id) {
+            return GAMESTATE.heroes[i];
+        }
+    }
+    return undefined;
+}
+
 function updateHud() {
-    if (GAMESTATE.hero === undefined) {
+    let currentHero = getCurrentHero();
+    if (currentHero === undefined) {
         $("#pts")[0].innerHTML = "gold: 0";
         return;
     }
-    $("#pts")[0].innerHTML = "gold: " + GAMESTATE.hero.pts;
+    $("#pts")[0].innerHTML = "gold: " + currentHero.pts;
 }
 
-function updateHero(delta) {
-    if (GAMESTATE.hero !== undefined) {
-        let hero = GAMESTATE.hero;
+function CheckForNewHeroes() {
+    while (heroGroups.length != GAMESTATE.heroes.length) {
+        let newHeroGroup = createNewHeroGroup();
+        newHeroGroup.visible = true;
+
+        let heroHealthBar = Entity.createHealthBar(100, 10, newHeroGroup);
+        heroHealthBar.visible = true;
+
+        app.stage.addChild(newHeroGroup);
+        app.stage.addChild(heroHealthBar);
+
+        heroGroups.push(newHeroGroup);
+        heroHealthBars.push(heroHealthBar);
+    }
+}
+
+function createNewHeroGroup() {
+    let heroGroup = new PIXI.Container()
+    let hero = new Sprite(loader.resources["images/hero.png"].texture);
+    hero.scale.set(0.5, 0.5);
+    // percentage of texture dimensions 0 to 1
+    hero.anchor.set(0.5, 0.5);
+    heroGroup.rotation = 0; // radians
+    hoverboard = new Sprite(loader.resources["images/hoverboard.png"].texture);
+    hoverboard.anchor.set(0.5, 0.5);
+    hoverboard.scale.set(1.8, 1.5);
+    hoverboard.rotation = Math.PI / 2;
+
+    heroGroup.addChild(hero);
+    return heroGroup;
+}
+
+function updateHeroes(delta) {
+    if (GAMESTATE.heroes == undefined) {
+        return;
+    }
+
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        let hero = GAMESTATE.heroes[i];
         let speedMul = FramesSinceLastUpdate * MulSpeedsWith * delta;
         let shouldInterpolate = up.isDown || down.isDown;
         speedMul = shouldInterpolate ? speedMul : 0;
@@ -258,10 +316,10 @@ function updateHero(delta) {
 
         if (hero.y + yplus < MapHeight && hero.y + yplus > 0)
             newy += yplus;
-
-        heroGroup.position.set(newx, newy);
-        heroGroup.rotation = hero.rotation;
-        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBar);
+        
+        heroGroups[i].position.set(newx, newy);
+        heroGroups[i].rotation = hero.rotation;
+        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBars[i]);
     }
 }
 const centerWith = navigator.platform == "MacIntel" ? 4 : 2;
@@ -269,9 +327,9 @@ const centerWith = navigator.platform == "MacIntel" ? 4 : 2;
 function moveMap() {
     app.stage.position.x = app.renderer.width / centerWith;
     app.stage.position.y = app.renderer.height / centerWith;
-
-    app.stage.pivot.x = heroGroup.position.x;
-    app.stage.pivot.y = heroGroup.position.y;
+    
+    app.stage.pivot.x = heroGroups[id - 1].position.x;
+    app.stage.pivot.y = heroGroups[id - 1].position.y;
 }
 
 let GAMESTATE = new GameState();
@@ -388,19 +446,18 @@ function loadProgressHandler(loader, resource) {
 
 function setup() {
     console.log("All files loaded");
-    heroGroup = new PIXI.Container()
-    let hero = new Sprite(loader.resources["images/hero.png"].texture);
-    hero.scale.set(0.5, 0.5);
-    // percentage of texture dimensions 0 to 1
-    hero.anchor.set(0.5, 0.5);
-    heroGroup.rotation = 0; // radians
-    hoverboard = new Sprite(loader.resources["images/hoverboard.png"].texture);
-    hoverboard.anchor.set(0.5, 0.5);
-    hoverboard.scale.set(1.8, 1.5);
-    hoverboard.rotation = Math.PI / 2;
 
-    heroGroup.addChild(hero);
-    heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
+    let heroGroup = createNewHeroGroup();
+    heroGroup.visible = false;
+
+    let heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
+    heroHealthBar.visible = false;
+
+    app.stage.addChild(heroGroup);
+    app.stage.addChild(heroHealthBar);
+
+    heroGroups.push(heroGroup);
+    heroHealthBars.push(heroHealthBar);
 
     let text = new PIXI.Text('Establishing connection to server...', {
         fontFamily: 'Arial',
@@ -408,13 +465,10 @@ function setup() {
         fill: 0x9999f0,
         align: 'center'
     });
+
     loadingDraw = text;
     loadingDraw.position.set(100, 100);
     app.stage.addChild(loadingDraw);
-    app.stage.addChild(heroGroup);
-    heroGroup.visible = false;
-    app.stage.addChild(heroHealthBar);
-    heroHealthBar.visible = false;
     WhatToRender = WaitingForHandshake;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
@@ -431,8 +485,14 @@ function WaitingForHandshake() {
     if (!isReadyToPlay) {
         return;
     }
-    heroGroup.visible = true;
-    heroHealthBar.visible = true;
+
+    for (let i = 0; i < heroGroups.length; i++) {
+        heroGroups[i].visible = true;
+    }
+    for (let i = 0; i < heroHealthBars.length; i++) {
+        heroHealthBars[i].visible = true;
+    }
+
     loadingDraw.visible = false;
     setMapSize(MapWidth, MapHeight);
     WhatToRender = play;
@@ -441,7 +501,7 @@ function WaitingForHandshake() {
 
 function play(delta) {
     fpsCounter.countTimesPerSecond(true);
-    updateHero(delta);
+    updateHeroes(delta);
     updateHud();
     updateEnemies();
     updateProjectiles();
