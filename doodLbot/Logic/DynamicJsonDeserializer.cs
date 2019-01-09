@@ -3,6 +3,7 @@ using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
 
 using Newtonsoft.Json.Linq;
+using Microsoft.CSharp.RuntimeBinder;
 
 using System.Collections.Generic;
 
@@ -33,9 +34,10 @@ namespace doodLbot.Logic
             BaseCodeElement DeserializeCodeElementInternal(dynamic element)
             {
                 BaseCodeElement ret;
-                switch ((string)element["type"]) {
+                switch ((string)element["type"])
+                {
                     case "ShootElement":
-                        ret =  new ShootElement(new RateLimiter(Design.ShootElementCooldown));
+                        ret = new ShootElement(new RateLimiter(Design.ShootElementCooldown));
                         break;
                     case "IdleElement":
                         ret = new IdleElement();
@@ -49,10 +51,24 @@ namespace doodLbot.Logic
                     case "BranchingElement":
                         var thenBlock = new List<BaseCodeElement>();
                         var elseBlock = new List<BaseCodeElement>();
-                        foreach (dynamic child in element.@then.elements) // TODO then doesn't have to hold anything
-                            thenBlock.Add(DeserializeCodeElementInternal(child));
-                        foreach (dynamic child in element.@else.elements)
-                            elseBlock.Add(DeserializeCodeElementInternal(child));
+                        try
+                        {
+                            foreach (dynamic child in element.@then.elements)
+                                thenBlock.Add(DeserializeCodeElementInternal(child));
+                        }
+                        catch (RuntimeBinderException)
+                        {
+                        }
+
+                        try
+                        {
+                            foreach (dynamic child in element.@else.elements)
+                                elseBlock.Add(DeserializeCodeElementInternal(child));
+                        }
+                        catch (RuntimeBinderException)
+                        {
+                        }
+
                         ret = new BranchingElement(
                             DeserializeConditionElementInternal(element["cond"]),
                             new CodeBlockElement(thenBlock),
@@ -72,7 +88,12 @@ namespace doodLbot.Logic
 
             BaseConditionElement DeserializeConditionElementInternal(dynamic element)
             {
-                switch ((string)element["type"]) {
+                if (element == null)
+                {
+                    return null;
+                }
+                switch ((string)element["type"])
+                {
                     case "IsEnemyNearCondition":
                         return new IsEnemyNearCondition();
                     default:

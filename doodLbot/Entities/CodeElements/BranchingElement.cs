@@ -44,10 +44,21 @@ namespace doodLbot.Entities.CodeElements
 
         protected override void OnExecute(GameState state)
         {
+            if (Condition == null)
+            {
+                return;
+            }
             if (this.Condition.Evaluate(state))
-                this.ThenBlock.Execute(state);
-            else
+            {
+                if (this.ThenBlock != null)
+                {
+                    this.ThenBlock.Execute(state);
+                }
+            }
+            else if (this.ElseBlock != null)
+            {
                 this.ElseBlock.Execute(state);
+            }
         }
     }
 }

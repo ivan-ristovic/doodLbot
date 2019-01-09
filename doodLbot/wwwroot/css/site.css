@@ -111,6 +111,17 @@ body {
     background: #fffddb !important;
 }
 
+
+.BranchingElement hr {
+    /*line breaks within branching element*/
+    border: none;
+    height: 2px;
+    color: #999; /* old IE */
+    background-color: #999; /* Modern Browsers */
+    opacity: 0.3;
+}
+
+
 .BranchingElement,
 .BranchingElement>.title>[type="checkbox"]:checked+label:after,
 .BranchingElement>.title>[type="checkbox"]:not(:checked)+label:after {

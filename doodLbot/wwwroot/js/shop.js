@@ -12,12 +12,13 @@ let shopToggle = () => {
 let buySellEquip = (item, count, type, cost) => {
     let container = $("<div />").addClass("buySellEquipContainer");
     container.append(($("<div />").addClass(type).text("+")).click(function () {
-        if (GAMESTATE.hero.pts < cost)
+        let hero = GAMESTATE.heroes[id - 1];
+        if (hero.pts < cost)
             return;
         count++;
         $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
         type === "code" ? buyCodeServer(item) : buyGearServer(item);
-        $("#pts")[0].innerHTML = "gold: " + GAMESTATE.hero.pts;
+        $("#pts")[0].innerHTML = "gold: " + hero.pts;
     }));
     container.append(($("<div />").addClass(type).text("-")).click(function () {
         if (count <= 0)
@@ -25,7 +26,7 @@ let buySellEquip = (item, count, type, cost) => {
         count--;
         $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
         type === "code" ? sellCodeServer(item) : sellGearServer(item);
-        $("#pts")[0].innerHTML = "gold: " + GAMESTATE.hero.pts;
+        $("#pts")[0].innerHTML = "gold: " + GAMESTATE.heroes[id - 1].pts;
     }));
     container.append(($("<div />").addClass(type).text("=>")).click(function () {
         if (count <= 0)

@@ -142,14 +142,6 @@ namespace doodLbot.Logic
             await this.hubContext.SendUpdatesToClients(this.GameState);
             foreach (Hero h in this.heroes)
             {
-                if (h.Points >= 40)
-                {
-                    if (h.HasGearChanged)
-                    {
-                        h.BuyGear("hoverboard");
-                        h.HasGearChanged = false;
-                    }
-                }
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;
