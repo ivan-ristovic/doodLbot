@@ -62,48 +62,61 @@ namespace doodLbot.Hubs
                 codeInventory = h.CodeInventory,
                 equipmentInventory = h.EquipmentInventory
             };
-
+            
             return this.Clients.Caller.SendAsync("InitClient", data);
         }
 
         public Task BuyGear(string name)
         {
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
             Log.Debug("server: buy gear");
-            this.game.GameState.Hero.BuyGear(name);
+            
+            hero.BuyGear(name);
             return Task.CompletedTask;
         }
 
         public Task SellGear(string name)
         {
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
             Log.Debug("server: sell gear");
-            this.game.GameState.Hero.SellGear(name);
+            hero.SellGear(name);
             return Task.CompletedTask;
         }
 
         public Task BuyCode(string name)
         {
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
             Log.Debug("server: buy code");
-            this.game.GameState.Hero.BuyCode(name);
+            hero.BuyCode(name);
             return Task.CompletedTask;
         }
 
         public Task SellCode(string name)
         {
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
             Log.Debug("server: sell code");
-            this.game.GameState.Hero.SellCode(name);
+            hero.SellCode(name);
             return Task.CompletedTask;
         }
 
         public Task EquipItem(string name)
         {
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
             Log.Debug("server: equip code");
-            this.game.GameState.Hero.EquipCode(name);
+            hero.EquipCode(name);
             return Task.CompletedTask;
         }
 
         public Task AlgorithmUpdated(string json)
         {
-            this.game.GameState.Hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
+            int id = 1;
+            var hero = this.game.GetHeroById(id);
+            hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             return Task.CompletedTask;
         }
     }

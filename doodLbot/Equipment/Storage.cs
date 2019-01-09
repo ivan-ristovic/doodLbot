@@ -19,11 +19,11 @@ namespace doodLbot.Equipment
             public int Count;
         }
 
-        public static Entities.CodeElements.BaseCodeElement getCodeElement(T element)
+        public static Entities.CodeElements.BaseCodeElement GetCodeElement(T element)
         {
             if (typeof(T).Equals(typeof(Entities.CodeElements.BaseCodeElement)))
                 return (Entities.CodeElements.BaseCodeElement)(object)element;
-            return new Entities.CodeElements.IdleElement(); //TODO throw error
+            return new Entities.CodeElements.IdleElement();
         }
 
         [JsonProperty("items")]

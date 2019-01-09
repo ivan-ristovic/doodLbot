@@ -18,7 +18,7 @@ namespace doodLbot.Entities.CodeElements
 
         protected override void OnExecute(GameState state)
         {
-            var hero = state.Hero;
+            var hero = state.Heroes.First();
             if (!state.Enemies.Any())
             {
                 return;

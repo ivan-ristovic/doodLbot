@@ -16,9 +16,6 @@ namespace doodLbot.Logic
         [JsonProperty("heroes")]
         public IReadOnlyCollection<Hero> Heroes { get; }
 
-        [JsonProperty("hero")]
-        public Hero Hero { get; }
-
         [JsonProperty("enemies")]
         public IReadOnlyCollection<Enemy> Enemies { get; private set; }
 
@@ -35,8 +32,7 @@ namespace doodLbot.Logic
         /// <param name="enemies"></param>
         public GameState(IReadOnlyCollection<Hero> heroes, IReadOnlyCollection<Enemy> enemies, IReadOnlyCollection<Projectile> enemyProjectiles)
         {
-            this.Heroes = heroes;
-            this.Hero = heroes.FirstOrDefault();
+            this.Heroes = heroes.OrderBy(x=>x.Id).ToList();
             this.Projectiles = heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
             this.Enemies = enemies;
             this.EnemyProjectiles = enemyProjectiles;

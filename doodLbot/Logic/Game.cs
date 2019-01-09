@@ -60,8 +60,6 @@ namespace doodLbot.Logic
 
         public Hero AddNewHero()
         {
-            // begin hardcoded test
-            // todo remove this
             Hero hero = new Hero(currentHeroId, Design.HeroStartX, Design.HeroStartY,
                 new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
             );
@@ -69,33 +67,9 @@ namespace doodLbot.Logic
             // Update hero Id for the next hero that comes to the game.
             Interlocked.Increment(ref currentHeroId);
 
-            //var shootElementList = new List<BaseCodeElement> {
-            //    new TargetElement(),
-            //    new ShootElement(new RateLimiter(Design.ShootElementCooldown)),
-            //    new ShootElement(new RateLimiter(Design.ShootElementCooldown))
-            //};
-
-            //var idleElementList = new List<BaseCodeElement> {
-            //    new IdleElement(),
-            //    new IdleElement(),
-            //    new IdleElement(),
-            //};
-
-            //var branchingElement = new BranchingElement(
-            //    new IsEnemyNearCondition(),
-            //    new CodeBlockElement(shootElementList),
-            //    new CodeBlockElement(idleElementList)
-            //);
-
-            //hero.Algorithm.Insert(branchingElement);
-            //hero.Algorithm.Insert(new IdleElement());
-            //hero.Algorithm.Insert(new ShootElement(
-            //    new RateLimiter(Design.ShootElementCooldown)));
-
             this.heroes.Add(hero);
 
             //this.SpawnEnemy(Design.SpawnRange);
-            // end hardcoded test
 
             if (this.heroes.Count == 1)
             {
@@ -212,7 +186,7 @@ namespace doodLbot.Logic
         /// Finds hero with the given id.
         /// </summary>
         /// <param name="id">Id of the Hero</param>
-        private Hero GetHeroById(int id)
+        public Hero GetHeroById(int id)
         {
             foreach (Hero h in this.heroes)
             {

@@ -327,7 +327,14 @@ const centerWith = navigator.platform == "MacIntel" ? 4 : 2;
 function moveMap() {
     app.stage.position.x = app.renderer.width / centerWith;
     app.stage.position.y = app.renderer.height / centerWith;
+
+
+    if (heroGroups[id - 1] == undefined) {
+        console.log("heroGroups[id - 1] is undef");
+        return;
+    }
     
+
     app.stage.pivot.x = heroGroups[id - 1].position.x;
     app.stage.pivot.y = heroGroups[id - 1].position.y;
 }

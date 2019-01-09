@@ -1,5 +1,6 @@
 ﻿using doodLbot.Common;
 using doodLbot.Logic;
+using System.Linq;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -17,9 +18,10 @@ namespace doodLbot.Entities.CodeElements
 
         protected override void OnExecute(GameState state)
         {
+            var hero = state.Heroes.First();
             if (!shootLimit?.IsCooldownActive() ?? false)
             {
-                state.Hero.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
+                hero.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
             }
         }
     }
