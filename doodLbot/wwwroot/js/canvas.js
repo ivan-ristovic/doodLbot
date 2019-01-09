@@ -11,7 +11,6 @@ function onStateUpdate(gameState) {
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
     CheckForNewHeroes();
-    // TODO: add logic to delete a hero when it leaves the game.
     updateHeroGear();
     serverCounter.countTimesPerSecond(true);
 }
@@ -149,7 +148,7 @@ class GameState {
     }
 }
 
-function calcTint(x1, x2, y1, y2) {
+function tintFromDistance(x1, x2, y1, y2) {
     let a = x1 - x2;
     let b = y1 - y2;
 
@@ -175,8 +174,6 @@ function updateHeroGear() {
 const halfPI = Math.PI / 2;
 
 function updateProjectiles() {
-    // TODO - maybe it can be nicely merged with updateEnemies(),
-    // the only prob are health bars.
     if (GAMESTATE.projectiles === undefined) return;
     let numProjs = GAMESTATE.projectiles.length;
     while (ProjectileSprites.length < numProjs) {
@@ -229,7 +226,7 @@ function updateEnemies() {
         let newy = enemies[i].y + speedMul * enemies[i].vy;
         EnemySprites[i].position.set(newx, newy);
         EnemySprites[i].visible = true;
-        EnemySprites[i].tint = calcTint(newx, playerToAttack.position.x, newy, playerToAttack.position.y);
+        EnemySprites[i].tint = tintFromDistance(newx, playerToAttack.position.x, newy, playerToAttack.position.y);
         EnemyHps[i].visible = true;
         Entity.updateHealthBar(newx, newy, enemies[i].hp, EnemyHps[i]);
     }
@@ -267,7 +264,7 @@ function updateHud() {
 
 function CheckForNewHeroes() {
     while (heroGroups.length != GAMESTATE.heroes.length) {
-        let newHeroGroup = createNewHeroGroup();
+        let newHeroGroup = createNewHeroGroup(heroGroups.length);
         newHeroGroup.visible = true;
 
         let heroHealthBar = Entity.createHealthBar(100, 10, newHeroGroup);
@@ -281,9 +278,12 @@ function CheckForNewHeroes() {
     }
 }
 
-function createNewHeroGroup() {
+function createNewHeroGroup(tintSeed) {
     let heroGroup = new PIXI.Container()
     let hero = new Sprite(loader.resources["images/hero.png"].texture);
+    if (tintSeed != undefined) {
+        hero.tint = Math.floor((Math.abs(Math.sin(tintSeed + 4) * 16777215)) % 16777215);
+    }
     hero.scale.set(0.5, 0.5);
     // percentage of texture dimensions 0 to 1
     hero.anchor.set(0.5, 0.5);
@@ -305,7 +305,10 @@ function updateHeroes(delta) {
     for (let i = 0; i < GAMESTATE.heroes.length; i++) {
         let hero = GAMESTATE.heroes[i];
         let speedMul = FramesSinceLastUpdate * MulSpeedsWith * delta;
-        let shouldInterpolate = up.isDown || down.isDown;
+
+        // if it our player, then only interpolate when keys are pressed, otherwise always
+        // this prevents jittery camera movement when stopping
+        let shouldInterpolate = i == id-1 ? (up.isDown || down.isDown) : true;
         speedMul = shouldInterpolate ? speedMul : 0;
         let xplus = speedMul * hero.vx;
         let yplus = speedMul * hero.vy;
@@ -316,7 +319,7 @@ function updateHeroes(delta) {
 
         if (hero.y + yplus < MapHeight && hero.y + yplus > 0)
             newy += yplus;
-        
+
         heroGroups[i].position.set(newx, newy);
         heroGroups[i].rotation = hero.rotation;
         Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBars[i]);

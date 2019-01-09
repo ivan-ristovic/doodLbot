@@ -80,7 +80,6 @@ body {
     width: 20px;
     height: 20px;
     background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
-    /* TODO MOVE TO LOCAL*/
     background-size: contain;
     opacity: .5;
     float: left;

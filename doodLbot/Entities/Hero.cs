@@ -56,8 +56,8 @@ namespace doodLbot.Entities
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory)
             : base(x: x, y: y)
         {
-            HasCodeChanged = true; // TODO tmp, should be false when shop works
-            HasGearChanged = true;
+            HasCodeChanged = false;
+            HasGearChanged = false;
             this.Id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;

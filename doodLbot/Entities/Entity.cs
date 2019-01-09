@@ -124,12 +124,11 @@ namespace doodLbot.Entities
         }
 
         /// <summary>
-        ///                 TODO
+        ///  TODO
         /// </summary>
         /// <param name="value"></param>
         public virtual void DecreaseHealthPoints(double value)
         {
-            // TODO: make Hp atomic
             double newHp = this.Hp - value;
             this.Hp = newHp > 0 ? newHp : 0;
         }
