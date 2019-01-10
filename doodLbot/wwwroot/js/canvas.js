@@ -15,7 +15,6 @@ function onStateUpdate(gameState) {
     serverCounter.countTimesPerSecond(true);
 }
 
-var id = 1;
 var isReadyToPlay = false;
 var FramesSinceLastUpdate = 0;
 var ServerTickrate = null;
@@ -397,7 +396,6 @@ window.addEventListener("resize", resize);
 
 // Resize function window
 function resize() {
-    // Get the p
     const parent = app.view.parentNode;
 
     // Resize the renderer
@@ -469,16 +467,7 @@ function setup() {
     heroGroups.push(heroGroup);
     heroHealthBars.push(heroHealthBar);
 
-    let text = new PIXI.Text('Establishing connection to server...', {
-        fontFamily: 'Arial',
-        fontSize: 24,
-        fill: 0x9999f0,
-        align: 'center'
-    });
-
-    loadingDraw = text;
-    loadingDraw.position.set(100, 100);
-    app.stage.addChild(loadingDraw);
+    loadingDraw = $("#loadingWindow");
     WhatToRender = WaitingForHandshake;
     // game loop
     app.ticker.add(delta => gameLoop(delta));
@@ -503,7 +492,8 @@ function WaitingForHandshake() {
         heroHealthBars[i].visible = true;
     }
 
-    loadingDraw.visible = false;
+    console.log(loadingDraw);
+    loadingDraw.css("top","-100%");
     setMapSize(MapWidth, MapHeight);
     WhatToRender = play;
     updateShop();

@@ -18,6 +18,123 @@ body {
     padding: 0;
 }
 
+/* LOADING */
+
+#loadingWindow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 100vh;
+    text-align: center;
+    background: #957DAD;
+    color: #ddd;
+    font-size: 60px;
+    top: 0;
+
+    z-index: 100;
+
+    -webkit-transition: all .5s ease;
+    /* Safari */
+    transition: all .5s ease;
+}
+
+/* WELCOME */
+
+#welcomeWindow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 20, 20, 0.8);
+
+    top: 0;
+
+    z-index: 99;
+
+    -webkit-transition: all .5s ease;
+    /* Safari */
+    transition: all .5s ease;
+}
+
+.panel h2 {
+    color: #444444;
+    font-size: 18px;
+    margin: 0 0 8px 0;
+}
+
+.panel p {
+    color: #777777;
+    font-size: 14px;
+    margin-bottom: 30px;
+    line-height: 24px;
+}
+
+.login-form .form-control {
+    background: #f7f7f7;
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    font-size: 14px;
+    height: 50px;
+    line-height: 50px;
+}
+
+.login-form .main-div {
+    background: #ffffff;
+    border-radius: 2px;
+    margin: 10px auto 30px;
+    max-width: 38%;
+    padding: 50px 70px 70px 71px;
+    border-radius: 20px;
+}
+
+.login-form .form-group {
+    margin-bottom: 10px;
+}
+
+.login-form {
+    color: #ffffff;
+    font-size: 14px;
+    margin: auto;
+
+    width:100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.login-form .btn.btn-primary {
+    background: #77DD77;
+    border-color: #87ED97;
+    color: #ffffff;
+    font-size: 14px;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    padding: 0;
+}
+
+#guest {
+    text-align: left;
+    margin-top: 6px;
+    color:#77DD77 !important;
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.login-form .btn.btn-primary.reset {
+    background: #ff9900 none repeat scroll 0 0;
+}
+
+.back {
+    text-align: left;
+    margin-top: 10px;
+}
+
+.back a {
+    color: #444444;
+    font-size: 13px;
+    text-decoration: none;
+}
+
 /* CONSOLE */
 
 #consoleDiv {
@@ -116,8 +233,10 @@ body {
     /*line breaks within branching element*/
     border: none;
     height: 2px;
-    color: #999; /* old IE */
-    background-color: #999; /* Modern Browsers */
+    color: #999;
+    /* old IE */
+    background-color: #999;
+    /* Modern Browsers */
     opacity: 0.3;
 }
 

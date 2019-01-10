@@ -3,6 +3,28 @@
   it's needed for the canvas to properly fit the window -->
 <!-- I don't know how to do this using Razor... -->
 <!--<style>* {padding: 0; margin: 0}</style>-->
+<div id="loadingWindow">
+    Establishing connection...
+</div>
+<div id="welcomeWindow">
+    <div class="login-form">
+        <div class="main-div">
+            <div class="panel">
+                <h2>Your name</h2>
+                <p>Please enter your ingame nickname</p>
+            </div>
+            <form id="Login">
+                <div class="form-group">
+                    <input id="inputName" type="text" class="form-control" placeholder="Guest">
+                </div>
+                <button id="loginBtn" type="submit" class="btn btn-primary">Submit</button>
+                <div id="guest">
+                    Stay Guest
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div id="consoleDiv" class="hiddenConsole">
     <ul>
         <li>
@@ -19,7 +41,7 @@
     <div class="row">
         <div id="frame" class="col-sm-9">
             @*Temporary div to store points, will be moved to a better place.*@
-            <div id="pts" style="float:right; position:absolute; ">1234</div>
+            <div id="pts" style="float:right; position:absolute; "></div>
 
             <div id="shopIcon" class="closed"></div>
             <div id="shop" class="hiddenShop">
@@ -36,5 +58,3 @@
         </div>
     </div>
 </div>
-
-

@@ -146,3 +146,25 @@ testKey.press = testKeyFunc;
 
 let consoleKey = keyboard(192 /*~*/);
 consoleKey.press = consoleKeyFunc;
+
+// users player id
+var id = 1;
+
+// WELCOME SCREEN
+let myName = "NewGuest";
+
+$("#guest").click(function(){
+    $("#welcomeWindow").hide();
+    myName = "Guest#"+id;
+});
+
+$("#loginBtn").click(function (e){
+    e.preventDefault();
+    $("#welcomeWindow").hide();
+    myName = $("#inputName").val();
+    console.log(myName);
+});
+
+function setPlayerName(name){
+    sendToServer("UpdateName", name, id);
+}

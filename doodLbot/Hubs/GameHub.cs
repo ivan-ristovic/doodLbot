@@ -35,6 +35,16 @@ namespace doodLbot.Hubs
             return Task.CompletedTask;
         }
 
+        public Task UpdateName(string newName, int id)
+        {
+            var hero = this.game.GetHeroById(id);
+            if (hero == null){
+                throw new System.Exception("hero not found");
+            }
+            hero.Name = newName;
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Used for quick client->server testing..
         /// </summary>

@@ -11,6 +11,9 @@ namespace doodLbot.Entities
 {
     public class Hero : Entity
     {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
         [JsonProperty("projectiles")]
         public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
 
