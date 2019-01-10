@@ -99,7 +99,6 @@ namespace doodLbot.Logic
         {
             this.gameLoopCTS.Cancel();
             this.gameLoopCTS.Dispose();
-            this.gameLoopTask.Dispose();
         }
 
         /// <summary>
