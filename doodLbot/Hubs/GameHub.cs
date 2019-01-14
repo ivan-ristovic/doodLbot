@@ -55,6 +55,7 @@ namespace doodLbot.Hubs
         {
             var hero = this.game.GetHeroById(id);
             if (hero == null){
+                // TODO think: is it necessary to kill the server for this?
                 throw new System.Exception("hero not found");
             }
             hero.Name = newName;

@@ -161,14 +161,18 @@ let myName = "NewGuest";
 
 $("#guest").click(function(){
     $("#welcomeWindow").hide();
-    myName = "Guest#"+id;
+    myName = "Guest#" + id;
+    setPlayerName(myName);
 });
 
 $("#loginBtn").click(function (e){
     e.preventDefault();
     $("#welcomeWindow").hide();
     myName = $("#inputName").val();
+    if (myName == "")
+        myName = "Guest#" + id;
     console.log(myName);
+    setPlayerName(myName);
 });
 
 function setPlayerName(name){

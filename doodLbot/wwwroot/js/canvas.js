@@ -13,6 +13,7 @@ function onStateUpdate(gameState) {
     CheckForNewHeroes();
     CheckForDeletedHeroes();
     updateHeroGear();
+    updateHeroName();
     serverCounter.countTimesPerSecond(true);
 }
 
@@ -178,6 +179,17 @@ function updateHeroGear() {
             heroToUpdateGear.heroGroup.addChildAt(hoverboard, 0);
         } else if (GAMESTATE.heroes[i].gear.length < heroToUpdateGear.heroGroup.children.length - 1) {
             heroToUpdateGear.heroGroup.removeChild(hoverboard);
+        }
+    }
+}
+
+function updateHeroName() {
+    // TODO: do this only once, not on very thick
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        if (GAMESTATE.heroes[i].name != null) {
+            let heroToUpdateName = getHeroById(GAMESTATE.heroes[i].id)
+            heroToUpdateName.nameGroup._text = GAMESTATE.heroes[i].name
+            heroToUpdateName.nameGroup.style = new PIXI.TextStyle();
         }
     }
 }

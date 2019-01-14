@@ -186,8 +186,11 @@ namespace doodLbot.Logic
         public void UpdateControls(GameStateUpdate update)
         {
             Hero h = GetHeroById(update.Id);
-            foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
-                h.UpdateControls(key, isDown);
+            if (h != null)
+            {
+                foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
+                    h.UpdateControls(key, isDown);
+            }
         }
 
         /// <summary>
