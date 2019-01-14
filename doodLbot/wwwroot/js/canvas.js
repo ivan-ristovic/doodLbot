@@ -4,7 +4,7 @@
 // SERVER => CLIENT
 function onStateUpdate(gameState) {
     if (WhatToRender != play) {
-        // ignore this if handshake was not recieved
+        // ignore this if handshake was not received
         return;
     }
     timesRecieved++;
@@ -23,8 +23,7 @@ var MapWidth = null;
 var MapHeight = null;
 // sprites
 
-let heroGroups = [];
-let heroHealthBars = [];
+let heroClasses = []
 
 let hoverboard;
 // currently is only assigned to play inside setup(),
@@ -111,7 +110,18 @@ class Entity {
     }
 }
 
-class Hero extends Entity {}
+class Hero extends Entity {
+    constructor(nameGroup, id, heroGroup, healthBarGroup, pts = 0) {
+        super()
+        this.nameGroup = nameGroup;
+        this.id = id
+        this.heroGroup = heroGroup
+        this.healthBarGroup = healthBarGroup
+        this.pts = pts
+    }
+
+
+}
 
 class Enemy extends Entity {}
 
@@ -161,11 +171,12 @@ function tintFromDistance(x1, x2, y1, y2) {
 function updateHeroGear() {
     for (let i = 0; i < GAMESTATE.heroes.length; i++) {
         // TODO: make this more robust:
-        if (GAMESTATE.heroes[i].gear.length > heroGroups[i].children.length - 1) {
-            console.log(heroGroups[i], GAMESTATE.heroes[i].gear);
-            heroGroups[i].addChildAt(hoverboard, 0);
-        } else if (GAMESTATE.heroes[i].gear.length < heroGroups[i].children.length - 1) {
-            heroGroups[i].removeChild(hoverboard);
+        let heroToUpdateGear = getHeroById(GAMESTATE.heroes[i].id)
+        if (GAMESTATE.heroes[i].gear.length > heroToUpdateGear.heroGroup.children.length - 1) {
+            console.log(heroToUpdateGear.heroGroup, GAMESTATE.heroes[i].gear);
+            heroToUpdateGear.heroGroup.addChildAt(hoverboard, 0);
+        } else if (GAMESTATE.heroes[i].gear.length < heroToUpdateGear.heroGroup.children.length - 1) {
+            heroToUpdateGear.heroGroup.removeChild(hoverboard);
         }
     }
 }
@@ -216,7 +227,7 @@ function updateEnemies() {
     }
 
     //TODO: determine closest hero to attack
-    let playerToAttack = heroGroups[0];
+    let playerToAttack = getCurrentHero().heroGroup;
 
     let enemies = GAMESTATE.enemies;
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
@@ -241,6 +252,7 @@ function updateEnemies() {
 }
 
 function getCurrentHero() {
+    /*
     if (GAMESTATE.heroes == undefined) {
         return heroGroups[0];
     }
@@ -249,7 +261,19 @@ function getCurrentHero() {
             return GAMESTATE.heroes[i];
         }
     }
-    return undefined;
+    return undefined;*/
+
+    return getHeroById(id)
+}
+
+function getHeroById(heroId) {
+    for (let i = 0; i < heroClasses.length; i++) {
+        if (heroClasses[i].id == heroId) {
+            return heroClasses[i];
+        }
+    }
+
+    return undefined
 }
 
 function updateHud() {
@@ -262,18 +286,26 @@ function updateHud() {
 }
 
 function CheckForNewHeroes() {
-    while (heroGroups.length != GAMESTATE.heroes.length) {
-        let newHeroGroup = createNewHeroGroup(heroGroups.length);
-        newHeroGroup.visible = true;
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        let existingHero = getHeroById(GAMESTATE.heroes[i].id)
+        if (existingHero === undefined) {
+            let newHeroGroup = createNewHeroGroup(id);
+            newHeroGroup.visible = true;
 
-        let heroHealthBar = Entity.createHealthBar(100, 10, newHeroGroup);
-        heroHealthBar.visible = true;
+            let heroHealthBar = Entity.createHealthBar(100, 10, newHeroGroup);
+            heroHealthBar.visible = true;
 
-        app.stage.addChild(newHeroGroup);
-        app.stage.addChild(heroHealthBar);
+            let heroName = createNewHeroNameGroup(GAMESTATE.heroes[i].name);
+            heroName.visible = true;
 
-        heroGroups.push(newHeroGroup);
-        heroHealthBars.push(heroHealthBar);
+            app.stage.addChild(newHeroGroup);
+            app.stage.addChild(heroHealthBar);
+            app.stage.addChild(heroName);
+
+            let newHeroId = GAMESTATE.heroes[i].id
+            let newHero = new Hero(heroName, newHeroId, newHeroGroup, heroHealthBar)
+            heroClasses.push(newHero)
+        }
     }
 }
 
@@ -294,6 +326,11 @@ function createNewHeroGroup(tintSeed) {
 
     heroGroup.addChild(hero);
     return heroGroup;
+}
+
+function createNewHeroNameGroup(name) {
+    let heroNameGroup = new PIXI.Text(name, { fontSize: 24 });
+    return heroNameGroup;
 }
 
 function updateHeroes(delta) {
@@ -319,9 +356,13 @@ function updateHeroes(delta) {
         if (hero.y + yplus < MapHeight && hero.y + yplus > 0)
             newy += yplus;
 
-        heroGroups[i].position.set(newx, newy);
-        heroGroups[i].rotation = hero.rotation;
-        Entity.updateHealthBar(newx, newy, hero.hp, heroHealthBars[i]);
+        let heroToUpdate = getHeroById(hero.id)
+
+        heroToUpdate.heroGroup.position.set(newx, newy);
+        heroToUpdate.heroGroup.rotation = hero.rotation;
+        Entity.updateHealthBar(newx, newy, hero.hp, heroToUpdate.healthBarGroup);
+        heroToUpdate.nameGroup.position.set(newx - 40, newy + 60);
+        heroToUpdate.pts = hero.pts
     }
 }
 const centerWith = navigator.platform == "MacIntel" ? 4 : 2;
@@ -330,15 +371,14 @@ function moveMap() {
     app.stage.position.x = app.renderer.width / centerWith;
     app.stage.position.y = app.renderer.height / centerWith;
 
-
-    if (heroGroups[id - 1] == undefined) {
-        console.log("heroGroups[id - 1] is undef");
+    let currentHero = getCurrentHero() 
+    if (currentHero == undefined) {
+        console.log("current hero (with id " + id + ") is undef");
         return;
     }
-    
 
-    app.stage.pivot.x = heroGroups[id - 1].position.x;
-    app.stage.pivot.y = heroGroups[id - 1].position.y;
+    app.stage.pivot.x = currentHero.heroGroup.position.x;
+    app.stage.pivot.y = currentHero.heroGroup.position.y;
 }
 
 let GAMESTATE = new GameState();
@@ -461,11 +501,15 @@ function setup() {
     let heroHealthBar = Entity.createHealthBar(100, 10, heroGroup);
     heroHealthBar.visible = false;
 
+    let heroName = createNewHeroNameGroup(myName);
+    heroName.visible = false;
+
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
+    app.stage.addChild(heroName);
 
-    heroGroups.push(heroGroup);
-    heroHealthBars.push(heroHealthBar);
+    let newHero = new Hero(heroName, id, heroGroup, heroHealthBar)
+    heroClasses.push(newHero)
 
     loadingDraw = $("#loadingWindow");
     WhatToRender = WaitingForHandshake;
@@ -485,11 +529,10 @@ function WaitingForHandshake() {
         return;
     }
 
-    for (let i = 0; i < heroGroups.length; i++) {
-        heroGroups[i].visible = true;
-    }
-    for (let i = 0; i < heroHealthBars.length; i++) {
-        heroHealthBars[i].visible = true;
+    for (let i = 0; i < heroClasses.length; i++) {
+        heroClasses[i].heroGroup.visible = true;
+        heroClasses[i].healthBarGroup.visible = true;
+        heroClasses[i].nameGroup.visible = true;        
     }
 
     console.log(loadingDraw);
