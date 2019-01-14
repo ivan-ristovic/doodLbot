@@ -9,14 +9,15 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
     /// </summary>
     public class IsEnemyNearCondition : BaseConditionElement
     {
+        /// <summary>
+        /// Constructs a new IsEnemyNearCondition element.
+        /// </summary>
         public IsEnemyNearCondition()
         {
             this.Cost = Design.CostIsNear;
         }
 
-        /// <summary>
-        /// Constructs a new IsEnemyNearCondition element.
-        /// </summary>
+
         protected override void OnExecute(GameState state)
         {
 

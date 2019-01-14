@@ -22,7 +22,7 @@ function sendHeartbeatToServer(id) {
 function sendCodeUpdateToServer(code) {
     let toSend = code.elements;
     console.log(JSON.stringify(toSend, null, 2));
-    sendToServer("algorithmUpdated", JSON.stringify(toSend));
+    sendToServer("algorithmUpdated", JSON.stringify(toSend), id);
 }
 
 // INIT SERVER => CLIENT

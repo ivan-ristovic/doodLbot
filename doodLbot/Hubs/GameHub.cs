@@ -139,9 +139,8 @@ namespace doodLbot.Hubs
             return Task.CompletedTask;
         }
 
-        public Task AlgorithmUpdated(string json)
+        public Task AlgorithmUpdated(string json, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
             return Task.CompletedTask;
