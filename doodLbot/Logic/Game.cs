@@ -113,6 +113,8 @@ namespace doodLbot.Logic
             }
             this.UpdateStateWithControls(delta);
 
+            RemoveDeadHeroes();
+
             foreach (Hero h in this.heroes)
             {
                 h.Move(delta);
@@ -146,7 +148,22 @@ namespace doodLbot.Logic
                     h.HasCodeChanged = false;
                     await this.hubContext.SendCodeUpdate(h.Algorithm);
                 }
-            }            
+            }
+        }
+
+        /// <summary>
+        /// Removes dead heroes from the backend. We pronounce hero dead when client doesn't send a heartbeat for N seconds
+        /// </summary>
+        /// <param name="inRange"></param>
+        public void RemoveDeadHeroes()
+        {
+            foreach (Hero h in this.heroes)
+            {
+                if (!h.IsAlive)
+                {
+                    this.heroes.TryRemove(h);
+                }
+            }
         }
 
         /// <summary>

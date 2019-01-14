@@ -11,6 +11,7 @@ function onStateUpdate(gameState) {
     FramesSinceLastUpdate = 0;
     GAMESTATE = new GameState(gameState);
     CheckForNewHeroes();
+    CheckForDeletedHeroes();
     updateHeroGear();
     serverCounter.countTimesPerSecond(true);
 }
@@ -252,17 +253,6 @@ function updateEnemies() {
 }
 
 function getCurrentHero() {
-    /*
-    if (GAMESTATE.heroes == undefined) {
-        return heroGroups[0];
-    }
-    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
-        if (GAMESTATE.heroes[i].id == id) {
-            return GAMESTATE.heroes[i];
-        }
-    }
-    return undefined;*/
-
     return getHeroById(id)
 }
 
@@ -331,6 +321,27 @@ function createNewHeroGroup(tintSeed) {
 function createNewHeroNameGroup(name) {
     let heroNameGroup = new PIXI.Text(name, { fontSize: 24 });
     return heroNameGroup;
+}
+
+function CheckForDeletedHeroes() {
+    for (let i = 0; i < heroClasses.length; i++) {
+        if (!heroExistsInGameState(heroClasses[i].id)) {
+            // delete hero on frontend
+            app.stage.removeChild(heroClasses[i].heroGroup);
+            app.stage.removeChild(heroClasses[i].healthBarGroup);
+            app.stage.removeChild(heroClasses[i].nameGroup);
+
+            heroClasses.pop(heroClasses[i])
+        }
+    }
+}
+
+function heroExistsInGameState(heroId) {
+    for (let i = 0; i < GAMESTATE.heroes.length; i++) {
+        if (GAMESTATE.heroes[i].id == heroId)
+            return true
+    }
+    return false
 }
 
 function updateHeroes(delta) {
@@ -552,6 +563,8 @@ function play(delta) {
     FramesSinceLastUpdate++;
     GAMESTATE.update(UPDATES_FOR_BACKEND);
     UPDATES_FOR_BACKEND = new UpdatesForBackend();
+    // TODO send heartbeat every 5s
+    sendHeartbeatToServer(id)
 }
 
 let type = "WebGL";

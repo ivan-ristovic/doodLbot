@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Timers;
 
 namespace doodLbot.Entities
 {
@@ -22,6 +23,12 @@ namespace doodLbot.Entities
 
         [JsonProperty("id")]
         public int Id;
+
+        [JsonIgnore]
+        public bool IsAlive;
+
+        [JsonIgnore]
+        public DateTime TimeOfLastHeartbeat { get; set; }
 
         [JsonIgnore]
         public bool HasCodeChanged { get; set; }
@@ -55,6 +62,7 @@ namespace doodLbot.Entities
         private double baseHp;
         private double baseSpeed;
         private double baseDamage;
+        private Timer heartbeatTimer;
 
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory)
             : base(x: x, y: y)
@@ -71,6 +79,22 @@ namespace doodLbot.Entities
             this.ShootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
             CalculateStatsFromGear();
+
+            // Configure a Timer for use
+            this.heartbeatTimer = new Timer();
+            this.heartbeatTimer.Interval = 2000;
+            this.heartbeatTimer.Elapsed += new ElapsedEventHandler(this.CheckAliveness);
+            this.heartbeatTimer.Enabled = true;
+            this.IsAlive = true;
+            this.TimeOfLastHeartbeat = DateTime.Now;
+        }
+
+        public void CheckAliveness(Object sender, ElapsedEventArgs eventArgs)
+        {
+            if (DateTime.Now - this.TimeOfLastHeartbeat > TimeSpan.FromSeconds(10))
+            {
+                this.IsAlive = false;
+            }
         }
 
         public void CalculateStatsFromGear()

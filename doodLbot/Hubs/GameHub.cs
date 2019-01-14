@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 
 using System.Threading.Tasks;
 using doodLbot.Entities;
+using System;
 
 namespace doodLbot.Hubs
 {
@@ -32,6 +33,21 @@ namespace doodLbot.Hubs
         public Task UpdateGameState(GameStateUpdate update)
         {
             this.game.UpdateControls(update);
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Heartbeat from player. Receieved from the frontend.
+        /// </summary>
+        /// <param name="update"></param>
+        public Task Heartbeat(int id)
+        {
+            Hero hero = this.game.GetHeroById(id);
+            if (hero != null)
+            {
+                hero.TimeOfLastHeartbeat = DateTime.Now;
+            }
+
             return Task.CompletedTask;
         }
 

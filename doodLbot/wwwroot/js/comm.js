@@ -12,6 +12,12 @@ function sendUpdateToServer(update) {
     sendToServer("updateGameState", update);
 }
 
+// HERO => SERVER
+function sendHeartbeatToServer(id) {
+    console.log("sending heartbeat to server", id);
+    sendToServer("heartbeat", id);
+}
+
 // CODE => SERVER
 function sendCodeUpdateToServer(code) {
     let toSend = code.elements;
