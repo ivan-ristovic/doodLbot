@@ -1,4 +1,5 @@
-﻿using doodLbot.Entities.CodeElements;
+﻿using doodLbot.Entities;
+using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
 using doodLbot.Logic;
 
@@ -14,11 +15,12 @@ namespace doodLbot.Tests.Logic
         [Test]
         public void DynamicDeserializationTest()
         {
+            var h = new Hero(0, 0, 0, null, null);
             string json;
             BehaviourAlgorithm algorithm;
 
             json = "[{\"type\":\"ShootElement\", \"isActive\":\"true\"}]";
-            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
+            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, h);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
             CollectionAssert.AllItemsAreNotNull(algorithm.CodeElements);
@@ -26,7 +28,7 @@ namespace doodLbot.Tests.Logic
             Assert.IsInstanceOf<ShootElement>(algorithm.CodeElements[0]);
 
             json = "[{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}]";
-            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
+            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, h);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
             CollectionAssert.AllItemsAreNotNull(algorithm.CodeElements);
