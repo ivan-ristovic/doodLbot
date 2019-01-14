@@ -36,11 +36,11 @@ namespace doodLbot.Entities.CodeElements
             this.CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
         }
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
             foreach (BaseCodeElement element in this.CodeElements)
             {
-                element.Execute(state);
+                element.Execute(state, hero);
             }
         }
     }

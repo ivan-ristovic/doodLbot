@@ -52,7 +52,7 @@ namespace doodLbot.Tests.Logic
                        "\"else\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}" +
                    "}" +
                    "]";
-            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
+            algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, null);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);
             CollectionAssert.AllItemsAreNotNull(algorithm.CodeElements);

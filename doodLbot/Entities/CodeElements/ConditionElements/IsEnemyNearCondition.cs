@@ -18,12 +18,12 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         }
 
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
 
         }
 
-        public override bool Evaluate(GameState state)
+        public override bool Evaluate(GameState state, Hero hero)
         {
             IReadOnlyCollection<Enemy> enemies = state.Enemies;
 
@@ -31,7 +31,8 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
                 return false;
 
             foreach (Enemy enemy in enemies)
-                return true; // TODO
+                if (enemy.SquaredDist(hero) < Design.SpawnRange / 10)
+                    return true;
 
             return false;
         }

@@ -16,9 +16,8 @@ namespace doodLbot.Entities.CodeElements
             shootLimit = limiter;
         }
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
-            var hero = state.Heroes.First();
             if (!shootLimit?.IsCooldownActive() ?? false)
             {
                 hero.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);

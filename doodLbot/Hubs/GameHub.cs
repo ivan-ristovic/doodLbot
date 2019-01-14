@@ -92,10 +92,9 @@ namespace doodLbot.Hubs
             
             return this.Clients.Caller.SendAsync("InitClient", data);
         }
-
-        public Task BuyGear(string name)
+        
+        public Task BuyGear(string name, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             Log.Debug("server: buy gear");
             
@@ -103,36 +102,32 @@ namespace doodLbot.Hubs
             return Task.CompletedTask;
         }
 
-        public Task SellGear(string name)
+        public Task SellGear(string name, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             Log.Debug("server: sell gear");
             hero.SellGear(name);
             return Task.CompletedTask;
         }
 
-        public Task BuyCode(string name)
+        public Task BuyCode(string name, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             Log.Debug("server: buy code");
             hero.BuyCode(name);
             return Task.CompletedTask;
         }
 
-        public Task SellCode(string name)
+        public Task SellCode(string name, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             Log.Debug("server: sell code");
             hero.SellCode(name);
             return Task.CompletedTask;
         }
 
-        public Task EquipItem(string name)
+        public Task EquipItem(string name, int id)
         {
-            int id = 1;
             var hero = this.game.GetHeroById(id);
             Log.Debug("server: equip code");
             hero.EquipCode(name);
@@ -142,7 +137,7 @@ namespace doodLbot.Hubs
         public Task AlgorithmUpdated(string json, int id)
         {
             var hero = this.game.GetHeroById(id);
-            hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json);
+            hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, hero);
             return Task.CompletedTask;
         }
     }

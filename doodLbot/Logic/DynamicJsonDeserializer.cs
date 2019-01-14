@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.CSharp.RuntimeBinder;
 
 using System.Collections.Generic;
+using doodLbot.Entities;
 
 namespace doodLbot.Logic
 {
@@ -19,12 +20,12 @@ namespace doodLbot.Logic
         /// </summary>
         /// <param name="json"></param>
         /// <returns>Deserialized BehaviourAlgorithm object.</returns>
-        static public BehaviourAlgorithm ToBehaviourAlgorithm(string json)
+        static public BehaviourAlgorithm ToBehaviourAlgorithm(string json, Hero hero)
         {
             var jsonVal = JArray.Parse(json) as JArray;
             dynamic elements = jsonVal;
 
-            var algorithm = new BehaviourAlgorithm();
+            var algorithm = new BehaviourAlgorithm(hero);
             foreach (dynamic element in elements)
                 algorithm.Insert(DeserializeCodeElementInternal(element));
 

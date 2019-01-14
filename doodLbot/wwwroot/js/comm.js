@@ -62,31 +62,31 @@ function startConnection() {
 // GEARSHOP => SERVER
 function buyGearServer(name) {
     console.log("sent request to buy gear", name);
-    sendToServer("BuyGear", name);
+    sendToServer("BuyGear", name, id);
 }
 
 // GEARSHOP => SERVER
 function sellGearServer(name) {
     console.log("sent request to sell gear", name);
-    sendToServer("SellGear", name);
+    sendToServer("SellGear", name, id);
 }
 
 // CODESHOP => SERVER
 function buyCodeServer(name) {
     console.log("sent request to buy code", name);
-    sendToServer("BuyCode", name);
+    sendToServer("BuyCode", name, id);
 }
 
 // CODESHOP => SERVER
 function sellCodeServer(name) {
     console.log("sent request to sell code", name);
-    sendToServer("SellCode", name);
+    sendToServer("SellCode", name, id);
 }
 
 // CODESHOP => SERVER
 function equipItemServer(name) {
     console.log("sent request to equip item", name);
-    sendToServer("EquipItem", name);
+    sendToServer("EquipItem", name, id);
 }
 
 // listens for the given keyCode

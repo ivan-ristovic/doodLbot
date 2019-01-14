@@ -43,7 +43,7 @@ namespace doodLbot.Entities
         public IReadOnlyCollection<Gear> VisibleGear => this.gear.Where(x => x.IsVisible).ToList();
 
         [JsonProperty("algorithm")]
-        public BehaviourAlgorithm Algorithm { get; set; } = new BehaviourAlgorithm();
+        public BehaviourAlgorithm Algorithm { get; set; }
 
         private readonly List<Gear> gear = new List<Gear>();
 
@@ -69,6 +69,7 @@ namespace doodLbot.Entities
         {
             HasCodeChanged = false;
             HasGearChanged = false;
+            this.Algorithm = new BehaviourAlgorithm(this);
             this.Id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;

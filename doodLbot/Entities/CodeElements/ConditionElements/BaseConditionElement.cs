@@ -12,10 +12,10 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        abstract public bool Evaluate(GameState state);
+        abstract public bool Evaluate(GameState state, Hero hero);
 
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
 
         }

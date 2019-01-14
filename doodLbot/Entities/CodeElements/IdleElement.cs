@@ -12,7 +12,7 @@ namespace doodLbot.Entities.CodeElements
             this.Cost = Design.CostIdle;
         }
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
 
         }

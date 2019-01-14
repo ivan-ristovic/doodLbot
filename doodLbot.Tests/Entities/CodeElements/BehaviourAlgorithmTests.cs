@@ -13,7 +13,8 @@ namespace doodLbot.Tests.Entities.CodeElements
         [Test]
         public async Task InsertRaceConditionTestAsync()
         {
-            var algorithm = new BehaviourAlgorithm();
+            var h = new Hero(0, 0, 0, null, null);
+            var algorithm = new BehaviourAlgorithm(h);
 
             const int count = 100;
 
@@ -29,9 +30,10 @@ namespace doodLbot.Tests.Entities.CodeElements
         [Test]
         public async Task RemoveRaceConditionTestAsync()
         {
+            var h = new Hero(0, 0, 0, null, null);
             const int count = 100;
 
-            var algorithm = new BehaviourAlgorithm();
+            var algorithm = new BehaviourAlgorithm(h);
             for (int i = 0; i < count; i++)
                 algorithm.Insert(new ShootElement());
 

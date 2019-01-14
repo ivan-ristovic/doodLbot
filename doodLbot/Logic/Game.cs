@@ -8,6 +8,7 @@ using doodLbot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace doodLbot.Logic
 
         public Hero AddNewHero()
         {
-            Hero hero = new Hero(currentHeroId, Design.HeroStartX, Design.HeroStartY,
+            var hero = new Hero(currentHeroId, Design.HeroStartX, Design.HeroStartY,
                 new Equipment.CodeStorage(), new Equipment.EquipmentStorage()
             );
 
@@ -199,12 +200,7 @@ namespace doodLbot.Logic
         /// <param name="id">Id of the Hero</param>
         public Hero GetHeroById(int id)
         {
-            foreach (Hero h in this.heroes)
-            {
-                if (h.Id == id)
-                    return h;
-            }
-            return null;
+            return this.heroes.SingleOrDefault(h => h.Id == id);
         }
 
         /// <summary>

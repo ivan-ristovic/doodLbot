@@ -18,6 +18,7 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("elements")]
         public IReadOnlyList<BaseCodeElement> CodeElements => this.codeElements.AsReadOnly();
 
+        private Hero hero;
         private readonly List<BaseCodeElement> codeElements;
         private readonly object codeElementsLock;
 
@@ -25,8 +26,9 @@ namespace doodLbot.Entities.CodeElements
         /// <summary>
         /// Constructs a new blank BehaviourAlgorithm.
         /// </summary>
-        public BehaviourAlgorithm()
+        public BehaviourAlgorithm(Hero hero)
         {
+            this.hero = hero;
             this.codeElements = new List<BaseCodeElement>();
             this.codeElementsLock = new object();
         }
@@ -72,11 +74,10 @@ namespace doodLbot.Entities.CodeElements
                 // TODO elements don't share any state for now,
                 // think about how to pipe them, for example: target->shoot
                 // without this dirty fix, hero can't rotate while targeting
-                var hero = state.Heroes.First();
                 var saveRotation = hero.Rotation;
                 foreach (BaseCodeElement element in this.codeElements)
                 {
-                    element.Execute(state);
+                    element.Execute(state, hero);
                 }
                 hero.Rotation = saveRotation;
             }

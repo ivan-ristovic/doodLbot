@@ -16,9 +16,8 @@ namespace doodLbot.Entities.CodeElements
             this.Cost = Design.CostTarget;
         }
 
-        protected override void OnExecute(GameState state)
+        protected override void OnExecute(GameState state, Hero hero)
         {
-            var hero = state.Heroes.First();
             if (!state.Enemies.Any())
             {
                 return;
