@@ -31,7 +31,7 @@ function initClient(data) {
     id = data.id;
     let alg = data.algorithm;
     console.log("Initial handshake recieved.")
-    updateCodeBlocks(alg);
+    updateCodeBlocks(alg, id);
     //console.log(JSON.stringify(alg, null, 2));
     ServerTickrate = data.tickRate;
     MulSpeedsWith = ServerTickrate / 60;

@@ -27,7 +27,7 @@ namespace doodLbot.Extensions
         /// <param name="hub"></param>
         /// <param name="alg"></param>
         /// <returns></returns>
-        public static async Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg)
-            => await hub.Clients.All.SendAsync("UpdateCodeBlocks", alg);
+        public static async Task SendCodeUpdate(this IHubContext<GameHub> hub, BehaviourAlgorithm alg, int id)
+            => await hub.Clients.All.SendAsync("UpdateCodeBlocks", alg, id);
     }
 }

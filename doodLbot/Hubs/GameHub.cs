@@ -89,7 +89,6 @@ namespace doodLbot.Hubs
                 codeInventory = h.CodeInventory,
                 equipmentInventory = h.EquipmentInventory
             };
-            
             return this.Clients.Caller.SendAsync("InitClient", data);
         }
         

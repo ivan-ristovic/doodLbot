@@ -147,7 +147,7 @@ namespace doodLbot.Logic
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;
-                    await this.hubContext.SendCodeUpdate(h.Algorithm);
+                    await this.hubContext.SendCodeUpdate(h.Algorithm, h.Id);
                 }
             }
         }
@@ -177,6 +177,7 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes)
             {
                 this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                this.enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
             }
         }
 

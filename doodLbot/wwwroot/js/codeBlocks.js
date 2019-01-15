@@ -108,7 +108,10 @@ function appendBlockAndChildren(blockJson, whereToAppend, drop = false) {
 
 var codeBlockIdNum = 0;
 
-function updateCodeBlocks(data) {
+function updateCodeBlocks(data, cid) {
+    if (cid != id)
+        return;
+
     console.log("updating code blocks.");
     CodeBlocks = data;
     codeBlockIdNum = 0;
