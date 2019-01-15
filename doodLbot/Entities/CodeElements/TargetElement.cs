@@ -18,8 +18,12 @@ namespace doodLbot.Entities.CodeElements
 
         protected override bool OnExecute(GameState state, Hero hero)
         {
-            if (!state.Enemies.Any())
-            {
+            return Target(state, hero);
+        }
+
+        protected bool Target(GameState state, Hero hero)
+        {
+            if (!state.Enemies.Any()) {
                 return false;
             }
 
