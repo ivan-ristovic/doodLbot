@@ -12,7 +12,7 @@ namespace doodLbot.Entities
     public abstract class Enemy : Entity
     {
 
-        protected Enemy(double hp = 100, double damage = 1, double speed = 0, double rotation = 0) : base(hp, damage, speed, rotation)
+        protected Enemy(double max_hp = 100, double hp = 100, double damage = 1, double speed = 0, double rotation = 0) : base(hp, max_hp, damage, speed, rotation)
         {
 
         }
@@ -44,7 +44,8 @@ namespace doodLbot.Entities
             ypos = Math.Max(ypos, 0);
             // Log.Debug($"Spawning: {typeof(T)} at ({xpos}, {ypos}) ; player position ({heroX}, {heroY})");
 
-            return new T() {
+            return new T()
+            {
                 Xpos = xpos,
                 Ypos = ypos
             };

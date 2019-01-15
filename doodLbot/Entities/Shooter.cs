@@ -12,7 +12,7 @@ namespace doodLbot.Entities
         private readonly RateLimiter shootingLimiter;
 
 
-        public Shooter() : base(hp: 150, damage: 10, speed: Design.EnemySpeed)
+        public Shooter() : base(max_hp: 150, hp: 150, damage: 10, speed: Design.EnemySpeed)
         {
             this.shootingLimiter = new RateLimiter(TimeSpan.FromSeconds(3));
         }

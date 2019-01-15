@@ -47,6 +47,12 @@ namespace doodLbot.Entities
         public double Hp { get; protected set; }
 
         /// <summary>
+        /// Get this entity's health.
+        /// </summary>
+        [JsonProperty("max_hp")]
+        public double MaxHp { get; protected set; }
+
+        /// <summary>
         /// Get this entity's damage.
         /// </summary>
         [JsonProperty("damage")]
@@ -61,10 +67,11 @@ namespace doodLbot.Entities
         /// <summary>
         /// Constructs a new Entity with default health and damage points.
         /// </summary>
-        public Entity(double hp = 100, double damage = 1, double speed = 0, double rotation = 0)
+        public Entity(double hp = 100, double max_hp = 100, double damage = 1, double speed = 0, double rotation = 0)
         {
             this.Speed = speed;
             this.Hp = hp;
+            this.MaxHp = hp;
             this.Damage = damage;
             this.Rotation = rotation;
         }
@@ -75,7 +82,7 @@ namespace doodLbot.Entities
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="rotation">Entity's rotation amount (in radians)</param>
-        public Entity(double x, double y, double speed = 0, double hp = 100, double damage = 1, double rotation = 0) : this(hp, damage, speed, rotation)
+        public Entity(double x, double y, double speed = 0, double hp = 100, double max_hp = 100, double damage = 1, double rotation = 0) : this(hp, max_hp, damage, speed, rotation)
         {
             this.Xpos = x;
             this.Ypos = y;
@@ -99,7 +106,7 @@ namespace doodLbot.Entities
         /// </summary>
         protected virtual void OnMove()
         {
-            
+
         }
 
         /// <summary>
@@ -111,7 +118,7 @@ namespace doodLbot.Entities
         {
             double xvel = goal.Xpos - this.Xpos;
             double yvel = goal.Ypos - this.Ypos;
-            double norm = Math.Sqrt( xvel * xvel + yvel * yvel );
+            double norm = Math.Sqrt(xvel * xvel + yvel * yvel);
             if (Math.Abs(norm) < 0.001)
             {
                 this.Xvel = 0;
