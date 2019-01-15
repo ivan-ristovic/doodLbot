@@ -37,6 +37,7 @@ let enemyTexture;
 let tilingBackground = null;
 let EnemySprites = [];
 let ProjectileSprites = [];
+let EnemyProjectileSprites = [];
 let EnemyHps = [];
 
 let Counter = function (id) {
@@ -196,32 +197,32 @@ function updateHeroName() {
 
 const halfPI = Math.PI / 2;
 
-function updateProjectiles() {
-    if (GAMESTATE.projectiles === undefined) return;
-    let numProjs = GAMESTATE.projectiles.length;
-    while (ProjectileSprites.length < numProjs) {
-        var textr = new Sprite(loader.resources["images/projectile.png"].texture);
+function updateProjectiles(projectiles, projectileSprites, spritePath = "images/projectile.png") {
+    if (projectiles === undefined) return;
+    let numProjs = projectiles.length;
+    while (projectileSprites.length < numProjs) {
+        var textr = new Sprite(loader.resources[spritePath].texture);
         textr.anchor.set(0.5, 0.5);
-        ProjectileSprites.push(textr);
+        projectileSprites.push(textr);
         app.stage.addChild(textr);
     }
-    let projectiles = GAMESTATE.projectiles;
+
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
 
     for (let i = 0; i < projectiles.length; i++) {
         let newx = projectiles[i].x + speedMul * projectiles[i].vx;
         let newy = projectiles[i].y + speedMul * projectiles[i].vy;
-        ProjectileSprites[i].position.set(newx, newy);
-        ProjectileSprites[i].visible = true;
+        projectileSprites[i].position.set(newx, newy);
+        projectileSprites[i].visible = true;
         let ang = Math.atan2(projectiles[i].vy, projectiles[i].vx);
-        ProjectileSprites[i].rotation = ang
+        projectileSprites[i].rotation = ang
     }
 
-    for (let i = projectiles.length; i < ProjectileSprites.length; i++) {
-        if (ProjectileSprites[i].visible === false) {
+    for (let i = projectiles.length; i < projectileSprites.length; i++) {
+        if (projectileSprites[i].visible === false) {
             break;
         }
-        ProjectileSprites[i].visible = false;
+        projectileSprites[i].visible = false;
     }
 }
 
@@ -504,6 +505,7 @@ loader
         "images/particle.png",
         "images/enemy.png",
         "images/projectile.png",
+        "images/projectile2.png",
         "images/hoverboard.png"
 
     ])
@@ -571,7 +573,8 @@ function play(delta) {
     updateHeroes(delta);
     updateHud();
     updateEnemies();
-    updateProjectiles();
+    updateProjectiles(GAMESTATE.enemyProjectiles, EnemyProjectileSprites, "images/projectile2.png");
+    updateProjectiles(GAMESTATE.projectiles, ProjectileSprites);
     moveMap();
     FramesSinceLastUpdate++;
     GAMESTATE.update(UPDATES_FOR_BACKEND);

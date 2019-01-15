@@ -25,7 +25,9 @@ namespace doodLbot.Entities
         public Projectile TryFire()
         {
             if (!this.shootingLimiter.IsCooldownActive())
-                return new Projectile(this.Xpos, this.Ypos, this.Rotation, Design.ProjectileSpeed, this.Damage);
+            {
+                return new Projectile(this.Xpos, this.Ypos, Math.Atan2(this.Yvel, this.Xvel), Design.ProjectileSpeed, this.Damage);
+            }
             else
                 return null;
         }

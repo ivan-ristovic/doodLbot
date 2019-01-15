@@ -128,7 +128,14 @@ namespace doodLbot.Logic
                 enemy.VelocityTowardsClosestEntity(this.heroes);
                 enemy.Move(delta);
                 if (enemy is Shooter shooter)
+                {
                     this.TryAddEnemyProjectile(shooter);
+                }
+            }
+
+            foreach (Projectile projectile in enemyProjectiles)
+            {
+                projectile.Move(delta);
             }
 
             foreach (Hero h in this.heroes)
