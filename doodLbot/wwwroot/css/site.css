@@ -250,7 +250,19 @@ body {
 .IdleElement,
 .IdleElement>.title>[type="checkbox"]:checked+label:after,
 .IdleElement>.title>[type="checkbox"]:not(:checked)+label:after {
-    background: #f1f1f1 !important;
+    background: #bebebe !important;
+}
+
+.TargetElement,
+.TargetElement > .title > [type="checkbox"]:checked + label:after,
+.TargetElement > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #ed5a5a !important;
+}
+
+.MoveAwayFromElement,
+.MoveAwayFromElement > .title > [type="checkbox"]:checked + label:after,
+.MoveAwayFromElement > .title > [type="checkbox"]:not(:checked) + label:after {
+    background: #a5cfb0 !important;
 }
 
 .IsEnemyNearCondition,
