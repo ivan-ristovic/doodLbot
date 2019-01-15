@@ -148,7 +148,7 @@ namespace doodLbot.Logic
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;
-                    await this.hubContext.SendCodeUpdate(h.Algorithm);
+                    await this.hubContext.SendCodeUpdate(h.Algorithm, h.Id);
                 }
             }
         }

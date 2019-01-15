@@ -134,7 +134,7 @@ class GameState {
             let cast = Object.assign(this, obj);
             return cast;
         }
-        console.log("WARNIG! GameState invalid obj");
+        console.log("WARNING! GameState invalid obj");
     }
 
     getEnemies() {
