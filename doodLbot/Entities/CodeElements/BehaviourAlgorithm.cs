@@ -70,17 +70,12 @@ namespace doodLbot.Entities.CodeElements
             {
                 if (!this.codeElements.Any())
                     return;
-
-                // TODO elements don't share any state for now,
-                // think about how to pipe them, for example: target->shoot
-                // without this dirty fix, hero can't rotate while targeting
-                var saveRotation = hero.Rotation;
+                
                 foreach (BaseCodeElement element in this.codeElements)
                 {
                     if (!element.Execute(state, hero))
                         return;
                 }
-                hero.Rotation = saveRotation;
             }
         }
     }
