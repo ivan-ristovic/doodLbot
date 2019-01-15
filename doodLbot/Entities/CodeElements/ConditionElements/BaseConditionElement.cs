@@ -15,9 +15,9 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         abstract public bool Evaluate(GameState state, Hero hero);
 
 
-        protected override void OnExecute(GameState state, Hero hero)
+        protected override bool OnExecute(GameState state, Hero hero)
         {
-
+            return true;
         }
     }
 }

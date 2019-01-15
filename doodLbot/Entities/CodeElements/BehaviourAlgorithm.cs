@@ -77,7 +77,8 @@ namespace doodLbot.Entities.CodeElements
                 var saveRotation = hero.Rotation;
                 foreach (BaseCodeElement element in this.codeElements)
                 {
-                    element.Execute(state, hero);
+                    if (!element.Execute(state, hero))
+                        return;
                 }
                 hero.Rotation = saveRotation;
             }

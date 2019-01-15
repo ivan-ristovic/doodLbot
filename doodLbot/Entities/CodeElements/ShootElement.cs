@@ -16,12 +16,14 @@ namespace doodLbot.Entities.CodeElements
             shootLimit = limiter;
         }
 
-        protected override void OnExecute(GameState state, Hero hero)
+        protected override bool OnExecute(GameState state, Hero hero)
         {
             if (!shootLimit?.IsCooldownActive() ?? false)
             {
                 hero.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
             }
+
+            return true;
         }
     }
 }

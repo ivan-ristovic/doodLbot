@@ -58,7 +58,7 @@ namespace doodLbot.Logic
             HeroStartX = 300;
             HeroStartY = 300;
 
-            SpawnRange = 300;
+            SpawnRange = 600;
             SpawnInterval = 5;
 
             ProjectileDamage = 30;

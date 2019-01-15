@@ -29,14 +29,11 @@ namespace doodLbot.Entities.CodeElements
         /// Executes this code element.
         /// </summary>
         /// <param name="state"></param>
-        public void Execute(GameState state, Hero hero)
+        public bool Execute(GameState state, Hero hero)
         {
-            if (IsActive)
-            {
-                OnExecute(state, hero);
-            }
+            return IsActive ? OnExecute(state, hero) : false;
         }
 
-        abstract protected void OnExecute(GameState state, Hero hero);
+        abstract protected bool OnExecute(GameState state, Hero hero);
     }
 }

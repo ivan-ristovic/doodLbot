@@ -16,15 +16,23 @@ namespace doodLbot.Entities.CodeElements
             this.Cost = Design.CostTarget;
         }
 
-        protected override void OnExecute(GameState state, Hero hero)
+        protected override bool OnExecute(GameState state, Hero hero)
         {
             if (!state.Enemies.Any())
             {
-                return;
+                return false;
             }
 
             var closest = state.Enemies.OrderBy(e => e.SquaredDist(hero)).First();
-            hero.Rotation = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
+            double rotationToClosest = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
+
+            if (Math.Abs(rotationToClosest - hero.Rotation) > Design.RotateAmount) {
+                hero.Rotation += (rotationToClosest > hero.Rotation) ? Design.RotateAmount : -Design.RotateAmount;
+                return false;
+            } else {
+                hero.Rotation = rotationToClosest;
+                return true;
+            }
         }
     }
 }

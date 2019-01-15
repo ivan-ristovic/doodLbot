@@ -221,6 +221,7 @@ namespace doodLbot.Logic
             this.CheckCollisionEnemyProjectile();
         }
 
+
         #region Helper functions
 
         private void CheckCollisionEnemyProjectile()

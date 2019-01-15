@@ -42,23 +42,26 @@ namespace doodLbot.Entities.CodeElements
             this.ElseBlock = elseBlock ?? new CodeBlockElement();
         }
 
-        protected override void OnExecute(GameState state, Hero hero)
+        protected override bool OnExecute(GameState state, Hero hero)
         {
             if (Condition == null)
             {
-                return;
+                return true;
             }
+
             if (this.Condition.Evaluate(state, hero))
             {
                 if (this.ThenBlock != null)
                 {
-                    this.ThenBlock.Execute(state, hero);
+                    return this.ThenBlock.Execute(state, hero);
                 }
             }
             else if (this.ElseBlock != null)
             {
-                this.ElseBlock.Execute(state, hero);
+                return this.ElseBlock.Execute(state, hero);
             }
+
+            return true;
         }
     }
 }
