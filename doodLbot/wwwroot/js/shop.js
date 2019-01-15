@@ -18,7 +18,7 @@ let buySellEquip = (item, count, type, cost) => {
         count++;
         $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
         type === "code" ? buyCodeServer(item) : buyGearServer(item);
-        $("#pts")[0].innerHTML = "gold: " + hero.pts;
+        $("#pts")[0].innerHTML = hero.pts;
     }));
     container.append(($("<div />").addClass(type).text("-")).click(function () {
         if (count <= 0)
@@ -26,15 +26,16 @@ let buySellEquip = (item, count, type, cost) => {
         count--;
         $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
         type === "code" ? sellCodeServer(item) : sellGearServer(item);
-        $("#pts")[0].innerHTML = "gold: " + GAMESTATE.heroes[id - 1].pts;
+        $("#pts")[0].innerHTML = GAMESTATE.heroes[id - 1].pts;
     }));
-    container.append(($("<div />").addClass(type).text("=>")).click(function () {
-        if (count <= 0)
-            return;
-        count--;
-        $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
-        equipItemServer(item)
-    }));;
+    if (type === "code")
+        container.append(($("<div />").addClass(type).text(">")).click(function () {
+            if (count <= 0)
+                return;
+            count--;
+            $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
+            equipItemServer(item)
+        }));;
     return container;
 };
 

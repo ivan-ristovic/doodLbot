@@ -81,8 +81,8 @@ class Entity {
 
         //Create the black background rectangle
         let innerBar = new PIXI.Graphics();
-        innerBar.beginFill(0x000000);
-        innerBar.drawRect(0, 0, w, h);
+        innerBar.beginFill(0x111111);
+        innerBar.drawRect(-2, -2, w + 4, h + 4);
         innerBar.endFill();
         healthBar.addChild(innerBar);
 
@@ -125,7 +125,7 @@ class Hero extends Entity {
 
 }
 
-class Enemy extends Entity {}
+class Enemy extends Entity { }
 
 // holds all needed game-state, which will be updated by backend
 class GameState {
@@ -236,6 +236,7 @@ function updateEnemies() {
         app.stage.addChild(enemyTexture);
 
         EnemyHps.push(Entity.createHealthBar(100, 10, enemyTexture));
+        // TODO Prosledi HP
         app.stage.addChild(EnemyHps[EnemyHps.length - 1]);
     }
 
@@ -281,10 +282,10 @@ function getHeroById(heroId) {
 function updateHud() {
     let currentHero = getCurrentHero();
     if (currentHero === undefined) {
-        $("#pts")[0].innerHTML = "gold: 0";
+        $("#pts")[0].innerHTML = "0";
         return;
     }
-    $("#pts")[0].innerHTML = "gold: " + currentHero.pts;
+    $("#pts")[0].innerHTML = currentHero.pts;
 }
 
 function CheckForNewHeroes() {
@@ -331,7 +332,7 @@ function createNewHeroGroup(tintSeed) {
 }
 
 function createNewHeroNameGroup(name) {
-    let heroNameGroup = new PIXI.Text(name, { fontSize: 24 });
+    let heroNameGroup = new PIXI.Text(name, { fontSize: 28 });
     return heroNameGroup;
 }
 
@@ -367,7 +368,7 @@ function updateHeroes(delta) {
 
         // if it our player, then only interpolate when keys are pressed, otherwise always
         // this prevents jittery camera movement when stopping
-        let shouldInterpolate = i == id-1 ? (up.isDown || down.isDown) : true;
+        let shouldInterpolate = i == id - 1 ? (up.isDown || down.isDown) : true;
         speedMul = shouldInterpolate ? speedMul : 0;
         let xplus = speedMul * hero.vx;
         let yplus = speedMul * hero.vy;
@@ -394,7 +395,7 @@ function moveMap() {
     app.stage.position.x = app.renderer.width / centerWith;
     app.stage.position.y = app.renderer.height / centerWith;
 
-    let currentHero = getCurrentHero() 
+    let currentHero = getCurrentHero()
     if (currentHero == undefined) {
         console.log("current hero (with id " + id + ") is undef");
         return;
@@ -487,8 +488,8 @@ function setMapSize() {
     let h = app.renderer.height + MapHeight;
     tilingBackground = new PIXI.extras.TilingSprite(loader.resources["images/paper.jpg"].texture, w, h);
     tilingBackground.position.set(-canvasw / 2, -canvash / 2);
-    tilingBackground.tileScale.x = 2;
-    tilingBackground.tileScale.y = 3 / 2;
+    //tilingBackground.tileScale.x = 2;
+    //tilingBackground.tileScale.y = 3 / 2;
 
     app.stage.addChildAt(tilingBackground, 0);
 }
@@ -555,11 +556,11 @@ function WaitingForHandshake() {
     for (let i = 0; i < heroClasses.length; i++) {
         heroClasses[i].heroGroup.visible = true;
         heroClasses[i].healthBarGroup.visible = true;
-        heroClasses[i].nameGroup.visible = true;        
+        heroClasses[i].nameGroup.visible = true;
     }
 
     console.log(loadingDraw);
-    loadingDraw.css("top","-100%");
+    loadingDraw.css("top", "-100%");
     setMapSize(MapWidth, MapHeight);
     WhatToRender = play;
     updateShop();

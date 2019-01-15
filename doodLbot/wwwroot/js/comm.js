@@ -1,6 +1,7 @@
 ﻿"use strict"
 
 let connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+let logged = false;
 
 let consoleKeyFunc = () => {
     $("#consoleDiv").toggleClass("hiddenConsole");
@@ -99,7 +100,7 @@ function keyboard(keyCode) {
     key.release = undefined;
     //The `downHandler`
     key.downHandler = event => {
-        if (event.keyCode === key.code) {
+        if (event.keyCode === key.code && logged) {
             //console.log("pressed", key.code);
             UPDATES_FOR_BACKEND.addKeyPress(key.code);
             if (key.isUp && key.press) key.press();
@@ -112,7 +113,7 @@ function keyboard(keyCode) {
 
     //The `upHandler`
     key.upHandler = event => {
-        if (event.keyCode === key.code) {
+        if (event.keyCode === key.code && logged) {
             UPDATES_FOR_BACKEND.addKeyRelease(key.code);
             if (key.isDown && key.release) key.release();
             key.isDown = false;
@@ -159,13 +160,13 @@ var id = 1;
 // WELCOME SCREEN
 let myName = "NewGuest";
 
-$("#guest").click(function(){
+$("#guest").click(function () {
     $("#welcomeWindow").hide();
     myName = "Guest#" + id;
     setPlayerName(myName);
 });
 
-$("#loginBtn").click(function (e){
+$("#loginBtn").click(function (e) {
     e.preventDefault();
     $("#welcomeWindow").hide();
     myName = $("#inputName").val();
@@ -175,6 +176,7 @@ $("#loginBtn").click(function (e){
     setPlayerName(myName);
 });
 
-function setPlayerName(name){
+function setPlayerName(name) {
+    logged = true;
     sendToServer("UpdateName", name, id);
 }

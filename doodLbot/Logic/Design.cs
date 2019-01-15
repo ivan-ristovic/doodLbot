@@ -55,9 +55,6 @@ namespace doodLbot.Logic
             ShootElementCooldown = 0.4;
             RotateAmount = 0.065 * adjust;
 
-            HeroStartX = 300;
-            HeroStartY = 300;
-
             SpawnRange = 600;
             SpawnInterval = 5;
 
@@ -65,6 +62,9 @@ namespace doodLbot.Logic
 
             MapWidth = 1900;
             MapHeight = 1000;
+
+            HeroStartX = MapWidth / 2;
+            HeroStartY = MapHeight / 2;
 
             EnemyRadiusSize = 20;
             HeroRadiusSize = 30;

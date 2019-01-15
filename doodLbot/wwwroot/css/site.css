@@ -6,7 +6,7 @@ body {
 }
 
 #game,
-#game>.row {
+#game > .row {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -30,9 +30,7 @@ body {
     color: #ddd;
     font-size: 60px;
     top: 0;
-
     z-index: 100;
-
     -webkit-transition: all .5s ease;
     /* Safari */
     transition: all .5s ease;
@@ -45,11 +43,8 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(20, 20, 20, 0.8);
-
     top: 0;
-
     z-index: 99;
-
     -webkit-transition: all .5s ease;
     /* Safari */
     transition: all .5s ease;
@@ -94,29 +89,28 @@ body {
     color: #ffffff;
     font-size: 14px;
     margin: auto;
-
-    width:100%;
+    width: 100%;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.login-form .btn.btn-primary {
-    background: #77DD77;
-    border-color: #87ED97;
-    color: #ffffff;
-    font-size: 14px;
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    padding: 0;
-}
+    .login-form .btn.btn-primary {
+        background: #77DD77;
+        border-color: #87ED97;
+        color: #ffffff;
+        font-size: 14px;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        padding: 0;
+    }
 
 #guest {
     text-align: left;
     margin-top: 6px;
-    color:#77DD77 !important;
-    cursor:pointer;
+    color: #77DD77 !important;
+    cursor: pointer;
     text-decoration: underline;
 }
 
@@ -129,11 +123,11 @@ body {
     margin-top: 10px;
 }
 
-.back a {
-    color: #444444;
-    font-size: 13px;
-    text-decoration: none;
-}
+    .back a {
+        color: #444444;
+        font-size: 13px;
+        text-decoration: none;
+    }
 
 /* CONSOLE */
 
@@ -151,28 +145,28 @@ body {
     transition: all .5s ease;
 }
 
-#consoleDiv.hiddenConsole {
-    top: -200px;
-}
+    #consoleDiv.hiddenConsole {
+        top: -200px;
+    }
 
-#consoleDiv>ul {
-    margin: 0;
-    list-style: none;
-    padding: 10px;
-}
+    #consoleDiv > ul {
+        margin: 0;
+        list-style: none;
+        padding: 10px;
+    }
 
-#consoleDiv li:before {
-    content: '>';
-    position: absolute;
-    left: 0;
-    top: 0;
-}
+    #consoleDiv li:before {
+        content: '>';
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 
-#consoleDiv li {
-    word-wrap: break-word;
-    position: relative;
-    padding: 0 0 0 15px;
-}
+    #consoleDiv li {
+        word-wrap: break-word;
+        position: relative;
+        padding: 0 0 0 15px;
+    }
 
 .codeBlocksContainer {
     height: 100%;
@@ -187,23 +181,23 @@ body {
     margin: 10px;
 }
 
-.codeBlock>.title {
-    text-align: center;
-    position: relative;
-    font-weight: 500;
-}
+    .codeBlock > .title {
+        text-align: center;
+        position: relative;
+        font-weight: 500;
+    }
 
-.codeBlock>.title>.dragMe {
-    width: 20px;
-    height: 20px;
-    background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
-    background-size: contain;
-    opacity: .5;
-    float: left;
-    margin: 5px;
-    position: relative;
-    cursor: grab;
-}
+        .codeBlock > .title > .dragMe {
+            width: 20px;
+            height: 20px;
+            background: url('https://cdn4.iconfinder.com/data/icons/design-2d-cad-outline-set-1/60/008.Move-512.png');
+            background-size: contain;
+            opacity: .5;
+            float: left;
+            margin: 5px;
+            position: relative;
+            cursor: grab;
+        }
 
 #codeBlocks .dropPart {
     margin: 0 10px;
@@ -216,15 +210,15 @@ body {
     transition: all .1s ease;
 }
 
-#codeBlocks .dropPart.active {
-    height: 40px !important;
-    border: 2px dashed #ccc !important;
-}
+    #codeBlocks .dropPart.active {
+        height: 40px !important;
+        border: 2px dashed #ccc !important;
+    }
 
 /*https://www.color-hex.com/color-palette/19053*/
 .ShootElement,
-.ShootElement>.title>[type="checkbox"]:checked+label:after,
-.ShootElement>.title>[type="checkbox"]:not(:checked)+label:after {
+.ShootElement > .title > [type="checkbox"]:checked + label:after,
+.ShootElement > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #fffddb !important;
 }
 
@@ -242,20 +236,20 @@ body {
 
 
 .BranchingElement,
-.BranchingElement>.title>[type="checkbox"]:checked+label:after,
-.BranchingElement>.title>[type="checkbox"]:not(:checked)+label:after {
+.BranchingElement > .title > [type="checkbox"]:checked + label:after,
+.BranchingElement > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #ffd3fd !important;
 }
 
 .IdleElement,
-.IdleElement>.title>[type="checkbox"]:checked+label:after,
-.IdleElement>.title>[type="checkbox"]:not(:checked)+label:after {
+.IdleElement > .title > [type="checkbox"]:checked + label:after,
+.IdleElement > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #f1f1f1 !important;
 }
 
 .IsEnemyNearCondition,
-.IsEnemyNearCondition>.title>[type="checkbox"]:checked+label:after,
-.IsEnemyNearCondition>.title>[type="checkbox"]:not(:checked)+label:after {
+.IsEnemyNearCondition > .title > [type="checkbox"]:checked + label:after,
+.IsEnemyNearCondition > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #d0fffe !important;
 }
 
@@ -293,37 +287,36 @@ body {
     -webkit-transition: all .5s ease;
     /* Safari */
     transition: all .5s ease;
-
     z-index: 1;
     padding: 10px;
 }
 
-#shop.hiddenShop {
-    left: -100%;
-}
+    #shop.hiddenShop {
+        left: -100%;
+    }
 
-#shop .row {
-    margin: 0 !important;
-}
+    #shop .row {
+        margin: 0 !important;
+    }
 
 
-#shop #codeBlocksShop,
-#shop #gearShop {
-    min-height: 180px;
-}
+    #shop #codeBlocksShop,
+    #shop #gearShop {
+        min-height: 180px;
+    }
 
-#shop #gearShop {
-    border-left: 1px solid #999
-}
+    #shop #gearShop {
+        border-left: 1px solid #999
+    }
 
-#shop::-webkit-scrollbar {
-    width: 10px;
-    background: transparent;
-}
+    #shop::-webkit-scrollbar {
+        width: 10px;
+        background: transparent;
+    }
 
-#shop::-webkit-scrollbar-thumb {
-    background: red;
-}
+    #shop::-webkit-scrollbar-thumb {
+        background: #77DD77;
+    }
 
 .shopItem {
     background: #999;
@@ -342,6 +335,8 @@ body {
     background-size: contain;
     cursor: pointer;
     position: absolute;
+    border-radius: 10px;
+    border: 1px solid #666;
     -webkit-transition: all .5s ease;
     /* Safari */
     transition: all .5s ease;
@@ -352,12 +347,21 @@ body {
     margin: 0;
 }
 
-#shopIcon.closed {
-    bottom: 10px;
-    left: 10px;
-}
+    #shopIcon:hover {
+        border: 5px solid #ED2939;
+    }
 
-.buySellEquipContainer>div {
+    #shopIcon.closed:hover {
+        border: 5px solid #77DD77;
+    }
+
+
+    #shopIcon.closed {
+        bottom: 10px;
+        left: 10px;
+    }
+
+.buySellEquipContainer > div {
     margin: 5px;
     background: rgba(255, 255, 255, 0.7);
     float: left;
@@ -373,7 +377,24 @@ body {
     transition: all .2s ease;
 }
 
-.buySellEquipContainer>div:hover {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.1);
+    .buySellEquipContainer > div:hover {
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+/* OTHER */
+
+#pts {
+    background-color: #dadada;
+    background-image: url('../images/gold.png');
+    background-size: 30px 30px;
+    background-position: left;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    padding-right: 10px;
+    height: 40px;
+    line-height: 40px;
+    margin: 10px;
+    border-radius: 10px;
+    border: 1px solid #666;
 }

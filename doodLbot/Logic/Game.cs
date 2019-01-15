@@ -74,7 +74,8 @@ namespace doodLbot.Logic
 
             if (this.heroes.Count == 1)
             {
-                this.gameLoopTask = Task.Run(async () => {
+                this.gameLoopTask = Task.Run(async () =>
+                {
                     while (!this.gameLoopCTS.IsCancellationRequested)
                     {
                         var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -177,6 +178,7 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes)
             {
                 this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                this.enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
             }
         }
 
