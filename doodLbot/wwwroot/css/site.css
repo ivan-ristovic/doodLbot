@@ -242,8 +242,8 @@ body {
 }
 
 .IdleElement,
-.IdleElement>.title>[type="checkbox"]:checked+label:after,
-.IdleElement>.title>[type="checkbox"]:not(:checked)+label:after {
+.IdleElement > .title > [type="checkbox"]:checked + label:after,
+.IdleElement > .title > [type="checkbox"]:not(:checked) + label:after {
     background: #bebebe !important;
 }
 
@@ -339,6 +339,27 @@ body {
     margin: 4px;
     padding: 10px;
 }
+
+    .shopItem > .buySellEquipContainer {
+        wdith: 100%;
+    }
+
+    .shopItem > .elementDetails {
+        padding: 10px 0;
+        margin: 10px 0;
+        border-top: 1px solid rgba(120,120,120,.3);
+        border-bottom: 1px solid rgba(120,120,120,.3);
+    }
+
+
+        .shopItem > .elementDetails > .elementCount {
+            text-align: left;
+        }
+
+        .shopItem > .elementDetails > .elementCost {
+            text-align: right;
+        }
+
 
 #shopIcon {
     width: 50px;
