@@ -40,6 +40,8 @@ namespace doodLbot.Logic
         public static int CostTarget;
         public static int CostIsNear;
 
+        public static double Delta { get; set; }
+
         static Design()
         {
             TickRate = 30;

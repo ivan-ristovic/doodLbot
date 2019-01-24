@@ -158,7 +158,7 @@ namespace doodLbot.Entities
         public double SquaredDist(Entity e)
         {
             var x = e.Xpos - this.Xpos;
-            var y = e.Xpos - this.Ypos;
+            var y = e.Ypos - this.Ypos;
             return x * x + y * y;
         }
     }

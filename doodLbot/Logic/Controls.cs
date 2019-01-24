@@ -19,7 +19,7 @@ namespace doodLbot.Logic
         private ConsoleKey leftKey;
         private ConsoleKey rightKey;
 
-        public Controls(ConsoleKey fireKey, ConsoleKey forwardKey, ConsoleKey backwardKey, 
+        public Controls(ConsoleKey fireKey, ConsoleKey forwardKey, ConsoleKey backwardKey,
             ConsoleKey leftKey, ConsoleKey rightKey)
         {
             this.fireKey = fireKey;
@@ -28,6 +28,17 @@ namespace doodLbot.Logic
             this.leftKey = leftKey;
             this.rightKey = rightKey;
         }
+
+        public void Wipe()
+        {
+            IsFire = false;
+            IsForward = false;
+            IsBackward = false;
+            IsLeft = false;
+            IsRight = false;
+        }
+
+        public bool IsMoving => IsLeft || IsRight || IsBackward || IsForward;
 
         /// <summary>
         /// Action executed when the key is pressed or released.
