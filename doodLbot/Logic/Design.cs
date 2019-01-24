@@ -48,6 +48,7 @@ namespace doodLbot.Logic
 
             // all speeds are calculated relative to the 50 tickrate
             double adjust = 50 / TickRate;
+            Delta = 1;
 
             ProjectileSpeed = 6 * adjust;
             HeroSpeed = 5 * adjust;

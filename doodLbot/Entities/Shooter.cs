@@ -26,7 +26,7 @@ namespace doodLbot.Entities
         {
             if (!this.shootingLimiter.IsCooldownActive())
             {
-                return new Projectile(this.Xpos, this.Ypos, Math.Atan2(this.Yvel, this.Xvel), Design.ProjectileSpeed, this.Damage);
+                return new Projectile(this.Xpos, this.Ypos, Math.Atan2(this.Yvel, this.Xvel), Design.ProjectileSpeed * Design.Delta, this.Damage);
             }
             else
                 return null;

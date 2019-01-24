@@ -109,7 +109,7 @@ namespace doodLbot.Logic
         /// <param name="_">game object that is passed by the timer</param>
         private async Task GameTick(double delta)
         {
-            Design.Delta = delta;
+            Design.Delta = delta < 0.0001 ? 1 : delta;
             if (!this.enemySpawnLimiter.IsCooldownActive())
             {
                 this.SpawnEnemy(Design.SpawnRange);
