@@ -75,7 +75,7 @@ namespace doodLbot.Entities
             this.Id = id;
             this.CodeInventory = codeInventory;
             this.EquipmentInventory = equipmentInventory;
-            this.Points = 1110;
+            this.Points = 0;
             this.baseSpeed = Design.HeroSpeed;
             this.baseDamage = this.Damage;
             this.baseHp = this.Hp;
@@ -273,7 +273,7 @@ namespace doodLbot.Entities
 
             if (controls.IsFire)
             {
-                this.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
+                this.TryFire(Design.ProjectileSpeed*delta, Design.ProjectileDamage);
             }
 
             double velocity = this.Speed * delta;
