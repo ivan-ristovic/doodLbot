@@ -1,32 +1,30 @@
-﻿using doodLbot.Common;
+﻿using System.Collections.Generic;
+using doodLbot.Common;
+using doodLbot.Entities;
 using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
-
-using Newtonsoft.Json.Linq;
 using Microsoft.CSharp.RuntimeBinder;
-
-using System.Collections.Generic;
-using doodLbot.Entities;
+using Newtonsoft.Json.Linq;
 
 namespace doodLbot.Logic
 {
     /// <summary>
     /// Deserializes JSON strings to classes needed for game logic.
     /// </summary>
-    static public class DynamicJsonDeserializer
+    public static class DynamicJsonDeserializer
     {
         /// <summary>
         /// Deserializes JSON string to BehaviourAlgorithm.
         /// </summary>
         /// <param name="json"></param>
         /// <returns>Deserialized BehaviourAlgorithm object.</returns>
-        static public BehaviourAlgorithm ToBehaviourAlgorithm(string json, Hero hero)
+        public static BehaviourAlgorithm ToBehaviourAlgorithm(string json, Hero hero)
         {
             var jsonVal = JArray.Parse(json) as JArray;
             dynamic elements = jsonVal;
 
             var algorithm = new BehaviourAlgorithm(hero);
-            foreach (dynamic element in elements)
+            foreach (var element in elements)
                 algorithm.Insert(DeserializeCodeElementInternal(element));
 
             return algorithm;
@@ -45,7 +43,7 @@ namespace doodLbot.Logic
                         break;
                     case "CodeBlockElement":
                         var children = new List<BaseCodeElement>();
-                        foreach (dynamic child in element.elements)
+                        foreach (var child in element.elements)
                             children.Add(DeserializeCodeElementInternal(child));
                         ret = new CodeBlockElement(children);
                         break;
@@ -54,7 +52,7 @@ namespace doodLbot.Logic
                         var elseBlock = new List<BaseCodeElement>();
                         try
                         {
-                            foreach (dynamic child in element.@then.elements)
+                            foreach (var child in element.@then.elements)
                                 thenBlock.Add(DeserializeCodeElementInternal(child));
                         }
                         catch (RuntimeBinderException)
@@ -63,7 +61,7 @@ namespace doodLbot.Logic
 
                         try
                         {
-                            foreach (dynamic child in element.@else.elements)
+                            foreach (var child in element.@else.elements)
                                 elseBlock.Add(DeserializeCodeElementInternal(child));
                         }
                         catch (RuntimeBinderException)
@@ -92,7 +90,7 @@ namespace doodLbot.Logic
 
             BaseConditionElement DeserializeConditionElementInternal(dynamic element)
             {
-                if (element == null)
+                if (element is null)
                 {
                     return null;
                 }

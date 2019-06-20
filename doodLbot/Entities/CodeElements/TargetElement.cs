@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements
@@ -13,7 +11,7 @@ namespace doodLbot.Entities.CodeElements
     {
         public TargetElement()
         {
-            this.Cost = Design.CostTarget;
+            Cost = Design.CostTarget;
         }
 
         protected override bool OnExecute(GameState state, Hero hero)
@@ -24,22 +22,26 @@ namespace doodLbot.Entities.CodeElements
         protected bool Target(GameState state, Hero hero)
         {
 
-            if (!state.Enemies.Any()) {
+            if (!state.Enemies.Any())
+            {
                 return false;
             }
 
             var closest = state.Enemies.OrderBy(e => e.SquaredDist(hero)).First();
-            double rotationToClosest = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
-            double rotAmount = Math.Abs(rotationToClosest - hero.Rotation) % (2*Math.PI);
-            if (rotAmount > Design.RotateAmount * Design.Delta) {
+            var rotationToClosest = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
+            var rotAmount = Math.Abs(rotationToClosest - hero.Rotation) % (2 * Math.PI);
+            if (rotAmount > Design.RotateAmount * Design.Delta)
+            {
                 // convert to [-Pi, Pi] so that rotation direction can be known
-                double rotMinusPiToPi = (rotationToClosest - hero.Rotation) % (2 * Math.PI);
-                rotMinusPiToPi = rotMinusPiToPi > Math.PI ? -rotMinusPiToPi + Math.PI : 
+                var rotMinusPiToPi = (rotationToClosest - hero.Rotation) % (2 * Math.PI);
+                rotMinusPiToPi = rotMinusPiToPi > Math.PI ? -rotMinusPiToPi + Math.PI :
                     rotMinusPiToPi < -Math.PI ? -rotMinusPiToPi - Math.PI : rotMinusPiToPi;
                 var side = rotMinusPiToPi > 0 ? ConsoleKey.D : ConsoleKey.A;
                 hero.UpdateSyntheticControls(side, true);
                 return false;
-            } else {
+            }
+            else
+            {
                 hero.Rotation = rotationToClosest;
                 return true;
             }

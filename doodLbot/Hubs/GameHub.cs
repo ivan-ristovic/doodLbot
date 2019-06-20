@@ -1,12 +1,8 @@
-﻿using doodLbot.Entities.CodeElements;
-using doodLbot.Logic;
-
-using Serilog;
-using Microsoft.AspNetCore.SignalR;
-
+﻿using System;
 using System.Threading.Tasks;
-using doodLbot.Entities;
-using System;
+using doodLbot.Logic;
+using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace doodLbot.Hubs
 {
@@ -32,7 +28,7 @@ namespace doodLbot.Hubs
         /// <param name="update"></param>
         public Task UpdateGameState(GameStateUpdate update)
         {
-            this.game.UpdateControls(update);
+            game.UpdateControls(update);
             return Task.CompletedTask;
         }
 
@@ -42,8 +38,8 @@ namespace doodLbot.Hubs
         /// <param name="update"></param>
         public Task Heartbeat(int id)
         {
-            Hero hero = this.game.GetHeroById(id);
-            if (hero != null)
+            var hero = game.GetHeroById(id);
+            if (!(hero is null))
             {
                 hero.TimeOfLastHeartbeat = DateTime.Now;
             }
@@ -53,8 +49,9 @@ namespace doodLbot.Hubs
 
         public Task UpdateName(string newName, int id)
         {
-            var hero = this.game.GetHeroById(id);
-            if (hero == null){
+            var hero = game.GetHeroById(id);
+            if (hero is null)
+            {
                 // TODO think: is it necessary to kill the server for this?
                 throw new System.Exception("hero not found");
             }
@@ -67,7 +64,7 @@ namespace doodLbot.Hubs
         /// </summary>
         public Task TestingCallback()
         {
-            this.game.SpawnEnemy(Design.SpawnRange);
+            game.SpawnEnemy(Design.SpawnRange);
             return Task.CompletedTask;
         }
 
@@ -77,7 +74,7 @@ namespace doodLbot.Hubs
         /// <returns></returns>
         public Task ClientIsReady()
         {
-            Hero h = game.AddNewHero();
+            var h = game.AddNewHero();
 
             var data = new
             {
@@ -89,21 +86,21 @@ namespace doodLbot.Hubs
                 codeInventory = h.CodeInventory,
                 equipmentInventory = h.EquipmentInventory
             };
-            return this.Clients.Caller.SendAsync("InitClient", data);
+            return Clients.Caller.SendAsync("InitClient", data);
         }
-        
+
         public Task BuyGear(string name, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             Log.Debug("server: buy gear");
-            
+
             hero.BuyGear(name);
             return Task.CompletedTask;
         }
 
         public Task SellGear(string name, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             Log.Debug("server: sell gear");
             hero.SellGear(name);
             return Task.CompletedTask;
@@ -111,7 +108,7 @@ namespace doodLbot.Hubs
 
         public Task BuyCode(string name, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             Log.Debug("server: buy code");
             hero.BuyCode(name);
             return Task.CompletedTask;
@@ -119,7 +116,7 @@ namespace doodLbot.Hubs
 
         public Task SellCode(string name, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             Log.Debug("server: sell code");
             hero.SellCode(name);
             return Task.CompletedTask;
@@ -127,7 +124,7 @@ namespace doodLbot.Hubs
 
         public Task EquipItem(string name, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             Log.Debug("server: equip code");
             hero.EquipCode(name);
             return Task.CompletedTask;
@@ -135,7 +132,7 @@ namespace doodLbot.Hubs
 
         public Task AlgorithmUpdated(string json, int id)
         {
-            var hero = this.game.GetHeroById(id);
+            var hero = game.GetHeroById(id);
             hero.Algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, hero);
             return Task.CompletedTask;
         }

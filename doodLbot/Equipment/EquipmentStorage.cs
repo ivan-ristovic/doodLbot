@@ -1,9 +1,5 @@
-using doodLbot.Entities.CodeElements.ConditionElements;
+﻿using System.Collections.Generic;
 using doodLbot.Logic;
-
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Linq;
 
 
 namespace doodLbot.Equipment
@@ -13,9 +9,9 @@ namespace doodLbot.Equipment
         public EquipmentStorage()
         {
             Items = new List<ShopEntry>();
-            foreach(var e in Design.GearDict)
+            foreach (var e in Design.GearDict)
             {
-                Items.Add(new ShopEntry{Element = e.Value, Count = 0});
+                Items.Add(new ShopEntry { Element = e.Value, Count = 0 });
             }
         }
     }

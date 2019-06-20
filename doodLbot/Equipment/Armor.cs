@@ -19,7 +19,7 @@ namespace doodLbot.Equipment
 
         public Armor(string name, int cost, double speed) : base(name, cost)
         {
-            this.Speed = speed;
+            Speed = speed;
         }
     }
 }

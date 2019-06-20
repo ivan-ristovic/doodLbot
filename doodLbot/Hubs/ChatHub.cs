@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SignalRChat.Hubs
 {
@@ -15,6 +14,6 @@ namespace SignalRChat.Hubs
         /// <param name="user">User that sent the message.</param>
         /// <param name="message"></param>
         public Task SendMessage(string user, string message)
-            => this.Clients.All.SendAsync("ReceiveMessage", user, message);
+            => Clients.All.SendAsync("ReceiveMessage", user, message);
     }
 }

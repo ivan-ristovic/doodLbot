@@ -1,6 +1,5 @@
 ﻿using doodLbot.Common;
 using doodLbot.Logic;
-using System.Linq;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -9,12 +8,15 @@ namespace doodLbot.Entities.CodeElements
     /// </summary>
     public class ShootElement : BaseCodeElement
     {
-        private RateLimiter shootLimit;
+        private readonly RateLimiter shootLimit;
+
+
         public ShootElement(RateLimiter limiter = null)
         {
-            this.Cost = Design.CostShoot;
+            Cost = Design.CostShoot;
             shootLimit = limiter;
         }
+
 
         protected override bool OnExecute(GameState state, Hero hero)
         {

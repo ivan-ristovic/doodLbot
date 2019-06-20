@@ -1,5 +1,5 @@
-﻿using doodLbot.Equipment;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using doodLbot.Equipment;
 
 namespace doodLbot.Logic
 {
@@ -47,7 +47,7 @@ namespace doodLbot.Logic
             TickRate = 30;
 
             // all speeds are calculated relative to the 50 tickrate
-            double adjust = 50 / TickRate;
+            var adjust = 50 / TickRate;
             Delta = 1;
 
             ProjectileSpeed = 6 * adjust;

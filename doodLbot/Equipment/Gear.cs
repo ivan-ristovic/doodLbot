@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace doodLbot.Equipment
 {
@@ -15,7 +11,7 @@ namespace doodLbot.Equipment
         /// Gets the type of this code element.
         /// </summary>
         [JsonProperty("type")]
-        public string Type => this.GetType().Name;
+        public string Type => GetType().Name;
 
         [JsonProperty("name")]
         public string Name { get; protected set; }
@@ -29,8 +25,8 @@ namespace doodLbot.Equipment
 
         public Gear(string name, int cost)
         {
-            this.Name = name;
-            this.Cost = cost;
+            Name = name;
+            Cost = cost;
         }
     }
 }

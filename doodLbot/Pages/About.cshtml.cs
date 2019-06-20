@@ -12,7 +12,7 @@ namespace SignalRChat.Pages
 
         public void OnGet()
         {
-            this.Message = "Your application description page.";
+            Message = "Your application description page.";
         }
     }
 }

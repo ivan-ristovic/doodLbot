@@ -41,18 +41,24 @@ namespace doodLbot.Common
         /// <remarks>Count has snapshot semantics and represents the number of items in the <see
         /// cref="ConcurrentHashSet{T}"/>
         /// at the moment when Count was accessed.</remarks>
-        public int Count {
-            get {
+        public int Count
+        {
+            get
+            {
                 var count = 0;
                 var acquiredLocks = 0;
-                try {
-                    this.AcquireAllLocks(ref acquiredLocks);
+                try
+                {
+                    AcquireAllLocks(ref acquiredLocks);
 
-                    for (var i = 0; i < this._tables.CountPerLock.Length; i++) {
-                        count += this._tables.CountPerLock[i];
+                    for (var i = 0; i < _tables.CountPerLock.Length; i++)
+                    {
+                        count += _tables.CountPerLock[i];
                     }
-                } finally {
-                    this.ReleaseLocks(0, acquiredLocks);
+                }
+                finally
+                {
+                    ReleaseLocks(0, acquiredLocks);
                 }
 
                 return count;
@@ -64,19 +70,26 @@ namespace doodLbot.Common
         /// </summary>
         /// <value>true if the <see cref="ConcurrentHashSet{T}"/> is empty; otherwise,
         /// false.</value>
-        public bool IsEmpty {
-            get {
+        public bool IsEmpty
+        {
+            get
+            {
                 var acquiredLocks = 0;
-                try {
-                    this.AcquireAllLocks(ref acquiredLocks);
+                try
+                {
+                    AcquireAllLocks(ref acquiredLocks);
 
-                    for (var i = 0; i < this._tables.CountPerLock.Length; i++) {
-                        if (this._tables.CountPerLock[i] != 0) {
+                    for (var i = 0; i < _tables.CountPerLock.Length; i++)
+                    {
+                        if (_tables.CountPerLock[i] != 0)
+                        {
                             return false;
                         }
                     }
-                } finally {
-                    this.ReleaseLocks(0, acquiredLocks);
+                }
+                finally
+                {
+                    ReleaseLocks(0, acquiredLocks);
                 }
 
                 return true;
@@ -165,7 +178,7 @@ namespace doodLbot.Common
         {
             if (collection is null) throw new ArgumentNullException(nameof(collection));
 
-            this.InitializeFromCollection(collection);
+            InitializeFromCollection(collection);
         }
 
 
@@ -195,7 +208,7 @@ namespace doodLbot.Common
             if (collection is null) throw new ArgumentNullException(nameof(collection));
             if (comparer is null) throw new ArgumentNullException(nameof(comparer));
 
-            this.InitializeFromCollection(collection);
+            InitializeFromCollection(collection);
         }
 
         /// <summary>
@@ -228,22 +241,24 @@ namespace doodLbot.Common
 
             // The capacity should be at least as large as the concurrency level. Otherwise, we would have locks that don't guard
             // any buckets.
-            if (capacity < concurrencyLevel) {
+            if (capacity < concurrencyLevel)
+            {
                 capacity = concurrencyLevel;
             }
 
             var locks = new object[concurrencyLevel];
-            for (var i = 0; i < locks.Length; i++) {
+            for (var i = 0; i < locks.Length; i++)
+            {
                 locks[i] = new object();
             }
 
             var countPerLock = new int[locks.Length];
             var buckets = new Node[capacity];
-            this._tables = new Tables(buckets, locks, countPerLock);
+            _tables = new Tables(buckets, locks, countPerLock);
 
-            this._growLockArray = growLockArray;
-            this._budget = buckets.Length / locks.Length;
-            this._comparer = comparer;
+            _growLockArray = growLockArray;
+            _budget = buckets.Length / locks.Length;
+            _comparer = comparer;
         }
 
         /// <summary>
@@ -255,7 +270,7 @@ namespace doodLbot.Common
         /// <exception cref="T:System.OverflowException">The <see cref="ConcurrentHashSet{T}"/>
         /// contains too many items.</exception>
         public bool Add(T item) =>
-            this.AddInternal(item, this._comparer.GetHashCode(item), true);
+            AddInternal(item, _comparer.GetHashCode(item), true);
 
         /// <summary>
         /// Removes all items from the <see cref="ConcurrentHashSet{T}"/>.
@@ -263,14 +278,17 @@ namespace doodLbot.Common
         public void Clear()
         {
             var locksAcquired = 0;
-            try {
-                this.AcquireAllLocks(ref locksAcquired);
+            try
+            {
+                AcquireAllLocks(ref locksAcquired);
 
-                var newTables = new Tables(new Node[DefaultCapacity], this._tables.Locks, new int[this._tables.CountPerLock.Length]);
-                this._tables = newTables;
-                this._budget = Math.Max(1, newTables.Buckets.Length / newTables.Locks.Length);
-            } finally {
-                this.ReleaseLocks(0, locksAcquired);
+                var newTables = new Tables(new Node[DefaultCapacity], _tables.Locks, new int[_tables.CountPerLock.Length]);
+                _tables = newTables;
+                _budget = Math.Max(1, newTables.Buckets.Length / newTables.Locks.Length);
+            }
+            finally
+            {
+                ReleaseLocks(0, locksAcquired);
             }
         }
 
@@ -282,10 +300,10 @@ namespace doodLbot.Common
         /// <returns>true if the <see cref="ConcurrentHashSet{T}"/> contains the item; otherwise, false.</returns>
         public bool Contains(T item)
         {
-            var hashcode = this._comparer.GetHashCode(item);
+            var hashcode = _comparer.GetHashCode(item);
 
             // We must capture the _buckets field in a local variable. It is set to a new table on each table resize.
-            var tables = this._tables;
+            var tables = _tables;
 
             var bucketNo = GetBucket(hashcode, tables.Buckets.Length);
 
@@ -293,8 +311,10 @@ namespace doodLbot.Common
             // The Volatile.Read ensures that the load of the fields of 'n' doesn't move before the load from buckets[i].
             var current = Volatile.Read(ref tables.Buckets[bucketNo]);
 
-            while (current != null) {
-                if (hashcode == current.Hashcode && this._comparer.Equals(current.Item, item)) {
+            while (current != null)
+            {
+                if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
+                {
                     return true;
                 }
                 current = current.Next;
@@ -310,28 +330,36 @@ namespace doodLbot.Common
         /// <returns>true if an item was removed successfully; otherwise, false.</returns>
         public bool TryRemove(T item)
         {
-            var hashcode = this._comparer.GetHashCode(item);
-            while (true) {
-                var tables = this._tables;
+            var hashcode = _comparer.GetHashCode(item);
+            while (true)
+            {
+                var tables = _tables;
 
                 int bucketNo, lockNo;
                 GetBucketAndLockNo(hashcode, out bucketNo, out lockNo, tables.Buckets.Length, tables.Locks.Length);
 
-                lock (tables.Locks[lockNo]) {
+                lock (tables.Locks[lockNo])
+                {
                     // If the table just got resized, we may not be holding the right lock, and must retry.
                     // This should be a rare occurrence.
-                    if (tables != this._tables) {
+                    if (tables != _tables)
+                    {
                         continue;
                     }
 
                     Node previous = null;
-                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next) {
+                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
+                    {
                         Debug.Assert((previous is null && current == tables.Buckets[bucketNo]) || previous.Next == current);
 
-                        if (hashcode == current.Hashcode && this._comparer.Equals(current.Item, item)) {
-                            if (previous is null) {
+                        if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
+                        {
+                            if (previous is null)
+                            {
                                 Volatile.Write(ref tables.Buckets[bucketNo], current.Next);
-                            } else {
+                            }
+                            else
+                            {
                                 previous.Next = current.Next;
                             }
 
@@ -346,7 +374,7 @@ namespace doodLbot.Common
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>Returns an enumerator that iterates through the <see
         /// cref="ConcurrentHashSet{T}"/>.</summary>
@@ -359,20 +387,22 @@ namespace doodLbot.Common
         /// </remarks>
         public IEnumerator<T> GetEnumerator()
         {
-            var buckets = this._tables.Buckets;
+            var buckets = _tables.Buckets;
 
-            for (var i = 0; i < buckets.Length; i++) {
+            for (var i = 0; i < buckets.Length; i++)
+            {
                 // The Volatile.Read ensures that the load of the fields of 'current' doesn't move before the load from buckets[i].
                 var current = Volatile.Read(ref buckets[i]);
 
-                while (current != null) {
+                while (current != null)
+                {
                     yield return current.Item;
                     current = current.Next;
                 }
             }
         }
 
-        void ICollection<T>.Add(T item) => this.Add(item);
+        void ICollection<T>.Add(T item) => Add(item);
 
         bool ICollection<T>.IsReadOnly => false;
 
@@ -382,13 +412,15 @@ namespace doodLbot.Common
             if (arrayIndex < 0) throw new ArgumentOutOfRangeException(nameof(arrayIndex));
 
             var locksAcquired = 0;
-            try {
-                this.AcquireAllLocks(ref locksAcquired);
+            try
+            {
+                AcquireAllLocks(ref locksAcquired);
 
                 var count = 0;
 
-                for (var i = 0; i < this._tables.Locks.Length && count >= 0; i++) {
-                    count += this._tables.CountPerLock[i];
+                for (var i = 0; i < _tables.Locks.Length && count >= 0; i++)
+                {
+                    count += _tables.CountPerLock[i];
                 }
 
                 if (array.Length - count < arrayIndex || count < 0) //"count" itself or "count + arrayIndex" can overflow
@@ -396,50 +428,59 @@ namespace doodLbot.Common
                     throw new ArgumentException("The index is equal to or greater than the length of the array, or the number of elements in the set is greater than the available space from index to the end of the destination array.");
                 }
 
-                this.CopyToItems(array, arrayIndex);
-            } finally {
-                this.ReleaseLocks(0, locksAcquired);
+                CopyToItems(array, arrayIndex);
+            }
+            finally
+            {
+                ReleaseLocks(0, locksAcquired);
             }
         }
 
-        bool ICollection<T>.Remove(T item) => this.TryRemove(item);
+        bool ICollection<T>.Remove(T item) => TryRemove(item);
 
         private void InitializeFromCollection(IEnumerable<T> collection)
         {
-            foreach (var item in collection) {
-                this.AddInternal(item, this._comparer.GetHashCode(item), false);
+            foreach (var item in collection)
+            {
+                AddInternal(item, _comparer.GetHashCode(item), false);
             }
 
-            if (this._budget == 0) {
-                this._budget = this._tables.Buckets.Length / this._tables.Locks.Length;
+            if (_budget == 0)
+            {
+                _budget = _tables.Buckets.Length / _tables.Locks.Length;
             }
         }
 
         private bool AddInternal(T item, int hashcode, bool acquireLock)
         {
-            while (true) {
+            while (true)
+            {
                 int bucketNo, lockNo;
 
-                var tables = this._tables;
+                var tables = _tables;
                 GetBucketAndLockNo(hashcode, out bucketNo, out lockNo, tables.Buckets.Length, tables.Locks.Length);
 
                 var resizeDesired = false;
                 var lockTaken = false;
-                try {
+                try
+                {
                     if (acquireLock)
                         Monitor.Enter(tables.Locks[lockNo], ref lockTaken);
 
                     // If the table just got resized, we may not be holding the right lock, and must retry.
                     // This should be a rare occurrence.
-                    if (tables != this._tables) {
+                    if (tables != _tables)
+                    {
                         continue;
                     }
 
                     // Try to find this item in the bucket
                     Node previous = null;
-                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next) {
+                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
+                    {
                         Debug.Assert((previous is null && current == tables.Buckets[bucketNo]) || previous.Next == current);
-                        if (hashcode == current.Hashcode && this._comparer.Equals(current.Item, item)) {
+                        if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
+                        {
                             return false;
                         }
                         previous = current;
@@ -447,7 +488,8 @@ namespace doodLbot.Common
 
                     // The item was not found in the bucket. Insert the new item.
                     Volatile.Write(ref tables.Buckets[bucketNo], new Node(item, hashcode, tables.Buckets[bucketNo]));
-                    checked {
+                    checked
+                    {
                         tables.CountPerLock[lockNo]++;
                     }
 
@@ -456,10 +498,13 @@ namespace doodLbot.Common
                     // It is also possible that GrowTable will increase the budget but won't resize the bucket table.
                     // That happens if the bucket table is found to be poorly utilized due to a bad hash function.
                     //
-                    if (tables.CountPerLock[lockNo] > this._budget) {
+                    if (tables.CountPerLock[lockNo] > _budget)
+                    {
                         resizeDesired = true;
                     }
-                } finally {
+                }
+                finally
+                {
                     if (lockTaken)
                         Monitor.Exit(tables.Locks[lockNo]);
                 }
@@ -472,8 +517,9 @@ namespace doodLbot.Common
                 // - As a result, it is possible that GrowTable will be called unnecessarily. But, GrowTable will obtain lock 0
                 //   and then verify that the table we passed to it as the argument is still the current table.
                 //
-                if (resizeDesired) {
-                    this.GrowTable(tables);
+                if (resizeDesired)
+                {
+                    GrowTable(tables);
                 }
 
                 return true;
@@ -500,12 +546,14 @@ namespace doodLbot.Common
         {
             const int maxArrayLength = 0X7FEFFFFF;
             var locksAcquired = 0;
-            try {
+            try
+            {
                 // The thread that first obtains _locks[0] will be the one doing the resize operation
-                this.AcquireLocks(0, 1, ref locksAcquired);
+                AcquireLocks(0, 1, ref locksAcquired);
 
                 // Make sure nobody resized the table while we were waiting for lock 0:
-                if (tables != this._tables) {
+                if (tables != _tables)
+                {
                     // We assume that since the table reference is different, it was already resized (or the budget
                     // was adjusted). If we ever decide to do table shrinking, or replace the table for other reasons,
                     // we will have to revisit this logic.
@@ -514,17 +562,20 @@ namespace doodLbot.Common
 
                 // Compute the (approx.) total size. Use an Int64 accumulation variable to avoid an overflow.
                 long approxCount = 0;
-                for (var i = 0; i < tables.CountPerLock.Length; i++) {
+                for (var i = 0; i < tables.CountPerLock.Length; i++)
+                {
                     approxCount += tables.CountPerLock[i];
                 }
 
                 //
                 // If the bucket array is too empty, double the budget instead of resizing the table
                 //
-                if (approxCount < tables.Buckets.Length / 4) {
-                    this._budget = 2 * this._budget;
-                    if (this._budget < 0) {
-                        this._budget = int.MaxValue;
+                if (approxCount < tables.Buckets.Length / 4)
+                {
+                    _budget = 2 * _budget;
+                    if (_budget < 0)
+                    {
+                        _budget = int.MaxValue;
                     }
                     return;
                 }
@@ -533,28 +584,35 @@ namespace doodLbot.Common
                 // 2,3,5 or 7. We can consider a different table-sizing policy in the future.
                 var newLength = 0;
                 var maximizeTableSize = false;
-                try {
-                    checked {
+                try
+                {
+                    checked
+                    {
                         // Double the size of the buckets table and add one, so that we have an odd integer.
                         newLength = tables.Buckets.Length * 2 + 1;
 
                         // Now, we only need to check odd integers, and find the first that is not divisible
                         // by 3, 5 or 7.
-                        while (newLength % 3 == 0 || newLength % 5 == 0 || newLength % 7 == 0) {
+                        while (newLength % 3 == 0 || newLength % 5 == 0 || newLength % 7 == 0)
+                        {
                             newLength += 2;
                         }
 
                         Debug.Assert(newLength % 2 != 0);
 
-                        if (newLength > maxArrayLength) {
+                        if (newLength > maxArrayLength)
+                        {
                             maximizeTableSize = true;
                         }
                     }
-                } catch (OverflowException) {
+                }
+                catch (OverflowException)
+                {
                     maximizeTableSize = true;
                 }
 
-                if (maximizeTableSize) {
+                if (maximizeTableSize)
+                {
                     newLength = maxArrayLength;
 
                     // We want to make sure that GrowTable will not be called again, since table is at the maximum size.
@@ -562,19 +620,21 @@ namespace doodLbot.Common
                     //
                     // (There is one special case that would allow GrowTable() to be called in the future: 
                     // calling Clear() on the ConcurrentHashSet will shrink the table and lower the budget.)
-                    this._budget = int.MaxValue;
+                    _budget = int.MaxValue;
                 }
 
                 // Now acquire all other locks for the table
-                this.AcquireLocks(1, tables.Locks.Length, ref locksAcquired);
+                AcquireLocks(1, tables.Locks.Length, ref locksAcquired);
 
                 var newLocks = tables.Locks;
 
                 // Add more locks
-                if (this._growLockArray && tables.Locks.Length < MaxLockNumber) {
+                if (_growLockArray && tables.Locks.Length < MaxLockNumber)
+                {
                     newLocks = new object[tables.Locks.Length * 2];
                     Array.Copy(tables.Locks, 0, newLocks, 0, tables.Locks.Length);
-                    for (var i = tables.Locks.Length; i < newLocks.Length; i++) {
+                    for (var i = tables.Locks.Length; i < newLocks.Length; i++)
+                    {
                         newLocks[i] = new object();
                     }
                 }
@@ -583,16 +643,19 @@ namespace doodLbot.Common
                 var newCountPerLock = new int[newLocks.Length];
 
                 // Copy all data into a new table, creating new nodes for all elements
-                for (var i = 0; i < tables.Buckets.Length; i++) {
+                for (var i = 0; i < tables.Buckets.Length; i++)
+                {
                     var current = tables.Buckets[i];
-                    while (current != null) {
+                    while (current != null)
+                    {
                         var next = current.Next;
                         int newBucketNo, newLockNo;
                         GetBucketAndLockNo(current.Hashcode, out newBucketNo, out newLockNo, newBuckets.Length, newLocks.Length);
 
                         newBuckets[newBucketNo] = new Node(current.Item, current.Hashcode, newBuckets[newBucketNo]);
 
-                        checked {
+                        checked
+                        {
                             newCountPerLock[newLockNo]++;
                         }
 
@@ -601,13 +664,15 @@ namespace doodLbot.Common
                 }
 
                 // Adjust the budget
-                this._budget = Math.Max(1, newBuckets.Length / newLocks.Length);
+                _budget = Math.Max(1, newBuckets.Length / newLocks.Length);
 
                 // Replace tables with the new versions
-                this._tables = new Tables(newBuckets, newLocks, newCountPerLock);
-            } finally {
+                _tables = new Tables(newBuckets, newLocks, newCountPerLock);
+            }
+            finally
+            {
                 // Release all locks that we took earlier
-                this.ReleaseLocks(0, locksAcquired);
+                ReleaseLocks(0, locksAcquired);
             }
         }
 
@@ -615,8 +680,9 @@ namespace doodLbot.Common
         {
             var elems = this.Where(predicate);
             var removed = 0;
-            foreach (var elem in elems) {
-                if (this.TryRemove(elem))
+            foreach (var elem in elems)
+            {
+                if (TryRemove(elem))
                     removed++;
             }
             return removed;
@@ -625,25 +691,30 @@ namespace doodLbot.Common
         private void AcquireAllLocks(ref int locksAcquired)
         {
             // First, acquire lock 0
-            this.AcquireLocks(0, 1, ref locksAcquired);
+            AcquireLocks(0, 1, ref locksAcquired);
 
             // Now that we have lock 0, the _locks array will not change (i.e., grow),
             // and so we can safely read _locks.Length.
-            this.AcquireLocks(1, this._tables.Locks.Length, ref locksAcquired);
-            Debug.Assert(locksAcquired == this._tables.Locks.Length);
+            AcquireLocks(1, _tables.Locks.Length, ref locksAcquired);
+            Debug.Assert(locksAcquired == _tables.Locks.Length);
         }
 
         private void AcquireLocks(int fromInclusive, int toExclusive, ref int locksAcquired)
         {
             Debug.Assert(fromInclusive <= toExclusive);
-            var locks = this._tables.Locks;
+            var locks = _tables.Locks;
 
-            for (var i = fromInclusive; i < toExclusive; i++) {
+            for (var i = fromInclusive; i < toExclusive; i++)
+            {
                 var lockTaken = false;
-                try {
+                try
+                {
                     Monitor.Enter(locks[i], ref lockTaken);
-                } finally {
-                    if (lockTaken) {
+                }
+                finally
+                {
+                    if (lockTaken)
+                    {
                         locksAcquired++;
                     }
                 }
@@ -654,16 +725,19 @@ namespace doodLbot.Common
         {
             Debug.Assert(fromInclusive <= toExclusive);
 
-            for (var i = fromInclusive; i < toExclusive; i++) {
-                Monitor.Exit(this._tables.Locks[i]);
+            for (var i = fromInclusive; i < toExclusive; i++)
+            {
+                Monitor.Exit(_tables.Locks[i]);
             }
         }
 
         private void CopyToItems(T[] array, int index)
         {
-            var buckets = this._tables.Buckets;
-            for (var i = 0; i < buckets.Length; i++) {
-                for (var current = buckets[i]; current != null; current = current.Next) {
+            var buckets = _tables.Buckets;
+            for (var i = 0; i < buckets.Length; i++)
+            {
+                for (var current = buckets[i]; current != null; current = current.Next)
+                {
                     array[index] = current.Item;
                     index++; //this should never flow, CopyToItems is only called when there's no overflow risk
                 }
@@ -679,9 +753,9 @@ namespace doodLbot.Common
 
             public Tables(Node[] buckets, object[] locks, int[] countPerLock)
             {
-                this.Buckets = buckets;
-                this.Locks = locks;
-                this.CountPerLock = countPerLock;
+                Buckets = buckets;
+                Locks = locks;
+                CountPerLock = countPerLock;
             }
         }
 
@@ -694,9 +768,9 @@ namespace doodLbot.Common
 
             public Node(T item, int hashcode, Node next)
             {
-                this.Item = item;
-                this.Hashcode = hashcode;
-                this.Next = next;
+                Item = item;
+                Hashcode = hashcode;
+                Next = next;
             }
         }
     }

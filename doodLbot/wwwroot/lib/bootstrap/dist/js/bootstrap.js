@@ -206,11 +206,11 @@ if (typeof jQuery === 'undefined') {
 
     state += 'Text'
 
-    if (data.resetText == null) $el.data('resetText', $el[val]())
+    if (data.resetText is null) $el.data('resetText', $el[val]())
 
     // push to event loop to allow forms to submit
     setTimeout($.proxy(function () {
-      $el[val](data[state] == null ? this.options[state] : data[state])
+      $el[val](data[state] is null ? this.options[state] : data[state])
 
       if (state == 'loadingText') {
         this.isLoading = true
@@ -1616,7 +1616,7 @@ if (typeof jQuery === 'undefined') {
     var isBody = el.tagName == 'BODY'
 
     var elRect    = el.getBoundingClientRect()
-    if (elRect.width == null) {
+    if (elRect.width is null) {
       // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
       elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
     }
@@ -2264,7 +2264,7 @@ if (typeof jQuery === 'undefined') {
       return (scrollTop + targetHeight <= scrollHeight - offsetBottom) ? false : 'bottom'
     }
 
-    var initializing   = this.affixed == null
+    var initializing   = this.affixed is null
     var colliderTop    = initializing ? scrollTop : position.top
     var colliderHeight = initializing ? targetHeight : height
 

@@ -1,8 +1,5 @@
-﻿using doodLbot.Logic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -11,7 +8,7 @@ namespace doodLbot.Entities.CodeElements
 
         public MoveAwayFromElement()
         {
-            this.Cost = Design.CostTarget;
+            Cost = Design.CostTarget;
         }
 
 

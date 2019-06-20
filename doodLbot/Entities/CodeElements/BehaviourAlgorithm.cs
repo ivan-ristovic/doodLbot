@@ -1,9 +1,7 @@
-﻿using doodLbot.Logic;
-
-using Newtonsoft.Json;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using doodLbot.Logic;
+using Newtonsoft.Json;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -16,9 +14,9 @@ namespace doodLbot.Entities.CodeElements
         /// Get a collection of code elements that this algorithm is made of.
         /// </summary>
         [JsonProperty("elements")]
-        public IReadOnlyList<BaseCodeElement> CodeElements => this.codeElements.AsReadOnly();
+        public IReadOnlyList<BaseCodeElement> CodeElements => codeElements.AsReadOnly();
 
-        private Hero hero;
+        private readonly Hero hero;
         private readonly List<BaseCodeElement> codeElements;
         private readonly object codeElementsLock;
 
@@ -29,10 +27,10 @@ namespace doodLbot.Entities.CodeElements
         public BehaviourAlgorithm(Hero hero)
         {
             this.hero = hero;
-            this.codeElements = new List<BaseCodeElement>();
-            this.codeElementsLock = new object();
+            codeElements = new List<BaseCodeElement>();
+            codeElementsLock = new object();
         }
-        
+
 
         /// <summary>
         /// Insert a code element in this algorithm.
@@ -41,12 +39,12 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="index">Position in the algorithm element list.</param>
         public void Insert(BaseCodeElement element, int? index = null)
         {
-            lock (this.codeElementsLock)
+            lock (codeElementsLock)
             {
                 if (index is null)
-                    this.codeElements.Add(element);
+                    codeElements.Add(element);
                 else
-                    this.codeElements.Insert(index.Value, element);
+                    codeElements.Insert(index.Value, element);
             }
         }
 
@@ -56,8 +54,8 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="index">Position of the element to remove.</param>
         public void RemoveAt(int index)
         {
-            lock (this.codeElementsLock)
-                this.codeElements.RemoveAt(index);
+            lock (codeElementsLock)
+                codeElements.RemoveAt(index);
         }
 
         /// <summary>
@@ -66,12 +64,12 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="state"></param>
         public void Execute(GameState state)
         {
-            lock (this.codeElementsLock)
+            lock (codeElementsLock)
             {
-                if (!this.codeElements.Any())
+                if (!codeElements.Any())
                     return;
-                
-                foreach (BaseCodeElement element in this.codeElements)
+
+                foreach (var element in codeElements)
                 {
                     element.Execute(state, hero);
                 }

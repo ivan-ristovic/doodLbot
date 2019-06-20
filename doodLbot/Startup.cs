@@ -1,4 +1,4 @@
-using doodLbot.Hubs;
+﻿using doodLbot.Hubs;
 using doodLbot.Logic;
 
 using Microsoft.AspNetCore.Builder;
@@ -19,13 +19,14 @@ namespace SignalRChat
 
         public Startup(IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            Configuration = configuration;
         }
 
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options => {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
@@ -38,9 +39,12 @@ namespace SignalRChat
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment()) {
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
-            } else {
+            }
+            else
+            {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
@@ -48,7 +52,8 @@ namespace SignalRChat
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseSignalR(routes => {
+            app.UseSignalR(routes =>
+            {
                 routes.MapHub<ChatHub>("/chatHub");
                 routes.MapHub<GameHub>("/gameHub");
             });

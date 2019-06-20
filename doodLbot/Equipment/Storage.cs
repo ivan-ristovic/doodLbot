@@ -1,10 +1,7 @@
-using doodLbot.Entities.CodeElements.ConditionElements;
-using doodLbot.Logic;
-
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 using System.Linq;
-
+using doodLbot.Entities.CodeElements;
+using Newtonsoft.Json;
 
 namespace doodLbot.Equipment
 {
@@ -19,12 +16,6 @@ namespace doodLbot.Equipment
             public int Count;
         }
 
-        public static Entities.CodeElements.BaseCodeElement GetCodeElement(T element)
-        {
-            if (typeof(T).Equals(typeof(Entities.CodeElements.BaseCodeElement)))
-                return (Entities.CodeElements.BaseCodeElement)(object)element;
-            return new Entities.CodeElements.IdleElement();
-        }
 
         [JsonProperty("items")]
         public List<ShopEntry> Items;

@@ -36,29 +36,29 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="elseBlock"></param>
         public BranchingElement(BaseConditionElement condition = null, CodeBlockElement thenBlock = null, CodeBlockElement elseBlock = null)
         {
-            this.Cost = Design.CostBranching;
-            this.Condition = condition;
-            this.ThenBlock = thenBlock ?? new CodeBlockElement();
-            this.ElseBlock = elseBlock ?? new CodeBlockElement();
+            Cost = Design.CostBranching;
+            Condition = condition;
+            ThenBlock = thenBlock ?? new CodeBlockElement();
+            ElseBlock = elseBlock ?? new CodeBlockElement();
         }
 
         protected override bool OnExecute(GameState state, Hero hero)
         {
-            if (Condition == null)
+            if (Condition is null)
             {
                 return true;
             }
 
-            if (this.Condition.Evaluate(state, hero))
+            if (Condition.Evaluate(state, hero))
             {
-                if (this.ThenBlock != null)
+                if (!(ThenBlock is null))
                 {
-                    return this.ThenBlock.Execute(state, hero);
+                    return ThenBlock.Execute(state, hero);
                 }
             }
-            else if (this.ElseBlock != null)
+            else if (!(ElseBlock is null))
             {
-                return this.ElseBlock.Execute(state, hero);
+                return ElseBlock.Execute(state, hero);
             }
 
             return true;

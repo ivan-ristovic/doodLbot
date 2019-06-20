@@ -1,9 +1,7 @@
-﻿using doodLbot.Entities;
+﻿using System.Threading.Tasks;
+using doodLbot.Entities;
 using doodLbot.Entities.CodeElements;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace doodLbot.Tests.Entities.CodeElements
 {
@@ -38,7 +36,8 @@ namespace doodLbot.Tests.Entities.CodeElements
                 algorithm.Insert(new ShootElement());
 
             var tasks = new Task[count];
-            for (int i = 0; i < tasks.Length; i++) {
+            for (int i = 0; i < tasks.Length; i++)
+            {
                 var element = new ShootElement();
                 tasks[i] = Task.Run(() => algorithm.RemoveAt(0));
             }

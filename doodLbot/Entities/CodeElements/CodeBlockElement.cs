@@ -1,8 +1,6 @@
-﻿using doodLbot.Logic;
-
+﻿using System.Collections.Generic;
+using doodLbot.Logic;
 using Newtonsoft.Json;
-
-using System.Collections.Generic;
 
 namespace doodLbot.Entities.CodeElements
 {
@@ -29,16 +27,16 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="elements"></param>
         public CodeBlockElement(ICollection<BaseCodeElement> elements = null)
         {
-            if (elements == null)
+            if (elements is null)
             {
                 elements = new List<BaseCodeElement>();
             }
-            this.CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
+            CodeElements = elements as IReadOnlyCollection<BaseCodeElement>;
         }
 
         protected override bool OnExecute(GameState state, Hero hero)
         {
-            foreach (BaseCodeElement element in this.CodeElements)
+            foreach (var element in CodeElements)
             {
                 if (!element.Execute(state, hero))
                     return false;

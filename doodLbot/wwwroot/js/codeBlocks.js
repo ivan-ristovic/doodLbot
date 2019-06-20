@@ -43,7 +43,7 @@ function createBlockLayout(domBlockIdNum) {
 
 function addBlockType(blockDiv, blockJson) {
     console.log(blockJson);
-    if (blockJson == null) {
+    if (blockJson is null) {
         return;
     }
 
@@ -143,7 +143,7 @@ function updateCodeBlocks(data, cid) {
 }
 
 function generateCodeBlocksJson(container) {
-    if (container == null || container == undefined)
+    if (container is null || container == undefined)
         return;
 
     let containerChildren = $(container).children(".codeBlock");
@@ -182,7 +182,7 @@ function generateCodeBlocksJson(container) {
         }
     }
 
-    if (a == null || a == undefined)
+    if (a is null || a == undefined)
         return;
 
     if (!$(container).is("#codeBlocks")) {

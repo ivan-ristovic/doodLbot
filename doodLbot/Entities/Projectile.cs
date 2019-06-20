@@ -10,7 +10,7 @@ namespace doodLbot.Entities
     {
         private readonly double angleRandom = Math.PI * 2 / 30;
         private readonly double speedRandom = .1;
-        private static Random random = new Random();
+        private static readonly Random random = new Random();
 
         /// <summary>
         /// Constructs a new projectile.
@@ -25,8 +25,8 @@ namespace doodLbot.Entities
             angle += random.NextDouble() * angleRandom - angleRandom / 2;
             speed += random.NextDouble() * speedRandom - speedRandom / 2;
             Log.Debug(random.NextDouble().ToString());
-            this.Xvel = Math.Cos(angle) * speed;
-            this.Yvel = Math.Sin(angle) * speed;
+            Xvel = Math.Cos(angle) * speed;
+            Yvel = Math.Sin(angle) * speed;
         }
     }
 }

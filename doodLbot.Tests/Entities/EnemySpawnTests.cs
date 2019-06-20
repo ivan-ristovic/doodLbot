@@ -1,8 +1,6 @@
+﻿using System;
 using doodLbot.Entities;
-
 using NUnit.Framework;
-
-using System;
 
 namespace doodLbotTests.Entities
 {
@@ -15,15 +13,16 @@ namespace doodLbotTests.Entities
             var rnd = new Random();
             const double maxValue = 100d;
 
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1000; i++)
+            {
                 double radius = rnd.NextDouble() * maxValue + 1d;
-                (double Xpos, double Ypos) hero = (rnd.NextDouble() * maxValue, rnd.NextDouble() * maxValue);
+                (double Xpos, double Ypos) = (rnd.NextDouble() * maxValue, rnd.NextDouble() * maxValue);
 
-                var enemy = Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, radius, 0);
+                var enemy = Enemy.Spawn<Kamikaze>(Xpos, Ypos, radius, 0);
                 Assert.IsNotNull(enemy);
-                
-                Assert.LessOrEqual(Math.Abs(enemy.Xpos - hero.Xpos), radius);
-                Assert.LessOrEqual(Math.Abs(enemy.Ypos - hero.Ypos), radius);
+
+                Assert.LessOrEqual(Math.Abs(enemy.Xpos - Xpos), radius);
+                Assert.LessOrEqual(Math.Abs(enemy.Ypos - Ypos), radius);
             }
         }
     }
