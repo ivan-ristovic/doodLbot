@@ -17,11 +17,13 @@ namespace doodLbot.Entities.CodeElements
 
         protected override bool OnExecute(GameState state, Hero hero)
         {
-            if (!Target(state, hero)) {
+            if (!this.Target(state, hero)) {
+                hero.IsControlledByAlgorithm = false;
                 hero.UpdateControls(ConsoleKey.S, false);
                 return false;
             }
             hero.UpdateControls(ConsoleKey.S, true);
+            hero.IsControlledByAlgorithm = true;
             return true;
         }
     }

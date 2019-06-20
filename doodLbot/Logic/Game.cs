@@ -120,6 +120,7 @@ namespace doodLbot.Logic
             foreach (Hero h in this.heroes)
             {
                 h.Move(delta);
+                h.IsControlledByAlgorithm = false;
                 h.Algorithm.Execute(this.GameState);
             }
 

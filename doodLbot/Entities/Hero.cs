@@ -37,6 +37,9 @@ namespace doodLbot.Entities
         public bool HasGearChanged { get; set; }
 
         [JsonIgnore]
+        public bool IsControlledByAlgorithm { get; set; }
+
+        [JsonIgnore]
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
         [JsonProperty("gear")]
@@ -270,7 +273,7 @@ namespace doodLbot.Entities
                 this.Xvel = -Math.Cos(this.Rotation) * velocity;
                 this.Yvel = -Math.Sin(this.Rotation) * velocity;
             }
-            if (!this.controls.IsForward && !this.controls.IsBackward)
+            if (!this.controls.IsForward && !this.controls.IsBackward && !this.IsControlledByAlgorithm)
             {
                 this.Xvel = 0;
                 this.Yvel = 0;

@@ -1,8 +1,7 @@
-using doodLbot.Entities.CodeElements.ConditionElements;
-using doodLbot.Logic;
 using doodLbot.Entities.CodeElements;
+using doodLbot.Entities.CodeElements.ConditionElements;
+
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace doodLbot.Equipment
 {
@@ -11,12 +10,14 @@ namespace doodLbot.Equipment
     {
         public CodeStorage()
         {
-            Items = new List<ShopEntry>();
-            Items.Add(new ShopEntry{Element = new ShootElement(), Count = 0});
-            Items.Add(new ShopEntry{Element = new BranchingElement(), Count = 0});
-            Items.Add(new ShopEntry{Element = new IdleElement(), Count = 0});
-            Items.Add(new ShopEntry{Element = new TargetElement(), Count = 0});
-            Items.Add(new ShopEntry{Element = new IsEnemyNearCondition(), Count = 0});
+            this.Items = new List<ShopEntry> {
+                new ShopEntry { Element = new ShootElement(), Count = 0 },
+                new ShopEntry { Element = new BranchingElement(), Count = 0 },
+                new ShopEntry { Element = new IdleElement(), Count = 0 },
+                new ShopEntry { Element = new TargetElement(), Count = 0 },
+                new ShopEntry { Element = new IsEnemyNearCondition(), Count = 0 },
+                new ShopEntry { Element = new MoveAwayFromElement(), Count = 0 }
+            };
         }
     }
 }
