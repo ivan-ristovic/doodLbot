@@ -37,6 +37,7 @@ let enemyTexture;
 let tilingBackground = null;
 let EnemySprites = [];
 let ProjectileSprites = [];
+let EnemyProjectileSprites = [];
 let EnemyHps = [];
 
 let Counter = function (id) {
@@ -101,13 +102,13 @@ class Entity {
         return healthBar;
     }
 
-    static updateHealthBar(x, y, hp, healthBar) {
+    static updateHealthBar(x, y, hp, max_hp, healthBar) {
         healthBar.position.set(
             x - healthBar.width / 2,
             y - healthBar.sprite.height / 2 - 15
         );
         let before = healthBar.outer.width;
-        healthBar.outer.width = (hp / 100) * healthBar.w;
+        healthBar.outer.width = (hp / max_hp) * healthBar.w;
         //console.log("hp=", hp, before, healthBar.outer.width);
     }
 }
@@ -196,32 +197,32 @@ function updateHeroName() {
 
 const halfPI = Math.PI / 2;
 
-function updateProjectiles() {
-    if (GAMESTATE.projectiles === undefined) return;
-    let numProjs = GAMESTATE.projectiles.length;
-    while (ProjectileSprites.length < numProjs) {
-        var textr = new Sprite(loader.resources["images/projectile.png"].texture);
+function updateProjectiles(projectiles, projectileSprites, spritePath = "images/projectile.png") {
+    if (projectiles === undefined) return;
+    let numProjs = projectiles.length;
+    while (projectileSprites.length < numProjs) {
+        var textr = new Sprite(loader.resources[spritePath].texture);
         textr.anchor.set(0.5, 0.5);
-        ProjectileSprites.push(textr);
+        projectileSprites.push(textr);
         app.stage.addChild(textr);
     }
-    let projectiles = GAMESTATE.projectiles;
+
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
 
     for (let i = 0; i < projectiles.length; i++) {
         let newx = projectiles[i].x + speedMul * projectiles[i].vx;
         let newy = projectiles[i].y + speedMul * projectiles[i].vy;
-        ProjectileSprites[i].position.set(newx, newy);
-        ProjectileSprites[i].visible = true;
+        projectileSprites[i].position.set(newx, newy);
+        projectileSprites[i].visible = true;
         let ang = Math.atan2(projectiles[i].vy, projectiles[i].vx);
-        ProjectileSprites[i].rotation = ang
+        projectileSprites[i].rotation = ang
     }
 
-    for (let i = projectiles.length; i < ProjectileSprites.length; i++) {
-        if (ProjectileSprites[i].visible === false) {
+    for (let i = projectiles.length; i < projectileSprites.length; i++) {
+        if (projectileSprites[i].visible === false) {
             break;
         }
-        ProjectileSprites[i].visible = false;
+        projectileSprites[i].visible = false;
     }
 }
 
@@ -252,7 +253,7 @@ function updateEnemies() {
         EnemySprites[i].visible = true;
         EnemySprites[i].tint = tintFromDistance(newx, playerToAttack.position.x, newy, playerToAttack.position.y);
         EnemyHps[i].visible = true;
-        Entity.updateHealthBar(newx, newy, enemies[i].hp, EnemyHps[i]);
+        Entity.updateHealthBar(newx, newy, enemies[i].hp, enemies[i].max_hp, EnemyHps[i]);
     }
 
     // if there are now less enemies than there are sprites, then don't draw them and don't draw their hp bar
@@ -384,7 +385,7 @@ function updateHeroes(delta) {
 
         heroToUpdate.heroGroup.position.set(newx, newy);
         heroToUpdate.heroGroup.rotation = hero.rotation;
-        Entity.updateHealthBar(newx, newy, hero.hp, heroToUpdate.healthBarGroup);
+        Entity.updateHealthBar(newx, newy, hero.hp, 100, heroToUpdate.healthBarGroup);
         heroToUpdate.nameGroup.position.set(newx - 40, newy + 60);
         heroToUpdate.pts = hero.pts
     }
@@ -504,6 +505,7 @@ loader
         "images/particle.png",
         "images/enemy.png",
         "images/projectile.png",
+        "images/projectile2.png",
         "images/hoverboard.png"
 
     ])
@@ -571,7 +573,8 @@ function play(delta) {
     updateHeroes(delta);
     updateHud();
     updateEnemies();
-    updateProjectiles();
+    updateProjectiles(GAMESTATE.enemyProjectiles, EnemyProjectileSprites, "images/projectile2.png");
+    updateProjectiles(GAMESTATE.projectiles, ProjectileSprites);
     moveMap();
     FramesSinceLastUpdate++;
     GAMESTATE.update(UPDATES_FOR_BACKEND);

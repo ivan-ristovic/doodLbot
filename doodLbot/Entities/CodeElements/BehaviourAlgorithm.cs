@@ -73,8 +73,7 @@ namespace doodLbot.Entities.CodeElements
                 
                 foreach (BaseCodeElement element in this.codeElements)
                 {
-                    if (!element.Execute(state, hero))
-                        return;
+                    element.Execute(state, hero);
                 }
             }
         }

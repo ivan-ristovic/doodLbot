@@ -12,7 +12,7 @@ namespace doodLbot.Entities
         private readonly RateLimiter shootingLimiter;
 
 
-        public Shooter() : base(hp: 150, damage: 10, speed: Design.EnemySpeed)
+        public Shooter() : base(max_hp: 150, hp: 150, damage: 10, speed: Design.EnemySpeed)
         {
             this.shootingLimiter = new RateLimiter(TimeSpan.FromSeconds(3));
         }
@@ -25,7 +25,9 @@ namespace doodLbot.Entities
         public Projectile TryFire()
         {
             if (!this.shootingLimiter.IsCooldownActive())
-                return new Projectile(this.Xpos, this.Ypos, this.Rotation, Design.ProjectileSpeed, this.Damage);
+            {
+                return new Projectile(this.Xpos, this.Ypos, Math.Atan2(this.Yvel, this.Xvel), Design.ProjectileSpeed * Design.Delta, this.Damage);
+            }
             else
                 return null;
         }

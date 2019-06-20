@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 var codeInventory;
 var equipmentInventory;
@@ -16,7 +16,9 @@ let buySellEquip = (item, count, type, cost) => {
         if (hero.pts < cost)
             return;
         count++;
-        $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
+        $(this).parent().parent().children(".elementTitle").text(item);
+        $(this).parent().parent().children(".elementDetails").children(".elementCount").text("#" + count);
+        $(this).parent().parent().children(".elementDetails").children(".elementCost").text(cost + "☉");
         type === "code" ? buyCodeServer(item) : buyGearServer(item);
         $("#pts")[0].innerHTML = hero.pts;
     }));
@@ -24,7 +26,9 @@ let buySellEquip = (item, count, type, cost) => {
         if (count <= 0)
             return;
         count--;
-        $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
+        $(this).parent().parent().children(".elementTitle").text(item);
+        $(this).parent().parent().children(".elementDetails").children(".elementCount").text("#" + count);
+        $(this).parent().parent().children(".elementDetails").children(".elementCost").text(cost + "☉");
         type === "code" ? sellCodeServer(item) : sellGearServer(item);
         $("#pts")[0].innerHTML = GAMESTATE.heroes[id - 1].pts;
     }));
@@ -33,29 +37,34 @@ let buySellEquip = (item, count, type, cost) => {
             if (count <= 0)
                 return;
             count--;
-            $(this).parent().parent().children(".elementTitle").text(item + " (" + count + ")");
+            $(this).parent().parent().children(".elementTitle").text(item);
+            $(this).parent().parent().children(".elementDetails").children(".elementCount").text("#" + count);
+            $(this).parent().parent().children(".elementDetails").children(".elementCost").text(cost + "☉");
             equipItemServer(item)
         }));;
     return container;
 };
 
-let instantiateShopItem = (element, count, type) => {
+let instantiateShopItem = (element, count, type, cost) => {
     return $("<div />")
         .addClass("shopItem")
         .addClass(element.name)
-        .append($("<div />").addClass("elementTitle").text(element.name + " (" + count + ")"))
+        .append($("<div />").addClass("elementTitle").text(element.name))
+        .append(($("<div />").addClass("elementDetails row"))
+            .append($("<div />").addClass("elementCount col-6").text("#" + count))
+            .append($("<div />").addClass("elementCost  col-6").text(cost + "☉")))
         .append(buySellEquip(element.name, count, type, element.cost));
 };
 
 function updateShop() {
     for (let i in codeInventory.items) {
         let block = codeInventory.items[i];
-        $("#codeBlocksShop").append(instantiateShopItem(block.element, block.count, "code"));
+        $("#codeBlocksShop").append(instantiateShopItem(block.element, block.count, "code", block.element.cost));
     }
 
     for (let i in equipmentInventory.items) {
         let item = equipmentInventory.items[i];
-        $("#gearShop").append(instantiateShopItem(item.element, item.count, "inventory"));
+        $("#gearShop").append(instantiateShopItem(item.element, item.count, "inventory", item.element.cost));
     }
 }
 

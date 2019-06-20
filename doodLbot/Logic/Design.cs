@@ -40,12 +40,15 @@ namespace doodLbot.Logic
         public static int CostTarget;
         public static int CostIsNear;
 
+        public static double Delta { get; set; }
+
         static Design()
         {
             TickRate = 30;
 
             // all speeds are calculated relative to the 50 tickrate
             double adjust = 50 / TickRate;
+            Delta = 1;
 
             ProjectileSpeed = 6 * adjust;
             HeroSpeed = 5 * adjust;

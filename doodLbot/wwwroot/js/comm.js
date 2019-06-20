@@ -15,7 +15,7 @@ function sendUpdateToServer(update) {
 
 // HERO => SERVER
 function sendHeartbeatToServer(id) {
-    console.log("sending heartbeat to server", id);
+    //console.log("sending heartbeat to server", id);
     sendToServer("heartbeat", id);
 }
 

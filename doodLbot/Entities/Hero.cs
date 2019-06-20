@@ -37,9 +37,6 @@ namespace doodLbot.Entities
         public bool HasGearChanged { get; set; }
 
         [JsonIgnore]
-        public bool IsControlledByAlgorithm { get; set; }
-
-        [JsonIgnore]
         public IReadOnlyCollection<Gear> Gear => this.gear;
 
         [JsonProperty("gear")]
@@ -61,6 +58,8 @@ namespace doodLbot.Entities
         private RateLimiter ShootRateLimiter;
 
         private readonly Controls controls;
+        private readonly Controls syntheticControls;
+
 
         private double baseHp;
         private double baseSpeed;
@@ -82,6 +81,7 @@ namespace doodLbot.Entities
             this.baseHp = this.Hp;
             this.ShootRateLimiter = new RateLimiter(Design.FireCooldown);
             this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
+            this.syntheticControls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
             CalculateStatsFromGear();
 
             // Configure a Timer for use
@@ -91,6 +91,13 @@ namespace doodLbot.Entities
             this.heartbeatTimer.Enabled = true;
             this.IsAlive = true;
             this.TimeOfLastHeartbeat = DateTime.Now;
+        }
+
+        public bool IsMoving => controls.IsMoving;
+
+        public void WipeSyntheticControls()
+        {
+            syntheticControls.Wipe();
         }
 
         public void CheckAliveness(Object sender, ElapsedEventArgs eventArgs)
@@ -253,36 +260,44 @@ namespace doodLbot.Entities
             this.controls.OnKey(key, isDown);
         }
 
+        internal void UpdateSyntheticControls(ConsoleKey key, bool isDown)
+        {
+            this.syntheticControls.OnKey(key, isDown);
+        }
+
         internal void UpdateStateWithControls(double delta)
         {
+            var controlWith = controls.IsMoving ? controls : syntheticControls;
+
             double rotationAmount = Design.RotateAmount * delta;
 
-            if (this.controls.IsFire)
+            if (controls.IsFire)
             {
-                this.TryFire(Design.ProjectileSpeed, Design.ProjectileDamage);
+                this.TryFire(Design.ProjectileSpeed*delta, Design.ProjectileDamage);
             }
+
             double velocity = this.Speed * delta;
-            if (this.controls.IsForward)
+            if (controlWith.IsForward)
             {
                 this.Xvel = Math.Cos(this.Rotation) * velocity;
                 this.Yvel = Math.Sin(this.Rotation) * velocity;
             }
-            if (this.controls.IsBackward)
+            if (controlWith.IsBackward)
             {
                 velocity *= Design.BackwardsSpeedRatio;
                 this.Xvel = -Math.Cos(this.Rotation) * velocity;
                 this.Yvel = -Math.Sin(this.Rotation) * velocity;
             }
-            if (!this.controls.IsForward && !this.controls.IsBackward && !this.IsControlledByAlgorithm)
+            if (!controlWith.IsForward && !controlWith.IsBackward)
             {
                 this.Xvel = 0;
                 this.Yvel = 0;
             }
-            if (this.controls.IsLeft)
+            if (controlWith.IsLeft)
             {
                 this.Rotation -= rotationAmount;
             }
-            if (this.controls.IsRight)
+            if (controlWith.IsRight)
             {
                 this.Rotation += rotationAmount;
             }

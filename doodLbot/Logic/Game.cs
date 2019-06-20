@@ -109,27 +109,38 @@ namespace doodLbot.Logic
         /// <param name="_">game object that is passed by the timer</param>
         private async Task GameTick(double delta)
         {
+            Design.Delta = delta < 0.0001 ? 1 : delta;
             if (!this.enemySpawnLimiter.IsCooldownActive())
             {
                 this.SpawnEnemy(Design.SpawnRange);
             }
-            this.UpdateStateWithControls(delta);
 
             RemoveDeadHeroes();
 
             foreach (Hero h in this.heroes)
             {
-                h.Move(delta);
-                h.IsControlledByAlgorithm = false;
                 h.Algorithm.Execute(this.GameState);
             }
 
+            this.UpdateStateWithControls(delta);
+
+            foreach (Hero h in this.heroes)
+            {
+                h.Move(delta);
+            }
             foreach (Enemy enemy in this.enemies)
             {
                 enemy.VelocityTowardsClosestEntity(this.heroes);
                 enemy.Move(delta);
                 if (enemy is Shooter shooter)
+                {
                     this.TryAddEnemyProjectile(shooter);
+                }
+            }
+
+            foreach (Projectile projectile in enemyProjectiles)
+            {
+                projectile.Move(delta);
             }
 
             foreach (Hero h in this.heroes)
@@ -146,6 +157,7 @@ namespace doodLbot.Logic
             await this.hubContext.SendUpdatesToClients(this.GameState);
             foreach (Hero h in this.heroes)
             {
+                h.WipeSyntheticControls();
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;

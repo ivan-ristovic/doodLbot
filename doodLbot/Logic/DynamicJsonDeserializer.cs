@@ -79,6 +79,9 @@ namespace doodLbot.Logic
                     case "TargetElement":
                         ret = new TargetElement();
                         break;
+                    case "MoveAwayFromElement":
+                        ret = new MoveAwayFromElement();
+                        break;
                     default:
                         ret = null;
                         break;

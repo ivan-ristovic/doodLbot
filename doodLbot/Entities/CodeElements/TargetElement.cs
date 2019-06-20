@@ -23,15 +23,21 @@ namespace doodLbot.Entities.CodeElements
 
         protected bool Target(GameState state, Hero hero)
         {
+
             if (!state.Enemies.Any()) {
                 return false;
             }
 
             var closest = state.Enemies.OrderBy(e => e.SquaredDist(hero)).First();
             double rotationToClosest = Math.Atan2(closest.Ypos - hero.Ypos, closest.Xpos - hero.Xpos);
-
-            if (Math.Abs(rotationToClosest - hero.Rotation) > Design.RotateAmount) {
-                hero.Rotation += (rotationToClosest > hero.Rotation) ? Design.RotateAmount : -Design.RotateAmount;
+            double rotAmount = Math.Abs(rotationToClosest - hero.Rotation) % (2*Math.PI);
+            if (rotAmount > Design.RotateAmount * Design.Delta) {
+                // convert to [-Pi, Pi] so that rotation direction can be known
+                double rotMinusPiToPi = (rotationToClosest - hero.Rotation) % (2 * Math.PI);
+                rotMinusPiToPi = rotMinusPiToPi > Math.PI ? -rotMinusPiToPi + Math.PI : 
+                    rotMinusPiToPi < -Math.PI ? -rotMinusPiToPi - Math.PI : rotMinusPiToPi;
+                var side = rotMinusPiToPi > 0 ? ConsoleKey.D : ConsoleKey.A;
+                hero.UpdateSyntheticControls(side, true);
                 return false;
             } else {
                 hero.Rotation = rotationToClosest;

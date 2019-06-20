@@ -31,7 +31,7 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
                 return false;
 
             foreach (Enemy enemy in enemies)
-                if (enemy.SquaredDist(hero) < Design.SpawnRange / 10)
+                if (enemy.SquaredDist(hero) < Design.SpawnRange * Design.SpawnRange)
                     return true;
 
             return false;
