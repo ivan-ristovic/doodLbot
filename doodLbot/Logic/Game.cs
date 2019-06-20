@@ -117,8 +117,8 @@ namespace doodLbot.Logic
 
             RemoveDeadHeroes();
 
-            foreach (Hero h in this.heroes)
-            {
+            foreach (Hero h in this.heroes) {
+                h.IsControlledByAlgorithm = false;
                 h.Algorithm.Execute(this.GameState);
             }
 

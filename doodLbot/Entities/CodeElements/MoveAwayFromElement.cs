@@ -19,10 +19,12 @@ namespace doodLbot.Entities.CodeElements
         {
             if (!Target(state, hero))
             {
+                hero.IsControlledByAlgorithm = false;
                 hero.UpdateSyntheticControls(ConsoleKey.S, false);
                 return false;
             }
             hero.UpdateSyntheticControls(ConsoleKey.S, true);
+            hero.IsControlledByAlgorithm = true;
             return true;
         }
     }

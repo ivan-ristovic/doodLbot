@@ -34,6 +34,9 @@ namespace doodLbot.Entities
         public bool HasCodeChanged { get; set; }
 
         [JsonIgnore]
+        public bool IsControlledByAlgorithm { get; set; }
+
+        [JsonIgnore]
         public bool HasGearChanged { get; set; }
 
         [JsonIgnore]
