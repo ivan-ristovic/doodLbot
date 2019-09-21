@@ -1,17 +1,14 @@
-﻿using doodLbot.Common;
-using doodLbot.Entities;
-using doodLbot.Entities.CodeElements;
-using doodLbot.Entities.CodeElements.ConditionElements;
-using doodLbot.Extensions;
-using doodLbot.Hubs;
-
-using Microsoft.AspNetCore.SignalR;
-using Serilog;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using doodLbot.Common;
+using doodLbot.Entities;
+using doodLbot.Extensions;
+using doodLbot.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace doodLbot.Logic
 {
@@ -28,9 +25,9 @@ namespace doodLbot.Logic
         private static System.Diagnostics.Stopwatch Watch = System.Diagnostics.Stopwatch.StartNew();
 
 
-        public GameState GameState => new GameState(this.heroes, this.enemies, this.EnemyProjectiles);
+        public GameState GameState => new GameState(heroes, enemies, EnemyProjectiles);
 
-        public IReadOnlyCollection<Projectile> EnemyProjectiles => this.enemyProjectiles;
+        public IReadOnlyCollection<Projectile> EnemyProjectiles => enemyProjectiles;
 
         private Task gameLoopTask;
         private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
@@ -47,16 +44,16 @@ namespace doodLbot.Logic
         /// <param name="hctx"></param>
         public Game(IHubContext<GameHub> hctx)
         {
-            this.heroes = new ConcurrentHashSet<Hero>();
-            this.enemies = new HashSet<Enemy>();
-            this.hubContext = hctx;
-            this.enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
-            this.gameLoopCTS = new CancellationTokenSource();
+            heroes = new ConcurrentHashSet<Hero>();
+            enemies = new HashSet<Enemy>();
+            hubContext = hctx;
+            enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
+            gameLoopCTS = new CancellationTokenSource();
         }
 
         ~Game()
         {
-            this.Dispose();
+            Dispose();
         }
 
         public Hero AddNewHero()
@@ -68,23 +65,23 @@ namespace doodLbot.Logic
             // Update hero Id for the next hero that comes to the game.
             Interlocked.Increment(ref currentHeroId);
 
-            this.heroes.Add(hero);
+            heroes.Add(hero);
 
             //this.SpawnEnemy(Design.SpawnRange);
 
-            if (this.heroes.Count == 1)
+            if (heroes.Count == 1)
             {
-                this.gameLoopTask = Task.Run(async () =>
+                gameLoopTask = Task.Run(async () =>
                 {
-                    while (!this.gameLoopCTS.IsCancellationRequested)
+                    while (!gameLoopCTS.IsCancellationRequested)
                     {
                         var ExecWatch = System.Diagnostics.Stopwatch.StartNew();
                         Watch.Stop();
                         var mss = Watch.ElapsedMilliseconds;
                         Watch = System.Diagnostics.Stopwatch.StartNew();
-                        double delta = mss / RefreshTimeSpan.TotalMilliseconds;
+                        var delta = mss / RefreshTimeSpan.TotalMilliseconds;
 
-                        await this.GameTick(delta);
+                        await GameTick(delta);
                         ExecWatch.Stop();
                         var ms = ExecWatch.ElapsedMilliseconds;
                         //Thread.Sleep(RefreshTimeSpan);
@@ -99,8 +96,8 @@ namespace doodLbot.Logic
 
         public void Dispose()
         {
-            this.gameLoopCTS.Cancel();
-            this.gameLoopCTS.Dispose();
+            gameLoopCTS.Cancel();
+            gameLoopCTS.Dispose();
         }
 
         /// <summary>
@@ -110,58 +107,58 @@ namespace doodLbot.Logic
         private async Task GameTick(double delta)
         {
             Design.Delta = delta < 0.0001 ? 1 : delta;
-            if (!this.enemySpawnLimiter.IsCooldownActive())
+            if (!enemySpawnLimiter.IsCooldownActive())
             {
-                this.SpawnEnemy(Design.SpawnRange);
+                SpawnEnemy(Design.SpawnRange);
             }
 
             RemoveDeadHeroes();
 
-            foreach (Hero h in this.heroes) {
+            foreach (var h in heroes) {
                 h.IsControlledByAlgorithm = false;
-                h.Algorithm.Execute(this.GameState);
+                h.Algorithm.Execute(GameState);
             }
 
-            this.UpdateStateWithControls(delta);
+            UpdateStateWithControls(delta);
 
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
                 h.Move(delta);
             }
-            foreach (Enemy enemy in this.enemies)
+            foreach (var enemy in enemies)
             {
-                enemy.VelocityTowardsClosestEntity(this.heroes);
+                enemy.VelocityTowardsClosestEntity(heroes);
                 enemy.Move(delta);
                 if (enemy is Shooter shooter)
                 {
-                    this.TryAddEnemyProjectile(shooter);
+                    TryAddEnemyProjectile(shooter);
                 }
             }
 
-            foreach (Projectile projectile in enemyProjectiles)
+            foreach (var projectile in enemyProjectiles)
             {
                 projectile.Move(delta);
             }
 
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
-                foreach (Projectile projectile in h.Projectiles)
+                foreach (var projectile in h.Projectiles)
                 {
                     projectile.Move(delta);
                 }
             }
 
-            this.CheckForCollisionsAndUpdateGame();
-            this.RemoveProjectilesOutsideOfMap();
+            CheckForCollisionsAndUpdateGame();
+            RemoveProjectilesOutsideOfMap();
 
-            await this.hubContext.SendUpdatesToClients(this.GameState);
-            foreach (Hero h in this.heroes)
+            await hubContext.SendUpdatesToClients(GameState);
+            foreach (var h in heroes)
             {
                 h.WipeSyntheticControls();
                 if (h.HasCodeChanged)
                 {
                     h.HasCodeChanged = false;
-                    await this.hubContext.SendCodeUpdate(h.Algorithm, h.Id);
+                    await hubContext.SendCodeUpdate(h.Algorithm, h.Id);
                 }
             }
         }
@@ -172,11 +169,11 @@ namespace doodLbot.Logic
         /// <param name="inRange"></param>
         public void RemoveDeadHeroes()
         {
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
                 if (!h.IsAlive)
                 {
-                    this.heroes.TryRemove(h);
+                    heroes.TryRemove(h);
                 }
             }
         }
@@ -188,10 +185,10 @@ namespace doodLbot.Logic
         public void SpawnEnemy(double inRange)
         {
             // TODO make this to work nicely whith multiplayer - create only one enemy
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
-                this.enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
-                this.enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
             }
         }
 
@@ -201,10 +198,10 @@ namespace doodLbot.Logic
         /// <param name="update"></param>
         public void UpdateControls(GameStateUpdate update)
         {
-            Hero h = GetHeroById(update.Id);
+            var h = GetHeroById(update.Id);
             if (h != null)
             {
-                foreach ((ConsoleKey key, bool isDown) in update.KeyPresses)
+                foreach ((var key, var isDown) in update.KeyPresses)
                     h.UpdateControls(key, isDown);
             }
         }
@@ -215,7 +212,7 @@ namespace doodLbot.Logic
         /// <param name="id">Id of the Hero</param>
         public Hero GetHeroById(int id)
         {
-            return this.heroes.SingleOrDefault(h => h.Id == id);
+            return heroes.SingleOrDefault(h => h.Id == id);
         }
 
         /// <summary>
@@ -224,7 +221,7 @@ namespace doodLbot.Logic
         /// <param name="delta">relative delta time</param>
         public void UpdateStateWithControls(double delta)
         {
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
                 h.UpdateStateWithControls(delta);
             }
@@ -232,8 +229,8 @@ namespace doodLbot.Logic
 
         private void CheckForCollisionsAndUpdateGame()
         {
-            this.CheckCollisionEnemyHero();
-            this.CheckCollisionEnemyProjectile();
+            CheckCollisionEnemyHero();
+            CheckCollisionEnemyProjectile();
         }
 
 
@@ -241,11 +238,11 @@ namespace doodLbot.Logic
 
         private void CheckCollisionEnemyProjectile()
         {
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
-                IReadOnlyList<(Entity Collider1, Entity Collider2)> collisions = CollisionCheck.GetCollisions(this.enemies, h.Projectiles);
+                IReadOnlyList<(Entity Collider1, Entity Collider2)> collisions = CollisionCheck.GetCollisions(enemies, h.Projectiles);
 
-                foreach ((Entity Collider1, Entity Collider2) in collisions)
+                foreach ((var Collider1, var Collider2) in collisions)
                 {
                     var enemy = Collider1 as Enemy;
                     var projectile = Collider2 as Projectile;
@@ -255,7 +252,7 @@ namespace doodLbot.Logic
                     // Removing projectile and enemy (if it's dead)
                     if (enemy.Hp <= 0)
                     {
-                        this.enemies.Remove(enemy);
+                        enemies.Remove(enemy);
                         h.Points += (int)Math.Ceiling(enemy.Damage);
                     }
 
@@ -266,19 +263,19 @@ namespace doodLbot.Logic
 
         private void CheckCollisionEnemyHero()
         {
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
                 var heroList = new List<Entity> { h };
-                IReadOnlyList<(Entity, Entity)> collisionsWithHero = CollisionCheck.GetCollisions(heroList, this.enemies);
+                var collisionsWithHero = CollisionCheck.GetCollisions(heroList, enemies);
 
-                foreach ((Entity Collider1, Entity Collider2) in collisionsWithHero)
+                foreach ((var Collider1, var Collider2) in collisionsWithHero)
                 {
                     var hero = Collider1 as Hero;
                     var enemy = Collider2 as Enemy;
                     enemy.DecreaseHealthPoints(hero.Damage);
 
                     // Remove kamikaze from the game
-                    this.enemies.Remove(enemy);
+                    enemies.Remove(enemy);
 
                     h.DecreaseHealthPoints(enemy.Damage);
                 }
@@ -287,10 +284,10 @@ namespace doodLbot.Logic
 
         private void RemoveProjectilesOutsideOfMap()
         {
-            foreach (Hero h in this.heroes)
+            foreach (var h in heroes)
             {
-                IReadOnlyCollection<Projectile> projectiles = h.Projectiles;
-                foreach (Projectile p in projectiles)
+                var projectiles = h.Projectiles;
+                foreach (var p in projectiles)
                 {
                     if (p.IsOutsideBounds(Design.MapSize))
                     {
@@ -308,11 +305,11 @@ namespace doodLbot.Logic
                 }
             }
 
-            foreach (Projectile p in this.EnemyProjectiles)
+            foreach (var p in EnemyProjectiles)
             {
                 if (p.IsOutsideBounds(Design.MapSize))
                 {
-                    if (this.TryRemoveEnemyProjectile(p))
+                    if (TryRemoveEnemyProjectile(p))
                     {
                         //Log.Debug($"Removed projectile on location: " +
                         //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
@@ -328,12 +325,12 @@ namespace doodLbot.Logic
 
         public bool TryAddEnemyProjectile(Shooter shooter)
         {
-            Projectile p = shooter.TryFire();
-            return p != null && this.enemyProjectiles.Add(p);
+            var p = shooter.TryFire();
+            return p != null && enemyProjectiles.Add(p);
         }
 
         public bool TryRemoveEnemyProjectile(Projectile p)
-            => this.enemyProjectiles.TryRemove(p);
+            => enemyProjectiles.TryRemove(p);
 
         #endregion
     }

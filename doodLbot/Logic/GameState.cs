@@ -1,10 +1,7 @@
-﻿using doodLbot.Common;
-using doodLbot.Entities;
-
-using Newtonsoft.Json;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using doodLbot.Entities;
+using Newtonsoft.Json;
 
 namespace doodLbot.Logic
 {
@@ -32,10 +29,10 @@ namespace doodLbot.Logic
         /// <param name="enemies"></param>
         public GameState(IReadOnlyCollection<Hero> heroes, IReadOnlyCollection<Enemy> enemies, IReadOnlyCollection<Projectile> enemyProjectiles)
         {
-            this.Heroes = heroes.OrderBy(x=>x.Id).ToList();
-            this.Projectiles = heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
-            this.Enemies = enemies;
-            this.EnemyProjectiles = enemyProjectiles;
+            Heroes = heroes.OrderBy(x=>x.Id).ToList();
+            Projectiles = heroes.SelectMany(h => h.Projectiles).ToList().AsReadOnly();
+            Enemies = enemies;
+            EnemyProjectiles = enemyProjectiles;
         }
     }
 }

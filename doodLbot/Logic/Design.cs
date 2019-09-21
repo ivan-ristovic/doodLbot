@@ -1,5 +1,5 @@
-﻿using doodLbot.Equipment;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using doodLbot.Equipment;
 
 namespace doodLbot.Logic
 {
@@ -47,7 +47,7 @@ namespace doodLbot.Logic
             TickRate = 30;
 
             // all speeds are calculated relative to the 50 tickrate
-            double adjust = 50 / TickRate;
+            var adjust = 50 / TickRate;
             Delta = 1;
 
             ProjectileSpeed = 6 * adjust;
@@ -85,8 +85,10 @@ namespace doodLbot.Logic
         private static void PopulateGearList()
         {
             GearDict = new Dictionary<string, Gear>();
-            var item = new Armor("hoverboard", 40, 5);
-            item.IsVisible = true;
+            var item = new Armor("hoverboard", 40, 5)
+            {
+                IsVisible = true
+            };
             GearDict.Add("hoverboard", item);
             GearDict.Add("hoverboard2", new Armor("hoverboard2", 1, 2));
             GearDict.Add("hoverboard3", new Armor("hoverboard3", 4, 5));

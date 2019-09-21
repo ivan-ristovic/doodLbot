@@ -15,8 +15,8 @@ namespace doodLbotTests.Entities
             var rnd = new Random();
             const double maxValue = 100d;
 
-            for (int i = 0; i < 1000; i++) {
-                double radius = rnd.NextDouble() * maxValue + 1d;
+            for (var i = 0; i < 1000; i++) {
+                var radius = rnd.NextDouble() * maxValue + 1d;
                 (double Xpos, double Ypos) hero = (rnd.NextDouble() * maxValue, rnd.NextDouble() * maxValue);
 
                 var enemy = Enemy.Spawn<Kamikaze>(hero.Xpos, hero.Ypos, radius, 0);

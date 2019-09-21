@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace doodLbot.Logic
 {
@@ -11,21 +11,19 @@ namespace doodLbot.Logic
     public sealed class GameStateUpdate
     {
         public TimeSpan TimeSinceLastUpdate { get; }
-        public IReadOnlyList<(ConsoleKey key, bool isDown)> KeyPresses => this.keyPresses.AsReadOnly();
-        public IReadOnlyList<object> ActionsPerformed => this.actionsPerformed.AsReadOnly();
-        public int Id => this.id;
+        public IReadOnlyList<(ConsoleKey key, bool isDown)> KeyPresses => keyPresses.AsReadOnly();
+        public IReadOnlyList<object> ActionsPerformed => actionsPerformed.AsReadOnly();
+        public int Id { get; }
 
         private readonly List<(ConsoleKey key, bool isDown)> keyPresses;
         private readonly List<object> actionsPerformed;
-        private readonly int id;
-
 
         [JsonConstructor]
         public GameStateUpdate(int timeSinceLastSend, int[] keyPresses, object [] actions, int id)
         {
             this.keyPresses = keyPresses.Select((key) => ((ConsoleKey)Math.Abs(key), key >= 0)).ToList();
-            this.actionsPerformed = actions.ToList();
-            this.id = id;
+            actionsPerformed = actions.ToList();
+            Id = id;
         }
     }
 }

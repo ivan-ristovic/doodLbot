@@ -1,12 +1,10 @@
-﻿using doodLbot.Common;
+﻿using System.Collections.Generic;
+using doodLbot.Common;
+using doodLbot.Entities;
 using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
-
-using Newtonsoft.Json.Linq;
 using Microsoft.CSharp.RuntimeBinder;
-
-using System.Collections.Generic;
-using doodLbot.Entities;
+using Newtonsoft.Json.Linq;
 
 namespace doodLbot.Logic
 {
@@ -26,7 +24,7 @@ namespace doodLbot.Logic
             dynamic elements = jsonVal;
 
             var algorithm = new BehaviourAlgorithm(hero);
-            foreach (dynamic element in elements)
+            foreach (var element in elements)
                 algorithm.Insert(DeserializeCodeElementInternal(element));
 
             return algorithm;
@@ -45,7 +43,7 @@ namespace doodLbot.Logic
                         break;
                     case "CodeBlockElement":
                         var children = new List<BaseCodeElement>();
-                        foreach (dynamic child in element.elements)
+                        foreach (var child in element.elements)
                             children.Add(DeserializeCodeElementInternal(child));
                         ret = new CodeBlockElement(children);
                         break;
@@ -54,7 +52,7 @@ namespace doodLbot.Logic
                         var elseBlock = new List<BaseCodeElement>();
                         try
                         {
-                            foreach (dynamic child in element.@then.elements)
+                            foreach (var child in element.@then.elements)
                                 thenBlock.Add(DeserializeCodeElementInternal(child));
                         }
                         catch (RuntimeBinderException)
@@ -63,7 +61,7 @@ namespace doodLbot.Logic
 
                         try
                         {
-                            foreach (dynamic child in element.@else.elements)
+                            foreach (var child in element.@else.elements)
                                 elseBlock.Add(DeserializeCodeElementInternal(child));
                         }
                         catch (RuntimeBinderException)
@@ -86,7 +84,12 @@ namespace doodLbot.Logic
                         ret = null;
                         break;
                 }
-                ret.IsActive = element["isActive"];
+
+                if (element["isActive"] is JValue jv)
+                {
+                    ret.IsActive = (bool)jv.Value;
+                }
+
                 return ret;
             }
 

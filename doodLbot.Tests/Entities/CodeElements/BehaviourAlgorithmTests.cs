@@ -19,7 +19,7 @@ namespace doodLbot.Tests.Entities.CodeElements
             const int count = 100;
 
             var tasks = new Task[count];
-            for (int i = 0; i < tasks.Length; i++)
+            for (var i = 0; i < tasks.Length; i++)
                 tasks[i] = Task.Run(() => algorithm.Insert(new ShootElement()));
 
             await Task.WhenAll(tasks);
@@ -34,11 +34,11 @@ namespace doodLbot.Tests.Entities.CodeElements
             const int count = 100;
 
             var algorithm = new BehaviourAlgorithm(h);
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
                 algorithm.Insert(new ShootElement());
 
             var tasks = new Task[count];
-            for (int i = 0; i < tasks.Length; i++) {
+            for (var i = 0; i < tasks.Length; i++) {
                 var element = new ShootElement();
                 tasks[i] = Task.Run(() => algorithm.RemoveAt(0));
             }

@@ -19,7 +19,7 @@ namespace SignalRChat
 
         public Startup(IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            Configuration = configuration;
         }
 
         

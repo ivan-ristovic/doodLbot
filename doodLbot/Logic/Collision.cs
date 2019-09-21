@@ -1,8 +1,5 @@
-﻿using doodLbot.Entities;
-
-using Serilog;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using doodLbot.Entities;
 
 namespace doodLbot.Logic
 {
@@ -22,11 +19,11 @@ namespace doodLbot.Logic
             var collides = new List<(Entity Collider1, Entity Collider2)>();
             // TODO these radiuses are sometimes hero, figure out how to assign them correctly
             // (example: see if entity is hero, then hero radius, etc..)
-            double radius1 = Design.EnemyRadiusSize;
-            double radius2 = Design.ProjectileRadiusSize;
+            var radius1 = Design.EnemyRadiusSize;
+            var radius2 = Design.ProjectileRadiusSize;
 
-            foreach (Entity collider1 in colliders1) {
-                foreach (Entity collider2 in colliders2) {
+            foreach (var collider1 in colliders1) {
+                foreach (var collider2 in colliders2) {
                     if (IsColliding(collider2, collider1, radius1, radius2)) {
                         collides.Add((collider1, collider2));
                     }

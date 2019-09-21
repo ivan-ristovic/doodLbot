@@ -18,9 +18,9 @@ namespace doodLbot.Common
         /// <param name="cooldown">Time span after the cooldown will be reset.</param>
         public RateLimiter(TimeSpan timespan)
         {
-            this.cooldownTimeout = timespan;
-            this.resetTime = DateTimeOffset.UtcNow + this.cooldownTimeout;
-            this.cooldown = false;
+            cooldownTimeout = timespan;
+            resetTime = DateTimeOffset.UtcNow + cooldownTimeout;
+            cooldown = false;
         }
 
         /// <summary>
@@ -40,16 +40,16 @@ namespace doodLbot.Common
         /// <returns></returns>
         public bool IsCooldownActive()
         {
-            bool success = false;
+            var success = false;
 
             var now = DateTimeOffset.UtcNow;
-            if (now >= this.resetTime) {
-                this.cooldown = false;
-                this.resetTime = now + this.cooldownTimeout;
+            if (now >= resetTime) {
+                cooldown = false;
+                resetTime = now + cooldownTimeout;
             }
 
-            if (!this.cooldown) {
-                this.cooldown = true;
+            if (!cooldown) {
+                cooldown = true;
                 success = true;
             }
 

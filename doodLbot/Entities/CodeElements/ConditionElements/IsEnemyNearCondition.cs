@@ -14,7 +14,7 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         /// </summary>
         public IsEnemyNearCondition()
         {
-            this.Cost = Design.CostIsNear;
+            Cost = Design.CostIsNear;
         }
 
 
@@ -25,12 +25,12 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
 
         public override bool Evaluate(GameState state, Hero hero)
         {
-            IReadOnlyCollection<Enemy> enemies = state.Enemies;
+            var enemies = state.Enemies;
 
             if (!enemies?.Any() ?? false)
                 return false;
 
-            foreach (Enemy enemy in enemies)
+            foreach (var enemy in enemies)
                 if (enemy.SquaredDist(hero) < Design.SpawnRange * Design.SpawnRange)
                     return true;
 

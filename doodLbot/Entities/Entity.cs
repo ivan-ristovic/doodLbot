@@ -1,7 +1,5 @@
-﻿using doodLbot.Logic;
+﻿using System;
 using Newtonsoft.Json;
-
-using System;
 
 namespace doodLbot.Entities
 {
@@ -69,11 +67,11 @@ namespace doodLbot.Entities
         /// </summary>
         public Entity(double hp = 100, double max_hp = 100, double damage = 1, double speed = 0, double rotation = 0)
         {
-            this.Speed = speed;
-            this.Hp = hp;
-            this.MaxHp = hp;
-            this.Damage = damage;
-            this.Rotation = rotation;
+            Speed = speed;
+            Hp = hp;
+            MaxHp = hp;
+            Damage = damage;
+            Rotation = rotation;
         }
 
         /// <summary>
@@ -84,8 +82,8 @@ namespace doodLbot.Entities
         /// <param name="rotation">Entity's rotation amount (in radians)</param>
         public Entity(double x, double y, double speed = 0, double hp = 100, double max_hp = 100, double damage = 1, double rotation = 0) : this(hp, max_hp, damage, speed, rotation)
         {
-            this.Xpos = x;
-            this.Ypos = y;
+            Xpos = x;
+            Ypos = y;
         }
 
 
@@ -96,9 +94,9 @@ namespace doodLbot.Entities
         /// less if faster, more if slower</param>
         public void Move(double delta)
         {
-            this.Xpos += this.Xvel * delta;
-            this.Ypos += this.Yvel * delta;
-            this.OnMove();
+            Xpos += Xvel * delta;
+            Ypos += Yvel * delta;
+            OnMove();
         }
 
         /// <summary>
@@ -116,18 +114,18 @@ namespace doodLbot.Entities
         /// <param name="withSpeed"></param>
         public void VelocityTowards(Entity goal, double? withSpeed = null)
         {
-            double xvel = goal.Xpos - this.Xpos;
-            double yvel = goal.Ypos - this.Ypos;
-            double norm = Math.Sqrt(xvel * xvel + yvel * yvel);
+            var xvel = goal.Xpos - Xpos;
+            var yvel = goal.Ypos - Ypos;
+            var norm = Math.Sqrt(xvel * xvel + yvel * yvel);
             if (Math.Abs(norm) < 0.001)
             {
-                this.Xvel = 0;
-                this.Yvel = 0;
+                Xvel = 0;
+                Yvel = 0;
                 return;
             }
-            double speed = withSpeed ?? this.Speed;
-            this.Xvel = xvel / norm * speed;
-            this.Yvel = yvel / norm * speed;
+            var speed = withSpeed ?? Speed;
+            Xvel = xvel / norm * speed;
+            Yvel = yvel / norm * speed;
         }
 
         /// <summary>
@@ -136,8 +134,8 @@ namespace doodLbot.Entities
         /// <param name="value"></param>
         public virtual void DecreaseHealthPoints(double value)
         {
-            double newHp = this.Hp - value;
-            this.Hp = newHp > 0 ? newHp : 0;
+            var newHp = Hp - value;
+            Hp = newHp > 0 ? newHp : 0;
         }
 
         /// <summary>
@@ -147,7 +145,7 @@ namespace doodLbot.Entities
         /// <returns>Indicator if entity is out of bounds.</returns>
         public bool IsOutsideBounds((double X, double Y) bounds)
         {
-            return this.Xpos < 0 || this.Xpos > bounds.X || this.Ypos < 0 || this.Ypos > bounds.Y;
+            return Xpos < 0 || Xpos > bounds.X || Ypos < 0 || Ypos > bounds.Y;
         }
 
         /// <summary>
@@ -157,8 +155,8 @@ namespace doodLbot.Entities
         /// <returns>squared distance</returns>
         public double SquaredDist(Entity e)
         {
-            var x = e.Xpos - this.Xpos;
-            var y = e.Ypos - this.Ypos;
+            var x = e.Xpos - Xpos;
+            var y = e.Ypos - Ypos;
             return x * x + y * y;
         }
     }

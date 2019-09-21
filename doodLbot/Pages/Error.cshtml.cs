@@ -12,12 +12,12 @@ namespace SignalRChat.Pages
     {
         public string RequestId { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(this.RequestId);
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public void OnGet()
         {
-            this.RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier;
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
     }
 }

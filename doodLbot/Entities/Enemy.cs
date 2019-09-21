@@ -1,8 +1,6 @@
-﻿using doodLbot.Logic;
-using Serilog;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using doodLbot.Logic;
 
 namespace doodLbot.Entities
 {
@@ -29,11 +27,11 @@ namespace doodLbot.Entities
         {
             var rand = new Random();
             double xpos, ypos;
-            double r = maxRadius * 2;
-            double deg = rand.NextDouble() * 2 * Math.PI;
-            double dist = minRadius + (maxRadius - minRadius) * rand.NextDouble();
-            double dx = Math.Cos(deg) * dist;
-            double dy = Math.Sin(deg) * dist;
+            var r = maxRadius * 2;
+            var deg = rand.NextDouble() * 2 * Math.PI;
+            var dist = minRadius + (maxRadius - minRadius) * rand.NextDouble();
+            var dx = Math.Cos(deg) * dist;
+            var dy = Math.Sin(deg) * dist;
 
             xpos = heroX + dx;
             ypos = heroY + dy;
@@ -59,17 +57,17 @@ namespace doodLbot.Entities
         public void VelocityTowardsClosestEntity(IEnumerable<Entity> entities, double? withSpeed = null)
         {
             Entity goal = null;
-            double minDistanceSquared = double.MaxValue;
-            foreach (Entity e in entities)
+            var minDistanceSquared = double.MaxValue;
+            foreach (var e in entities)
             {
-                double currentDistanceSquared = CollisionCheck.DistanceSquared(e.Xpos, e.Ypos, this.Xpos, this.Ypos);
+                var currentDistanceSquared = CollisionCheck.DistanceSquared(e.Xpos, e.Ypos, Xpos, Ypos);
                 if (currentDistanceSquared < minDistanceSquared)
                 {
                     goal = e;
                     minDistanceSquared = currentDistanceSquared;
                 }
             }
-            this.VelocityTowards(goal, withSpeed);
+            VelocityTowards(goal, withSpeed);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using doodLbot.Common;
+﻿using System;
+using doodLbot.Common;
 using doodLbot.Logic;
-using System;
 
 namespace doodLbot.Entities
 {
@@ -14,7 +14,7 @@ namespace doodLbot.Entities
 
         public Shooter() : base(max_hp: 150, hp: 150, damage: 10, speed: Design.EnemySpeed)
         {
-            this.shootingLimiter = new RateLimiter(TimeSpan.FromSeconds(3));
+            shootingLimiter = new RateLimiter(TimeSpan.FromSeconds(3));
         }
 
 
@@ -24,9 +24,9 @@ namespace doodLbot.Entities
         /// <returns>The fired projectile or null if the firing cooldown is active.</returns>
         public Projectile TryFire()
         {
-            if (!this.shootingLimiter.IsCooldownActive())
+            if (!shootingLimiter.IsCooldownActive())
             {
-                return new Projectile(this.Xpos, this.Ypos, Math.Atan2(this.Yvel, this.Xvel), Design.ProjectileSpeed * Design.Delta, this.Damage);
+                return new Projectile(Xpos, Ypos, Math.Atan2(Yvel, Xvel), Design.ProjectileSpeed * Design.Delta, Damage);
             }
             else
                 return null;

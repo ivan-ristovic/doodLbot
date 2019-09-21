@@ -1,12 +1,12 @@
-﻿using doodLbot.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Timers;
+using doodLbot.Common;
 using doodLbot.Entities.CodeElements;
 using doodLbot.Equipment;
 using doodLbot.Logic;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Timers;
 
 namespace doodLbot.Entities
 {
@@ -16,7 +16,7 @@ namespace doodLbot.Entities
         public string Name { get; set; }
 
         [JsonProperty("projectiles")]
-        public IReadOnlyCollection<Projectile> Projectiles => this.projectiles;
+        public IReadOnlyCollection<Projectile> Projectiles => projectiles;
 
         [JsonProperty("pts")]
         public int Points;
@@ -40,17 +40,17 @@ namespace doodLbot.Entities
         public bool HasGearChanged { get; set; }
 
         [JsonIgnore]
-        public IReadOnlyCollection<Gear> Gear => this.gear;
+        public IReadOnlyCollection<Gear> Gear => gear;
 
         [JsonProperty("gear")]
-        public IReadOnlyCollection<Gear> VisibleGear => this.gear.Where(x => x.IsVisible).ToList();
+        public IReadOnlyCollection<Gear> VisibleGear => gear.Where(x => x.IsVisible).ToList();
 
         [JsonProperty("algorithm")]
         public BehaviourAlgorithm Algorithm { get; set; }
 
         private readonly List<Gear> gear = new List<Gear>();
 
-        private ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
+        private readonly ConcurrentHashSet<Projectile> projectiles = new ConcurrentHashSet<Projectile>();
 
         [JsonProperty("codeInventory")]
         public CodeStorage CodeInventory { get; private set; }
@@ -58,42 +58,44 @@ namespace doodLbot.Entities
         [JsonProperty("equipmentInventory")]
         public EquipmentStorage EquipmentInventory { get; private set; }
 
-        private RateLimiter ShootRateLimiter;
+        private readonly RateLimiter ShootRateLimiter;
 
         private readonly Controls controls;
         private readonly Controls syntheticControls;
 
 
         private double baseHp;
-        private double baseSpeed;
-        private double baseDamage;
-        private Timer heartbeatTimer;
+        private readonly double baseSpeed;
+        private readonly double baseDamage;
+        private readonly Timer heartbeatTimer;
 
         public Hero(int id, double x, double y, CodeStorage codeInventory, EquipmentStorage equipmentInventory)
             : base(x: x, y: y)
         {
             HasCodeChanged = false;
             HasGearChanged = false;
-            this.Algorithm = new BehaviourAlgorithm(this);
-            this.Id = id;
-            this.CodeInventory = codeInventory;
-            this.EquipmentInventory = equipmentInventory;
-            this.Points = 0;
-            this.baseSpeed = Design.HeroSpeed;
-            this.baseDamage = this.Damage;
-            this.baseHp = this.Hp;
-            this.ShootRateLimiter = new RateLimiter(Design.FireCooldown);
-            this.controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
-            this.syntheticControls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
+            Algorithm = new BehaviourAlgorithm(this);
+            Id = id;
+            CodeInventory = codeInventory;
+            EquipmentInventory = equipmentInventory;
+            Points = 0;
+            baseSpeed = Design.HeroSpeed;
+            baseDamage = Damage;
+            baseHp = Hp;
+            ShootRateLimiter = new RateLimiter(Design.FireCooldown);
+            controls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
+            syntheticControls = new Controls(ConsoleKey.Spacebar, ConsoleKey.W, ConsoleKey.S, ConsoleKey.A, ConsoleKey.D);
             CalculateStatsFromGear();
 
             // Configure a Timer for use
-            this.heartbeatTimer = new Timer();
-            this.heartbeatTimer.Interval = 2000;
-            this.heartbeatTimer.Elapsed += new ElapsedEventHandler(this.CheckAliveness);
-            this.heartbeatTimer.Enabled = true;
-            this.IsAlive = true;
-            this.TimeOfLastHeartbeat = DateTime.Now;
+            heartbeatTimer = new Timer
+            {
+                Interval = 2000
+            };
+            heartbeatTimer.Elapsed += new ElapsedEventHandler(CheckAliveness);
+            heartbeatTimer.Enabled = true;
+            IsAlive = true;
+            TimeOfLastHeartbeat = DateTime.Now;
         }
 
         public bool IsMoving => controls.IsMoving;
@@ -105,27 +107,27 @@ namespace doodLbot.Entities
 
         public void CheckAliveness(Object sender, ElapsedEventArgs eventArgs)
         {
-            if (DateTime.Now - this.TimeOfLastHeartbeat > TimeSpan.FromSeconds(10))
+            if (DateTime.Now - TimeOfLastHeartbeat > TimeSpan.FromSeconds(10))
             {
-                this.IsAlive = false;
+                IsAlive = false;
             }
         }
 
         public void CalculateStatsFromGear()
         {
-            this.Speed = this.baseSpeed;
-            this.Damage = this.baseDamage;
-            this.Hp = this.baseHp;
+            Speed = baseSpeed;
+            Damage = baseDamage;
+            Hp = baseHp;
             foreach (var g in gear)
             {
                 switch (g)
                 {
                     case Armor armor:
-                        this.Speed += armor.Speed;
-                        this.baseHp += armor.Hp;
+                        Speed += armor.Speed;
+                        baseHp += armor.Hp;
                         break;
                     case Weapon weapon:
-                        this.Damage += weapon.Damage;
+                        Damage += weapon.Damage;
                         break;
                 }
             }
@@ -157,13 +159,13 @@ namespace doodLbot.Entities
 
         public void BuyGear(string name)
         {
-            if (EquipmentInventory.ItemExists(name, out int cost))
+            if (EquipmentInventory.ItemExists(name, out var cost))
             {
-                if (this.Points < cost)
+                if (Points < cost)
                 {
                     return;
                 }
-                this.Points -= cost;
+                Points -= cost;
                 var item = EquipmentInventory.BuyItem(name);
                 AddGear(item);
             }
@@ -171,9 +173,9 @@ namespace doodLbot.Entities
 
         public void SellGear(string name)
         {
-            if (EquipmentInventory.ItemExists(name, out int cost))
+            if (EquipmentInventory.ItemExists(name, out var cost))
             {
-                this.Points += cost;
+                Points += cost;
                 var item = EquipmentInventory.SellItem(name);
                 RemoveGear(item);
             }
@@ -182,13 +184,13 @@ namespace doodLbot.Entities
         public void BuyCode(string name)
         {
             HasCodeChanged = true;
-            if (CodeInventory.ItemExists(name, out int cost))
+            if (CodeInventory.ItemExists(name, out var cost))
             {
-                if (this.Points < cost)
+                if (Points < cost)
                 {
                     return;
                 }
-                this.Points -= cost;
+                Points -= cost;
                 var item = CodeInventory.BuyItem(name);
             }
         }
@@ -196,9 +198,9 @@ namespace doodLbot.Entities
         public void SellCode(string name)
         {
             HasCodeChanged = true;
-            if (CodeInventory.ItemExists(name, out int cost))
+            if (CodeInventory.ItemExists(name, out var cost))
             {
-                this.Points += cost;
+                Points += cost;
                 CodeInventory.SellItem(name);
             }
         }
@@ -206,7 +208,7 @@ namespace doodLbot.Entities
         public void EquipCode(string name)
         {
             HasCodeChanged = true;
-            if (CodeInventory.ItemExists(name, out int cost))
+            if (CodeInventory.ItemExists(name, out var cost))
             {
                 var item = CodeInventory.BuyItem(name);
                 CodeInventory.SellItem(name);
@@ -217,20 +219,20 @@ namespace doodLbot.Entities
         protected override void OnMove()
         {
             var map = Logic.Design.MapSize;
-            if (this.IsOutsideBounds(map))
+            if (IsOutsideBounds(map))
             {
-                this.Xpos = Math.Max(0, this.Xpos);
-                this.Ypos = Math.Max(0, this.Ypos);
-                this.Xpos = Math.Min(map.X, this.Xpos);
-                this.Ypos = Math.Min(map.Y, this.Ypos);
+                Xpos = Math.Max(0, Xpos);
+                Ypos = Math.Max(0, Ypos);
+                Xpos = Math.Min(map.X, Xpos);
+                Ypos = Math.Min(map.Y, Ypos);
             }
         }
 
         public bool TryFire(double speed, double damage)
         {
-            if (!this.ShootRateLimiter.IsCooldownActive())
+            if (!ShootRateLimiter.IsCooldownActive())
             {
-                this.Fire(speed, damage);
+                Fire(speed, damage);
                 return true;
             }
             return false;
@@ -238,71 +240,71 @@ namespace doodLbot.Entities
 
         private void Fire(double speed, double damage)
         {
-            this.projectiles.Add(new Projectile(this.Xpos, this.Ypos, this.Rotation, speed, damage));
+            projectiles.Add(new Projectile(Xpos, Ypos, Rotation, speed, damage));
         }
 
         public bool TryRemoveProjectile(Projectile p)
         {
-            return this.projectiles.TryRemove(p);
+            return projectiles.TryRemove(p);
         }
 
         public override void DecreaseHealthPoints(double value)
         {
             base.DecreaseHealthPoints(value);
 
-            if (this.Hp == 0)
+            if (Hp == 0)
             {
                 // TODO when hero's hp == 0 - GAME OVER
                 // For now, we reset hp.
-                this.Hp = 100;
+                Hp = 100;
             }
         }
 
         internal void UpdateControls(ConsoleKey key, bool isDown)
         {
-            this.controls.OnKey(key, isDown);
+            controls.OnKey(key, isDown);
         }
 
         internal void UpdateSyntheticControls(ConsoleKey key, bool isDown)
         {
-            this.syntheticControls.OnKey(key, isDown);
+            syntheticControls.OnKey(key, isDown);
         }
 
         internal void UpdateStateWithControls(double delta)
         {
             var controlWith = controls.IsMoving ? controls : syntheticControls;
 
-            double rotationAmount = Design.RotateAmount * delta;
+            var rotationAmount = Design.RotateAmount * delta;
 
             if (controls.IsFire)
             {
-                this.TryFire(Design.ProjectileSpeed*delta, Design.ProjectileDamage);
+                TryFire(Design.ProjectileSpeed*delta, Design.ProjectileDamage);
             }
 
-            double velocity = this.Speed * delta;
+            var velocity = Speed * delta;
             if (controlWith.IsForward)
             {
-                this.Xvel = Math.Cos(this.Rotation) * velocity;
-                this.Yvel = Math.Sin(this.Rotation) * velocity;
+                Xvel = Math.Cos(Rotation) * velocity;
+                Yvel = Math.Sin(Rotation) * velocity;
             }
             if (controlWith.IsBackward)
             {
                 velocity *= Design.BackwardsSpeedRatio;
-                this.Xvel = -Math.Cos(this.Rotation) * velocity;
-                this.Yvel = -Math.Sin(this.Rotation) * velocity;
+                Xvel = -Math.Cos(Rotation) * velocity;
+                Yvel = -Math.Sin(Rotation) * velocity;
             }
             if (!controlWith.IsForward && !controlWith.IsBackward)
             {
-                this.Xvel = 0;
-                this.Yvel = 0;
+                Xvel = 0;
+                Yvel = 0;
             }
             if (controlWith.IsLeft)
             {
-                this.Rotation -= rotationAmount;
+                Rotation -= rotationAmount;
             }
             if (controlWith.IsRight)
             {
-                this.Rotation += rotationAmount;
+                Rotation += rotationAmount;
             }
         }
     }

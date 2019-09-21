@@ -1,9 +1,5 @@
-using doodLbot.Entities.CodeElements.ConditionElements;
+﻿using System.Collections.Generic;
 using doodLbot.Logic;
-
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Linq;
 
 
 namespace doodLbot.Equipment

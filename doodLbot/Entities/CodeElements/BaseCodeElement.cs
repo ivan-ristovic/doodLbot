@@ -13,7 +13,7 @@ namespace doodLbot.Entities.CodeElements
         /// Gets the type of this code element.
         /// </summary>
         [JsonProperty("type")]
-        public string Type => this.GetType().Name;
+        public string Type => GetType().Name;
 
         /// <summary>
         /// Gets or sets the active flag for this code element.

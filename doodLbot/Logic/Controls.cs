@@ -13,11 +13,11 @@ namespace doodLbot.Logic
         public bool IsLeft { get; private set; }
         public bool IsRight { get; private set; }
 
-        private ConsoleKey fireKey;
-        private ConsoleKey forwardKey;
-        private ConsoleKey backwardKey;
-        private ConsoleKey leftKey;
-        private ConsoleKey rightKey;
+        private readonly ConsoleKey fireKey;
+        private readonly ConsoleKey forwardKey;
+        private readonly ConsoleKey backwardKey;
+        private readonly ConsoleKey leftKey;
+        private readonly ConsoleKey rightKey;
 
         public Controls(ConsoleKey fireKey, ConsoleKey forwardKey, ConsoleKey backwardKey,
             ConsoleKey leftKey, ConsoleKey rightKey)
@@ -47,16 +47,16 @@ namespace doodLbot.Logic
         /// <param name="isDown"></param>
         public void OnKey(ConsoleKey key, bool isDown)
         {
-            if (key == this.leftKey)
-                this.IsLeft = isDown;
-            else if (key == this.backwardKey)
-                this.IsBackward = isDown;
-            else if (key == this.rightKey)
-                this.IsRight = isDown;
-            else if (key == this.forwardKey)
-                this.IsForward = isDown;
-            else if (key == this.fireKey)
-                this.IsFire = isDown;
+            if (key == leftKey)
+                IsLeft = isDown;
+            else if (key == backwardKey)
+                IsBackward = isDown;
+            else if (key == rightKey)
+                IsRight = isDown;
+            else if (key == forwardKey)
+                IsForward = isDown;
+            else if (key == fireKey)
+                IsFire = isDown;
         }
     }
 }
