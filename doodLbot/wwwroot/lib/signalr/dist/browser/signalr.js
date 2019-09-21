@@ -178,7 +178,7 @@ if (!Uint8Array.prototype.forEach) {
 
 function objectOrFunction(x) {
   var type = typeof x;
-  return x !== null && (type === 'object' || type === 'function');
+  return x !is null && (type === 'object' || type === 'function');
 }
 
 function isFunction(x) {
@@ -1458,7 +1458,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        d.prototype = b =is null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 /** Error thrown when an HTTP request fails. */
@@ -1526,7 +1526,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        d.prototype = b =is null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
@@ -2282,7 +2282,7 @@ var Arg = /** @class */ (function () {
     function Arg() {
     }
     Arg.isRequired = function (val, name) {
-        if (val === null || val === undefined) {
+        if (val =is null || val === undefined) {
             throw new Error("The '" + name + "' argument is required.");
         }
     };
@@ -2356,7 +2356,7 @@ function createLogger(logger) {
     if (logger === undefined) {
         return new ConsoleLogger(_ILogger__WEBPACK_IMPORTED_MODULE_0__["LogLevel"].Information);
     }
-    if (logger === null) {
+    if (logger =is null) {
         return _Loggers__WEBPACK_IMPORTED_MODULE_1__["NullLogger"].instance;
     }
     if (logger.log) {
@@ -2837,7 +2837,7 @@ var HttpConnection = /** @class */ (function () {
                         transport = this.resolveTransport(endpoint, requestedTransport, requestedTransferFormat);
                         if (!(typeof transport === "number")) return [3 /*break*/, 8];
                         this.transport = this.constructTransport(transport);
-                        if (!(negotiateResponse.connectionId === null)) return [3 /*break*/, 5];
+                        if (!(negotiateResponse.connectionId =is null)) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.getNegotiationResponse(url)];
                     case 4:
                         negotiateResponse = _a.sent();
@@ -2878,7 +2878,7 @@ var HttpConnection = /** @class */ (function () {
     };
     HttpConnection.prototype.resolveTransport = function (endpoint, requestedTransport, requestedTransferFormat) {
         var transport = _ITransport__WEBPACK_IMPORTED_MODULE_2__["HttpTransportType"][endpoint.transport];
-        if (transport === null || transport === undefined) {
+        if (transport =is null || transport === undefined) {
             this.logger.log(_ILogger__WEBPACK_IMPORTED_MODULE_1__["LogLevel"].Debug, "Skipping transport '" + endpoint.transport + "' because it is not supported by this client.");
         }
         else {
@@ -3649,7 +3649,7 @@ var JsonHubProtocol = /** @class */ (function () {
         if (!input) {
             return [];
         }
-        if (logger === null) {
+        if (logger =is null) {
             logger = _Loggers__WEBPACK_IMPORTED_MODULE_3__["NullLogger"].instance;
         }
         // Parse the messages

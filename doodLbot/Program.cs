@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
@@ -21,12 +17,17 @@ namespace SignalRChat
                .WriteTo.Console()
                .CreateLogger();
 
-            try {
-                Log.Information("Starting web host"); 
+            try
+            {
+                Log.Information("Starting web host");
                 CreateWebHostBuilder(args).Build().Run();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Log.Fatal(ex, "Host terminated unexpectedly");
-            } finally {
+            }
+            finally
+            {
                 Log.CloseAndFlush();
             }
         }

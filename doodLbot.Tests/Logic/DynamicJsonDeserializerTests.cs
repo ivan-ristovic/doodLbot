@@ -1,11 +1,9 @@
-﻿using doodLbot.Entities;
+﻿using System.Linq;
+using doodLbot.Entities;
 using doodLbot.Entities.CodeElements;
 using doodLbot.Entities.CodeElements.ConditionElements;
 using doodLbot.Logic;
-
 using NUnit.Framework;
-
-using System.Linq;
 
 namespace doodLbot.Tests.Logic
 {
@@ -45,15 +43,15 @@ namespace doodLbot.Tests.Logic
                 Assert.IsInstanceOf<IdleElement>(block.CodeElements.ElementAt(1));
             }
 
-            json = "[" +
-                   "{\"type\":\"ShootElement\", \"isActive\":\"true\"}, " +
-                   "{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}]}," +
-                   "{\"type\":\"BranchingElement\", \"isActive\":\"true\", " +
-                       "\"cond\":{\"type\":\"IsEnemyNearCondition\", \"isActive\":\"true\"}, " +
-                       "\"then\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}, " +
-                       "\"else\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}" +
-                   "}" +
-                   "]";
+            json = "["
+                   + "{\"type\":\"ShootElement\", \"isActive\":\"true\"}, "
+                   + "{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}]},"
+                   + "{\"type\":\"BranchingElement\", \"isActive\":\"true\", "
+                   + "\"cond\":{\"type\":\"IsEnemyNearCondition\", \"isActive\":\"true\"}, "
+                   + "\"then\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}, "
+                   + "\"else\":{\"type\":\"CodeBlockElement\", \"isActive\":\"true\", \"elements\":[{\"type\":\"ShootElement\", \"isActive\":\"true\"}, {\"type\":\"IdleElement\", \"isActive\":\"true\"}]}"
+                   + "}"
+                   + "]";
             algorithm = DynamicJsonDeserializer.ToBehaviourAlgorithm(json, null);
             Assert.NotNull(algorithm);
             CollectionAssert.IsNotEmpty(algorithm.CodeElements);

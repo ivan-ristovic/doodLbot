@@ -1,6 +1,5 @@
-﻿using doodLbot.Logic;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements.ConditionElements
 {
@@ -18,10 +17,7 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         }
 
 
-        protected override bool OnExecute(GameState state, Hero hero)
-        {
-            return true;
-        }
+        protected override bool OnExecute(GameState state, Hero hero) => true;
 
         public override bool Evaluate(GameState state, Hero hero)
         {

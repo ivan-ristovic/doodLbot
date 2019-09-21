@@ -5,8 +5,8 @@ namespace doodLbot.Equipment
     public interface IStorageItem
     {
         [JsonProperty("name")]
-        string Name {get;}
+        string Name { get; }
 
-        int Cost {get;} 
+        int Cost { get; }
     }
 }

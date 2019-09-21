@@ -9,9 +9,9 @@ namespace doodLbot.Equipment
         public EquipmentStorage()
         {
             Items = new List<ShopEntry>();
-            foreach(var e in Design.GearDict)
+            foreach (var e in Design.GearDict)
             {
-                Items.Add(new ShopEntry{Element = e.Value, Count = 0});
+                Items.Add(new ShopEntry { Element = e.Value, Count = 0 });
             }
         }
     }

@@ -29,7 +29,9 @@ namespace doodLbot.Entities
                 return new Projectile(Xpos, Ypos, Math.Atan2(Yvel, Xvel), Design.ProjectileSpeed * Design.Delta, Damage);
             }
             else
+            {
                 return null;
+            }
         }
 
     }

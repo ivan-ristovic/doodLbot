@@ -1,13 +1,13 @@
-﻿using doodLbot.Logic;
+﻿using doodLbot.Equipment;
+using doodLbot.Logic;
 using Newtonsoft.Json;
-using doodLbot.Equipment;
 
 namespace doodLbot.Entities.CodeElements
 {
     /// <summary>
     /// Represents an abstract code element.
     /// </summary>
-    abstract public class BaseCodeElement : IStorageItem
+    public abstract class BaseCodeElement : IStorageItem
     {
         /// <summary>
         /// Gets the type of this code element.
@@ -34,6 +34,7 @@ namespace doodLbot.Entities.CodeElements
             return IsActive ? OnExecute(state, hero) : false;
         }
 
-        abstract protected bool OnExecute(GameState state, Hero hero);
+
+        protected abstract bool OnExecute(GameState state, Hero hero);
     }
 }

@@ -27,7 +27,7 @@ namespace doodLbot.Entities.CodeElements
         /// <param name="elements"></param>
         public CodeBlockElement(ICollection<BaseCodeElement> elements = null)
         {
-            if (elements == null)
+            if (elements is null)
             {
                 elements = new List<BaseCodeElement>();
             }

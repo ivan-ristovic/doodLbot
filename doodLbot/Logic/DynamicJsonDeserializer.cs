@@ -11,14 +11,14 @@ namespace doodLbot.Logic
     /// <summary>
     /// Deserializes JSON strings to classes needed for game logic.
     /// </summary>
-    static public class DynamicJsonDeserializer
+    public static class DynamicJsonDeserializer
     {
         /// <summary>
         /// Deserializes JSON string to BehaviourAlgorithm.
         /// </summary>
         /// <param name="json"></param>
         /// <returns>Deserialized BehaviourAlgorithm object.</returns>
-        static public BehaviourAlgorithm ToBehaviourAlgorithm(string json, Hero hero)
+        public static BehaviourAlgorithm ToBehaviourAlgorithm(string json, Hero hero)
         {
             var jsonVal = JArray.Parse(json) as JArray;
             dynamic elements = jsonVal;
@@ -95,7 +95,7 @@ namespace doodLbot.Logic
 
             BaseConditionElement DeserializeConditionElementInternal(dynamic element)
             {
-                if (element == null)
+                if (element is null)
                 {
                     return null;
                 }
