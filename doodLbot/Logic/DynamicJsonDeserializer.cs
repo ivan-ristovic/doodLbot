@@ -87,7 +87,8 @@ namespace doodLbot.Logic
 
                 if (element["isActive"] is JValue jv)
                 {
-                    ret.IsActive = (bool)jv.Value;
+                    bool.TryParse(jv.Value.ToString(), out bool b);
+                    ret.IsActive = b;
                 }
 
                 return ret;
