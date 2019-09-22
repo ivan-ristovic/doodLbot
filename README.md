@@ -27,7 +27,7 @@ You think you mastered the game and want more challenges? Hop into multiplayer w
 ### Controls
 
 |  Key  |     Action     |
-|:--=--:|:--------------:|
+|:-----:|:--------------:|
 |   W   | Move forward   |
 |   A   | Move left      |
 |   S   | Move backwards |
