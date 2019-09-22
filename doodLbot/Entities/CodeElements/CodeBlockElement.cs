@@ -15,10 +15,7 @@ namespace doodLbot.Entities.CodeElements
         [JsonProperty("elements")]
         public IReadOnlyCollection<BaseCodeElement> CodeElements { get; }
 
-        /// <summary>
-        /// this is a collection of elements, so it's always active
-        /// </summary>
-        public override bool IsActive { get => true; }
+        public override bool IsActive => true;
 
 
         /// <summary>

@@ -18,6 +18,7 @@ namespace doodLbot.Logic
         private readonly List<(ConsoleKey key, bool isDown)> keyPresses;
         private readonly List<object> actionsPerformed;
 
+
         [JsonConstructor]
         public GameStateUpdate(int timeSinceLastSend, int[] keyPresses, object [] actions, int id)
         {

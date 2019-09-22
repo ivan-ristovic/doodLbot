@@ -46,7 +46,7 @@ namespace doodLbot.Logic
         {
             TickRate = 30;
 
-            // all speeds are calculated relative to the 50 tickrate
+            // All speeds are calculated relative to the 50 tickrate
             var adjust = 50 / TickRate;
             Delta = 1;
 

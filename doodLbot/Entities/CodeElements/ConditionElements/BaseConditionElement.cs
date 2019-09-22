@@ -11,6 +11,7 @@ namespace doodLbot.Entities.CodeElements.ConditionElements
         /// Evaluate this condition element and return the boolean condition evaluation.
         /// </summary>
         /// <param name="state"></param>
+        /// <param name="hero"></param>
         /// <returns></returns>
         public abstract bool Evaluate(GameState state, Hero hero);
 

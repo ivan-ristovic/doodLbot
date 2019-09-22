@@ -11,7 +11,7 @@ namespace doodLbot.Entities.CodeElements
     public class BehaviourAlgorithm
     {
         /// <summary>
-        /// Get a collection of code elements that this algorithm is made of.
+        /// Gets a collection of code elements that this algorithm is made of.
         /// </summary>
         [JsonProperty("elements")]
         public IReadOnlyList<BaseCodeElement> CodeElements => codeElements.AsReadOnly();
@@ -22,7 +22,7 @@ namespace doodLbot.Entities.CodeElements
 
 
         /// <summary>
-        /// Constructs a new blank BehaviourAlgorithm.
+        /// Constructs a new empty BehaviourAlgorithm.
         /// </summary>
         public BehaviourAlgorithm(Hero hero)
         {
@@ -33,7 +33,7 @@ namespace doodLbot.Entities.CodeElements
         
 
         /// <summary>
-        /// Insert a code element in this algorithm.
+        /// Insert given code element to this algorithm.
         /// </summary>
         /// <param name="element">Code element to insert</param>
         /// <param name="index">Position in the algorithm element list.</param>

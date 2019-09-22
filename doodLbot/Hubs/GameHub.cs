@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using doodLbot.Logic;
 using Microsoft.AspNetCore.SignalR;
@@ -52,7 +53,7 @@ namespace doodLbot.Hubs
             var hero = game.GetHeroById(id);
             if (hero == null){
                 // TODO think: is it necessary to kill the server for this?
-                throw new System.Exception("hero not found");
+                throw new KeyNotFoundException("hero not found");
             }
             hero.Name = newName;
             return Task.CompletedTask;
@@ -68,7 +69,7 @@ namespace doodLbot.Hubs
         }
 
         /// <summary>
-        /// Fired when client is ready for initial sync.
+        /// Fired when client is ready for the initial sync.
         /// </summary>
         /// <returns></returns>
         public Task ClientIsReady()

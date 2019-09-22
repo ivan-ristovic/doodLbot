@@ -3,6 +3,9 @@ using doodLbot.Logic;
 
 namespace doodLbot.Entities.CodeElements
 {
+    /// <summary>
+    /// When executed, moves the hero in the opposite direction relative to the nearest enemy.
+    /// </summary>
     public class MoveAwayFromElement : TargetElement
     {
 

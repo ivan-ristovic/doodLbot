@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace doodLbot.Entities.CodeElements
 {
     /// <summary>
-    /// Represents an abstract code element.
+    /// Represents a base for all code elements.
     /// </summary>
     public abstract class BaseCodeElement : IStorageItem
     {

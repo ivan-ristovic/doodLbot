@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace doodLbot.Logic
 {
     /// <summary>
-    /// Represent a game state that will be sent to clients so they can update the game view.
+    /// Represents a game state that will be sent to clients so they can update the game view.
     /// </summary>
     public sealed class GameState
     {
@@ -21,6 +21,7 @@ namespace doodLbot.Logic
 
         [JsonProperty("enemyProjectiles")]
         public IReadOnlyCollection<Projectile> EnemyProjectiles { get; private set; }
+
 
         /// <summary>
         /// Constructs a new GameState object containing the hero and spawned enemies.

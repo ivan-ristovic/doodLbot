@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace doodLbot.Extensions
 {
     /// <summary>
-    /// Extensions for gamehub.
-    /// Used for C# => client direction.
+    /// Extensions for gamehub. Used in server -> client direction.
     /// </summary>
     public static class HubContextExtensions
     {

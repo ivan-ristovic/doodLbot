@@ -67,7 +67,7 @@ namespace doodLbot.Logic
 
             heroes.Add(hero);
 
-            //this.SpawnEnemy(Design.SpawnRange);
+            // this.SpawnEnemy(Design.SpawnRange);
 
             if (heroes.Count == 1)
             {
@@ -235,7 +235,6 @@ namespace doodLbot.Logic
 
 
         #region Helper functions
-
         private void CheckCollisionEnemyProjectile()
         {
             foreach (var h in heroes)
@@ -293,13 +292,13 @@ namespace doodLbot.Logic
                     {
                         if (h.TryRemoveProjectile(p))
                         {
-                            //Log.Debug($"Removed projectile on location: " +
-                            //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
+                            //Log.Debug("Failed to remove projectile on location: " +
+                            //    "({Xpos}, {Ypos}) because it's outside of the map.", p.Xpos, p.Ypos);
                         }
                         else
                         {
-                            Log.Debug($"Failed to remove projectile on location:" +
-                                $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                            Log.Debug("Failed to remove projectile on location: " +
+                                "({Xpos}, {Ypos}) because it's outside of the map.", p.Xpos, p.Ypos);
                         }
                     }
                 }
@@ -311,13 +310,13 @@ namespace doodLbot.Logic
                 {
                     if (TryRemoveEnemyProjectile(p))
                     {
-                        //Log.Debug($"Removed projectile on location: " +
-                        //    $"({ p.Xpos}, { p.Ypos}) because it's outside of the map.");
+                        //Log.Debug("Failed to remove projectile on location: " +
+                        //    "({Xpos}, {Ypos}) because it's outside of the map.", p.Xpos, p.Ypos);
                     }
                     else
                     {
-                        Log.Debug($"Failed to remove projectile on location:" +
-                            $" ({p.Xpos}, {p.Ypos}) because it's outside of the map.");
+                        Log.Debug("Failed to remove projectile on location: " +
+                            "({Xpos}, {Ypos}) because it's outside of the map.", p.Xpos, p.Ypos);
                     }
                 }
             }
@@ -331,7 +330,6 @@ namespace doodLbot.Logic
 
         public bool TryRemoveEnemyProjectile(Projectile p)
             => enemyProjectiles.TryRemove(p);
-
         #endregion
     }
 }

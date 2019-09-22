@@ -27,7 +27,6 @@ namespace doodLbot.Equipment
         public List<ShopEntry> Items;
 
 
-        // returns bought element
         public T BuyItem(string name)
         {
             var item = FindItemFromName(name);

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace doodLbot.Entities.CodeElements
 {
     /// <summary>
-    /// Represents a branching statement made of condition, then and else blocks.
+    /// Represents a branching statement made of a condition, then and else blocks.
     /// </summary>
     public class BranchingElement : BaseCodeElement
     {
@@ -28,7 +28,7 @@ namespace doodLbot.Entities.CodeElements
         public CodeBlockElement ElseBlock { get; }
 
         /// <summary>
-        /// Constructs a new branching element from a condition, "then" and "else blocks.
+        /// Constructs a new branching element from a condition, "then" and "else" blocks.
         /// </summary>
         /// <param name="condition"></param>
         /// <param name="thenBlock"></param>
