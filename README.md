@@ -15,7 +15,7 @@ Developed by:
 
 ## Intro
 
-doodLbot is a game where, instead of making your own way to more and more points by playing, you create an algorithm which will score points on it's own and beat your high scores. 
+doodLbot is a game where, instead of making your own way to more and more points by playing, you create an algorithm which will score points on its own and beat your high scores. 
 The enemies are ruthless, and as the game progresses it becomes impossible to play off of your own reflexes. If only you had some sort of aimbot and moved away from the enemies 
 automatically without pressing any keys... Well, in fact you can do all of that! The game shop allows you to buy powerful blocks of code which you can piece together to form the
 algorithm of your liking which will move the hero by itself. That will teach those green thingies who's the boss!
