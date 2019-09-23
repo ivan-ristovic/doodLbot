@@ -30,10 +30,12 @@ namespace doodLbot.Logic
                 }
             }
 
+            /*
             if (collides.Count > 0)
             {
-                // Log.Debug($"Collisions: ({collides.Count})");
+                Log.Debug("Collisions: {CollisionCount}", collides.Count);
             }
+            */
 
             return collides.AsReadOnly();
 

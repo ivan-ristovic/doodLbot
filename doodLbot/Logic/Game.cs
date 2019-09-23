@@ -21,9 +21,7 @@ namespace doodLbot.Logic
 
         public static TimeSpan RefreshTimeSpan => TimeSpan.FromMilliseconds(1000d / TickRate);
 
-
         private static System.Diagnostics.Stopwatch Watch = System.Diagnostics.Stopwatch.StartNew();
-
 
         public GameState GameState => new GameState(heroes, enemies, EnemyProjectiles);
 
@@ -84,7 +82,6 @@ namespace doodLbot.Logic
                         await GameTick(delta);
                         ExecWatch.Stop();
                         var ms = ExecWatch.ElapsedMilliseconds;
-                        //Thread.Sleep(RefreshTimeSpan);
                         await Task.Delay(RefreshTimeSpan);
                         //Log.Debug($"exec ms = {ms}, between calls = {mss}, delta = {delta}");
                     }
@@ -98,6 +95,7 @@ namespace doodLbot.Logic
         {
             gameLoopCTS.Cancel();
             gameLoopCTS.Dispose();
+            gameLoopTask.Dispose();
         }
 
         /// <summary>
@@ -114,7 +112,8 @@ namespace doodLbot.Logic
 
             RemoveDeadHeroes();
 
-            foreach (var h in heroes) {
+            foreach (var h in heroes)
+            {
                 h.IsControlledByAlgorithm = false;
                 h.Algorithm.Execute(GameState);
             }
@@ -230,12 +229,13 @@ namespace doodLbot.Logic
         private void CheckForCollisionsAndUpdateGame()
         {
             CheckCollisionEnemyHero();
-            CheckCollisionEnemyProjectile();
+            CheckCollisionWithHeroProjectile();
+            CheckCollisionWithEnemyProjectile();
         }
 
 
         #region Helper functions
-        private void CheckCollisionEnemyProjectile()
+        private void CheckCollisionWithHeroProjectile()
         {
             foreach (var h in heroes)
             {
@@ -257,6 +257,19 @@ namespace doodLbot.Logic
 
                     h.TryRemoveProjectile(projectile);
                 }
+            }
+        }
+
+        private void CheckCollisionWithEnemyProjectile()
+        {
+            IReadOnlyList<(Entity Collider1, Entity Collider2)> collisions = CollisionCheck.GetCollisions(heroes, enemyProjectiles);
+            foreach ((var Collider1, var Collider2) in collisions)
+            {
+                var hero = Collider1 as Hero;
+                var projectile = Collider2 as Projectile;
+
+                hero.DecreaseHealthPoints(projectile.Damage);
+                enemyProjectiles.TryRemove(projectile);
             }
         }
 
