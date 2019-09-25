@@ -37,3 +37,7 @@ You think you mastered the game and want more challenges? Hop into multiplayer w
 Click on the shop icon to open up the shop. In order to buy upgrades you need gold which is obtained by killing enemies. The item price can be seen in the shop for each item.
 Buy the item by clicking the `+` button. You can transfer your bought code blocks to active algorithm (on the right) by clicking the `>` button. You can reorder the blocks
 in the algorithm and then re-compile in order to apply the newest changes.
+
+## Development details
+
+Want to know more about the project development? Check out our [kanban board](https://trello.com/b/Gr5GyI5j/rs2) and hear out our [voice meetings](https://drive.google.com/drive/folders/1YQkxp55jhGMEdwo7n2nKyz6eDjhqzb9J?usp=sharing) (in Serbian).

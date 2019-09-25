@@ -188,6 +188,7 @@ namespace doodLbot.Logic
             {
                 enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
                 enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                enemies.Add(Enemy.Spawn<Tank>(h.Xpos, h.Ypos, inRange, inRange / 2));
             }
         }
 
