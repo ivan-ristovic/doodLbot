@@ -24,7 +24,6 @@ namespace doodLbot.Entities
         {
             angle += random.NextDouble() * angleRandom - angleRandom / 2;
             speed += random.NextDouble() * speedRandom - speedRandom / 2;
-            Log.Debug(random.NextDouble().ToString());
             Xvel = Math.Cos(angle) * speed;
             Yvel = Math.Sin(angle) * speed;
         }

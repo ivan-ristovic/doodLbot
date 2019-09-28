@@ -7,7 +7,7 @@ namespace doodLbot.Entities
     /// </summary>
     public class Tank : Enemy
     {
-        public Tank() : base(max_hp: 300, hp: 300, damage: 10, speed: Design.EnemySpeed)
+        public Tank() : base(max_hp: 300, hp: 300, damage: 10, speed: Design.EnemySpeed, reward: 10)
         {
 
         }

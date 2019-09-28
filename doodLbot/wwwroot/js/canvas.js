@@ -73,7 +73,7 @@ let serverCounter = new Counter("#serverUps");
 class Entity {
     // FIXME. bar widths are incorrect at first
     // because we are always sending w=100
-    static createHealthBar(w, h, sprite, max_hp = null, step = 50) {
+    static createHealthBar(w, h, sprite, max_hp = null, step = 30) {
         //Create the health bar
         let healthBar;
         healthBar = new PIXI.Container();
@@ -260,10 +260,10 @@ function drawNewEnemies() {
     EnemyNum = enemies.length;
 
     for (let i = oldEnemyNum; i < enemies.length; i++) {
-        drawEnemyIndex(i)
+        drawEnemyIndex(i);
 
-        console.log(EnemySprites);
-        console.log(EnemyHps);
+//        console.log(EnemySprites);
+//        console.log(EnemyHps);
     }
 }
 

@@ -69,7 +69,7 @@ namespace doodLbot.Entities
         {
             Speed = speed;
             Hp = hp;
-            MaxHp = hp;
+            MaxHp = max_hp;
             Damage = damage;
             Rotation = rotation;
         }
@@ -80,7 +80,8 @@ namespace doodLbot.Entities
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="rotation">Entity's rotation amount (in radians)</param>
-        public Entity(double x, double y, double speed = 0, double hp = 100, double max_hp = 100, double damage = 1, double rotation = 0) : this(hp, max_hp, damage, speed, rotation)
+        public Entity(double x, double y, double speed = 0, double hp = 100, double max_hp = 100, double damage = 1, double rotation = 0, int reward = 10) 
+            : this(hp, max_hp, damage, speed, rotation)
         {
             Xpos = x;
             Ypos = y;

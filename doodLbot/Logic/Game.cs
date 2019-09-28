@@ -30,7 +30,7 @@ namespace doodLbot.Logic
         private Task gameLoopTask;
         private readonly ConcurrentHashSet<Projectile> enemyProjectiles = new ConcurrentHashSet<Projectile>();
         private readonly ConcurrentHashSet<Hero> heroes;
-        private readonly HashSet<Enemy> enemies;
+        private readonly ConcurrentHashSet<Enemy> enemies;
         private readonly IHubContext<GameHub> hubContext;
         private readonly RateLimiter enemySpawnLimiter;
         private readonly CancellationTokenSource gameLoopCTS;
@@ -45,7 +45,7 @@ namespace doodLbot.Logic
         public Game(IHubContext<GameHub> hctx)
         {
             heroes = new ConcurrentHashSet<Hero>();
-            enemies = new HashSet<Enemy>();
+            enemies = new ConcurrentHashSet<Enemy>();
             hubContext = hctx;
             enemySpawnLimiter = new RateLimiter(Design.SpawnInterval);
             gameLoopCTS = new CancellationTokenSource();
@@ -267,8 +267,9 @@ namespace doodLbot.Logic
                     // Removing projectile and enemy (if it's dead)
                     if (enemy.Hp <= 0)
                     {
-                        enemies.Remove(enemy);
-                        h.Points += (int)Math.Ceiling(enemy.Damage);
+                        enemies.TryRemove(enemy);
+                        //h.Points += (int)Math.Ceiling(enemy.Damage);
+                        h.Points += enemy.KillReward;
                     }
 
                     h.TryRemoveProjectile(projectile);
@@ -303,7 +304,7 @@ namespace doodLbot.Logic
                     enemy.DecreaseHealthPoints(hero.Damage);
 
                     // Remove kamikaze from the game
-                    enemies.Remove(enemy);
+                    enemies.TryRemove(enemy);
 
                     h.DecreaseHealthPoints(enemy.Damage);
                 }

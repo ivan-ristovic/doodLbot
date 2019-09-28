@@ -9,10 +9,13 @@ namespace doodLbot.Entities
     /// </summary>
     public abstract class Enemy : Entity
     {
+        public int KillReward { get; set; }
 
-        protected Enemy(double max_hp = 100, double hp = 100, double damage = 1, double speed = 0, double rotation = 0) : base(hp, max_hp, damage, speed, rotation)
+
+        protected Enemy(double max_hp = 100, double hp = 100, double damage = 1, double speed = 0, double rotation = 0, int reward = 10) 
+            : base(hp, max_hp, damage, speed, rotation)
         {
-
+            KillReward = reward;
         }
 
         /// <summary>
