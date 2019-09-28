@@ -36,6 +36,8 @@ namespace doodLbot.Logic
         private readonly CancellationTokenSource gameLoopCTS;
         private int currentHeroId = 1;
 
+        private static readonly Random random = new Random();
+
         /// <summary>
         /// Constructs a new Game which uses a HubContext interface to send data to clients.
         /// </summary>
@@ -186,9 +188,22 @@ namespace doodLbot.Logic
             // TODO make this to work nicely whith multiplayer - create only one enemy
             foreach (var h in heroes)
             {
-                enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
-                enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
-                enemies.Add(Enemy.Spawn<Tank>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                int enemyIndex = (int)Math.Floor(random.NextDouble() * 3);
+
+                switch (enemyIndex)
+                {
+                    case 0:
+                        enemies.Add(Enemy.Spawn<Kamikaze>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                        break;
+                    case 1:
+                        enemies.Add(Enemy.Spawn<Shooter>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                        break;
+                    case 2:
+                        enemies.Add(Enemy.Spawn<Tank>(h.Xpos, h.Ypos, inRange, inRange / 2));
+                        break;
+                }
+
+
             }
         }
 

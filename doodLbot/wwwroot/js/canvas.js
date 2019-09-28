@@ -39,6 +39,8 @@ let EnemySprites = [];
 let ProjectileSprites = [];
 let EnemyProjectileSprites = [];
 let EnemyHps = [];
+let EnemyNum = 0;
+let enemyContainer = null;
 
 let Counter = function (id) {
     var oldCountTime = performance.now();
@@ -71,7 +73,7 @@ let serverCounter = new Counter("#serverUps");
 class Entity {
     // FIXME. bar widths are incorrect at first
     // because we are always sending w=100
-    static createHealthBar(w, h, sprite) {
+    static createHealthBar(w, h, sprite, max_hp = null, step = 50) {
         //Create the health bar
         let healthBar;
         healthBar = new PIXI.Container();
@@ -89,10 +91,24 @@ class Entity {
 
         //Create the front red rectangle
         let outerBar = new PIXI.Graphics();
-        outerBar.beginFill(0xff3300);
+        // enemy hp bars
+        if (max_hp)
+            outerBar.beginFill(0xff3300);
+        else
+            outerBar.beginFill(0x33ff00);
         outerBar.drawRect(0, 0, w, h);
         outerBar.endFill();
         healthBar.addChild(outerBar);
+
+        if (max_hp) {
+            for (let i = 1; i < (max_hp / step); i++) {
+                let tickBar = new PIXI.Graphics();
+                tickBar.beginFill(0x111111);
+                tickBar.drawRect(i * step * (w / max_hp), 0, 1, h);
+                tickBar.endFill();
+                healthBar.addChild(tickBar);
+            }
+        }
 
         healthBar.outer = outerBar;
         healthBar.w = w;
@@ -226,25 +242,59 @@ function updateProjectiles(projectiles, projectileSprites, spritePath = "images/
     }
 }
 
-function updateEnemies() {
-    if (GAMESTATE.enemies === undefined) return;
+function drawEnemyIndex(i) {
+    let enemies = GAMESTATE.enemies;
 
-    let numEnemies = GAMESTATE.enemies.length;
-    while (EnemySprites.length < numEnemies) {
-        var enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
-        enemyTexture.anchor.set(0.5, 0.5);
-        EnemySprites.push(enemyTexture);
-        app.stage.addChild(enemyTexture);
+    var enemyTexture = new Sprite(loader.resources["images/enemy.png"].texture);
+    enemyTexture.anchor.set(0.5, 0.5);
+    EnemySprites.push(enemyTexture);
+    enemyContainer.addChild(enemyTexture);
 
-        EnemyHps.push(Entity.createHealthBar(100, 10, enemyTexture));
-        // TODO Prosledi HP
-        app.stage.addChild(EnemyHps[EnemyHps.length - 1]);
+    EnemyHps.push(Entity.createHealthBar(100, 10, enemyTexture, enemies[i].hp));
+    enemyContainer.addChild(EnemyHps[EnemyHps.length - 1]);
+}
+
+function drawNewEnemies() {
+    let oldEnemyNum = EnemyNum;
+    let enemies = GAMESTATE.enemies;
+    EnemyNum = enemies.length;
+
+    for (let i = oldEnemyNum; i < enemies.length; i++) {
+        drawEnemyIndex(i)
+
+        console.log(EnemySprites);
+        console.log(EnemyHps);
     }
+}
+
+function drawAllEnemies() {
+    let enemies = GAMESTATE.enemies;
+    EnemyNum = enemies.length;
+    while (enemyContainer.children[0]) {
+        enemyContainer.removeChild(enemyContainer.children[0]);
+    }
+    EnemySprites = []
+    EnemyHps = []
+
+    for (let i = 0; i < enemies.length; i++) {
+        drawEnemyIndex(i);
+    }
+}
+
+
+function updateEnemies() {
+    let enemies = GAMESTATE.enemies;
+
+    if (enemies === undefined) return;
+
+    if (enemies.length < EnemySprites.length)
+        drawAllEnemies();
+    else
+        drawNewEnemies();
 
     //TODO: determine closest hero to attack
     let playerToAttack = getCurrentHero().heroGroup;
 
-    let enemies = GAMESTATE.enemies;
     let speedMul = FramesSinceLastUpdate * MulSpeedsWith;
     for (let i = 0; i < enemies.length; i++) {
         let newx = enemies[i].x + speedMul * enemies[i].vx;
@@ -254,15 +304,6 @@ function updateEnemies() {
         EnemySprites[i].tint = tintFromDistance(newx, playerToAttack.position.x, newy, playerToAttack.position.y);
         EnemyHps[i].visible = true;
         Entity.updateHealthBar(newx, newy, enemies[i].hp, enemies[i].max_hp, EnemyHps[i]);
-    }
-
-    // if there are now less enemies than there are sprites, then don't draw them and don't draw their hp bar
-    for (let i = enemies.length; i < EnemySprites.length; i++) {
-        if (EnemySprites[i].visible === false) {
-            break;
-        }
-        EnemySprites[i].visible = false;
-        EnemyHps[i].visible = false;
     }
 }
 
@@ -530,9 +571,12 @@ function setup() {
     let heroName = createNewHeroNameGroup(myName);
     heroName.visible = false;
 
+    enemyContainer = new PIXI.Container();
+
     app.stage.addChild(heroGroup);
     app.stage.addChild(heroHealthBar);
     app.stage.addChild(heroName);
+    app.stage.addChild(enemyContainer);
 
     let newHero = new Hero(heroName, id, heroGroup, heroHealthBar)
     heroClasses.push(newHero)
