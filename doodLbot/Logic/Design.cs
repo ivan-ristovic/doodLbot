@@ -90,8 +90,6 @@ namespace doodLbot.Logic
                 IsVisible = true
             };
             GearDict.Add("hoverboard", item);
-            GearDict.Add("hoverboard2", new Armor("hoverboard2", 1, 2));
-            GearDict.Add("hoverboard3", new Armor("hoverboard3", 4, 5));
         }
     }
 }
