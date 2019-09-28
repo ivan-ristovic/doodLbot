@@ -107,7 +107,7 @@ namespace doodLbot.Entities
 
         public void CheckAliveness(Object sender, ElapsedEventArgs eventArgs)
         {
-            if (DateTime.Now - TimeOfLastHeartbeat > TimeSpan.FromSeconds(10))
+            if (DateTime.Now - TimeOfLastHeartbeat > TimeSpan.FromSeconds(40))
             {
                 IsAlive = false;
             }
