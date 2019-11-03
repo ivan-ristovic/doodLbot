@@ -13,6 +13,8 @@ Developed by:
 - [Luka Živanović](https://github.com/ZivanovicLuka)
 - [Milana Kovačević](https://github.com/milana-kovacevic)
 
+![Preview](images/preview.PNG)
+
 ## Intro
 
 doodLbot is a game where, instead of making your own way to more and more points by playing, you create an algorithm which will score points on its own and beat your high scores. 
